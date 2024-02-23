@@ -12,9 +12,7 @@ import UIDropdownWithSearch from '@/components/ui/UIDropdownWithSearch.vue';
         </div>
         <div class="text-center pt-6">
             <b>Выберите тип донации</b><br>
-            <UIDropdownWithSearch :options="donations" v-model="donationType">
-                
-            </UIDropdownWithSearch>
+            <UIDropdownWithSearch :options="donations" v-model="donationType"/>
         </div>
         <div class="text-center pt-6">
             <b>Дата донации</b><br>

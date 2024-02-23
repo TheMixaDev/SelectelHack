@@ -38,6 +38,11 @@ const router = createRouter({
       name: 'planDonation',
       component: () => import('../views/authorized/donations/PlanDonationView.vue')
     },
+    {
+      path: '/profile/setup',
+      name: 'setupProfile',
+      component: () => import('../views/authorized/user/SetupProfileView.vue')
+    },
   ]
 })
 

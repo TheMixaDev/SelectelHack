@@ -13,7 +13,7 @@ import UIDropdownWithSearch from '@/components/ui/UIDropdownWithSearch.vue';
         <div class="text-center pt-6">
             <b>Выберите тип донации</b><br>
             <span>После выбора типа донации автоматически отобразится ближайшая доступная дата с учётом интервалов между донациями</span><br>
-            <UIDropdownWithSearch :options="donations" v-model="donationType"></UIDropdownWithSearch>
+            <UIDropdownWithSearch :options="donations" v-model="donationType"/>
         </div>
         <div class="text-center pt-6">
             <b>Дата донации</b><br>
