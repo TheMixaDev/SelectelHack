@@ -46,7 +46,6 @@ import UISmallButton from '@/components/ui/UISmallButton.vue';
 </template>
 
 <script>
-import { useWebAppSendData } from 'vue-tg';
 export default {
     name: 'AuthView',
     data() {
@@ -68,7 +67,8 @@ export default {
             AuthService.login(this.login, this.password, (data) => {
                 let token = data.headers.token;
                 this.$cookies.set('token', token, "30d");
-                alert("AAAAA");
+                this.$router.push({name: "setupProfile"});
+                /*alert("AAAAA");
                 try {
                     //useWebAppSendData(JSON.stringify({token: token, hash: this.$cookies.get("hash"), id: this.$cookies.get("id")}));
                     useWebAppSendData("wefdnkjwedfnjwdesnjwdnejk");
@@ -77,7 +77,7 @@ export default {
                     alert(e);
                     alert(JSON.stringify(e));
                 }
-                alert("BBBBBB");
+                alert("BBBBBB");*/
             }, (error) => {
                 Object.values(error.response.data).flat().forEach(message => {
                     this.$notify({text: message, type: "error"});

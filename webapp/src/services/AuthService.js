@@ -58,5 +58,5 @@ export const AuthService = {
                 success(response.data);
             else fail(response.data);
         }, fail)
-    },
+    }
 }

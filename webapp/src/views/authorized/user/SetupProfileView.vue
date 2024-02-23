@@ -2,7 +2,7 @@
 import Datepicker from '@vuepic/vue-datepicker';
 import '@vuepic/vue-datepicker/dist/main.css';
 
-import UIInlineInput from '@/components/ui/UIInlineInput.vue';
+//import UIInlineInput from '@/components/ui/UIInlineInput.vue';
 import UISmallButton from '@/components/ui/UISmallButton.vue';
 import UIDropdownWithSearch from '@/components/ui/UIDropdownWithSearch.vue';
 </script>
@@ -14,9 +14,9 @@ import UIDropdownWithSearch from '@/components/ui/UIDropdownWithSearch.vue';
                 Настройка профиля
             </div>
             <form class="" id="new_user" novalidate="">
-                <UIInlineInput v-model="last_name" placeholder="Фамилия*" type="text" property="last_name"/>
+                <!--UIInlineInput v-model="last_name" placeholder="Фамилия*" type="text" property="last_name"/>
                 <UIInlineInput v-model="first_name" placeholder="Имя*" type="text" property="first_name"/>
-                <UIInlineInput v-model="middle_name" placeholder="Отчество" type="text" property="middle_name"/>
+                <UIInlineInput v-model="middle_name" placeholder="Отчество" type="text" property="middle_name"/-->
                 <p>Дата рождения</p>
                 <Datepicker v-model="birth_date"
                     locale="ru-RU"
@@ -25,16 +25,21 @@ import UIDropdownWithSearch from '@/components/ui/UIDropdownWithSearch.vue';
                     :max-date="new Date()"
                     format="dd.MM.yyyy"/>
                 <p class="mb-2">Город</p>
-                <UIDropdownWithSearch :options="cities" v-model="city" @changed="updateCenters">
+                <UIDropdownWithSearch :options="cities" v-model="city_id">
                     Выберите город
                 </UIDropdownWithSearch>
-                <UISmallButton @click="auth" type="button">Войти</UISmallButton>
+                <p class="mb-2">Группа крови</p>
+                <UIDropdownWithSearch :options="blood_groups" v-model="blood_group"/>
+                <UISmallButton @click="save" type="button">Сохранить</UISmallButton>
             </form>
         </div>
     </div>
 </template>
 
 <script>
+import { useWebApp } from 'vue-tg';
+import { AccountService } from '@/services/AccountService'
+import { RegionService } from '@/services/RegionService'
 export default {
     name: 'SetupProfileView',
     data() {
@@ -43,7 +48,7 @@ export default {
             first_name: '',
             middle_name: '',
             birth_date: new Date(),
-            city: 0,
+            city_id: 0,
             blood_group: 0,
 
             cities: {},
@@ -57,8 +62,69 @@ export default {
                 "b_minus": "Третья отрицательная - B(III) Rh-",
                 "ab_plus": "Четвертая положительная - AB(IV) Rh+",
                 "ab_minus": "Четвертая отрицательная - AB(IV) Rh-",
-            }
+            },
+            profile: {},
         }
+    },
+    methods: {
+        save() {
+            /*if(this.last_name.length < 1) {
+                this.$notify({text: "Введите фамилию", type: "error"});
+                return;
+            }
+            if(this.first_name.length < 1) {
+                this.$notify({text: "Введите имя", type: "error"});
+                return;
+            }*/
+            if(this.city_id < 1) {
+                this.$notify({text: "Выберите город", type: "error"});
+                return;
+            }
+            /*this.profile.last_name = this.last_name;
+            this.profile.first_name = this.first_name;
+            this.profile.middle_name = this.middle_name;*/
+
+            this.profile.birth_date = this.birth_date.toISOString().substring(0, 10);
+            this.profile.city_id = this.city_id;
+            this.profile.blood_group = this.blood_group;
+            AccountService.patchMe({
+                birth_date: this.profile.birth_date,
+                city_id: this.profile.city_id
+            }, () => {
+                AccountService.patchCard({
+                    blood_group: this.profile.blood_group
+                }, () => {
+                    this.$notify({text: "Профиль сохранен", type: "success"});
+                    // send data to webapp
+                    useWebApp().close();
+                }, () => {
+                    this.$notify({text: "Не удалось сохранить профиль", type: "error"});
+                }, this.$cookies);
+            }, () => {
+                this.$notify({text: "Не удалось сохранить профиль", type: "error"});
+            }, this.$cookies);
+        }
+    },
+    mounted() {
+        RegionService.getCities((data) => {
+            this.cities = data.results.reduce((acc, cur) => {
+                acc[cur.id] = cur.title;
+                return acc;
+            }, {});
+            AccountService.getMe((data) => {
+                this.profile = data;
+                this.last_name = data.last_name;
+                this.first_name = data.first_name;
+                this.middle_name = data.middle_name;
+                this.birth_date = new Date(data.birth_date);
+                this.city_id = data.city_id;
+                this.blood_group = data.blood_group ? data.blood_group : 0;
+            }, () => {
+                this.$notify({text: "Не удалось получить профиль", type: "error"});
+            }, this.$cookies)
+        }, () => {
+            this.$notify({text: "Не удалось получить доступные города", type: "error"});
+        });
     }
 }
 </script>
