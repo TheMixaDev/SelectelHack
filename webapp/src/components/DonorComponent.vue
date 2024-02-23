@@ -1,10 +1,14 @@
+<script setup>
+const NO_PHOTO = 'https://139115.selcdn.ru/ds_staging_media/media/backend/pictures/5bcfe1ee76474a7ab498649e238813ea.medium.jpg';
+</script>
+
 <template>
     <div class="main_block">
-        <div class="header_main_block"><span class="header_text">{{ json.first_name }} {{ json.last_name }}</span></div>
+        <div class="header_main_block"><span class="header_text">{{ json.first_name ? json.first_name : "Безымянный" }} {{ json.last_name }}</span></div>
         <div class="card_container">
             <div class="card">
                 <div style="display: flex; align-items: center;">
-                  <img :src="json.photo?.medium" style="margin-right: 10px;">
+                  <img :src="json.photo ? json.photo.medium : NO_PHOTO" style="margin-right: 10px;">
                   <div>
                     <div class="">Донаций: {{ json.donation_agg.count }}</div>
                     <div class="" v-if="json.donor_status">Статус донора: {{ json.donor_status?.name }}</div>

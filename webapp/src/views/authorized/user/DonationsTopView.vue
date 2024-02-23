@@ -25,7 +25,7 @@ export default {
             this.top = data.items;
         }, () => {
             this.$notify({text: "Не удалось получить топ доноров", type: "error"});
-        }, this.$cookies);
+        });
     }
 }
 </script>

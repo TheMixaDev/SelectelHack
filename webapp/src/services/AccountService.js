@@ -22,8 +22,8 @@ export const AccountService = {
             else fail(response.data);
         }, fail)
     },
-    getTopDonors(success, fail, cookies) {
-        NetworkService.AuthRequest("GET", "users_top/", {}, cookies, (response) => {
+    getTopDonors(success, fail) {
+        NetworkService.ClassicRequest("GET", "users_top/", {}, (response) => {
             if(response.status === 200)
                 success(response.data);
             else fail(response.data);
