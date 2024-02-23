@@ -3,6 +3,7 @@ kind: CrdbCluster
 metadata:
   name: cockroachdb
   namespace: cockroach-dev
+spec:
   dataStore:
     pvc:
       spec:
