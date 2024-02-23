@@ -1,4 +1,4 @@
-name: Deploy Vue.js Application to GitHub Pages
+name: Deploy Vue.js
 
 on:
   push:
