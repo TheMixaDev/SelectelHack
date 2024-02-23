@@ -24,7 +24,7 @@ redisClient.on('connect', () => {
  * @returns {boolean} true if the user is authorized, false otherwise
  */
 async function isUserAuthorized(telegramId, userID) {
-    redisClient.set(telegramId + ":auth", userID);
+    // redisClient.set(telegramId + ":auth", userID);
     let id = await redisClient.get(telegramId + ":auth");
     return id == userID;
 }

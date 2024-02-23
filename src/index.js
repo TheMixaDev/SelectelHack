@@ -2,7 +2,7 @@ import { Scenes, Telegraf, session } from 'telegraf';
 import config from 'config';
 import HashStringWithString from './hash.js';
 import { isUserAuthorized, redisClient } from './redis.js';
-import { MenuKeys } from './keyboards.js';
+import { MenuKeys, ProfileKeys } from './keyboards.js';
 import { message } from 'telegraf/filters';
 
 const bot = new Telegraf(config.get('bot.token'))
@@ -13,7 +13,10 @@ const stage = new Scenes.Stage();
 const authScene = new Scenes.BaseScene('authScene');
 const menuScene = new Scenes.BaseScene('menuScene');
 
-stage.register(authScene, menuScene)
+const eventScene = new Scenes.BaseScene('eventScene');
+const profileScene = new Scenes.BaseScene('profileScene');
+
+stage.register(authScene, menuScene, profileScene, eventScene);
 
 bot.use(session());
 bot.use(stage.middleware());
@@ -40,7 +43,7 @@ authScene.enter(async (ctx) => {
 
 authScene.on(message('text'), async (ctx) => {
     let hash = HashStringWithString(ctx.message.from.id, config.get('bot.secret'));
-    await ctx.reply('Пожалуйста воспользуйтесь одной из кнопок ниже', {
+    await ctx.reply('Пожалуйста, воспользуйтесь одной из кнопок ниже', {
         reply_markup: {
             inline_keyboard: [
                 [
@@ -57,41 +60,71 @@ authScene.on(message('text'), async (ctx) => {
 
 
 menuScene.enter(async (ctx) => {
-    return ctx.reply('👋 Привет! Что вам нужно сегодня?', {
+    return ctx.reply('Чем могу быть полезен?', {
         reply_markup: {
             keyboard: MenuKeys,
             resize_keyboard: true,
         }
     });
-    
+
 });
 
 menuScene.on(message('text'), async (ctx) => {
-    switch (ctx.message.text.toLowerCase()) {
+    switch (ctx.message.text) {
+        case MenuKeys[0][0]: return ctx.reply('Что именно вы хотите сделать?', {
+            reply_markup: {
+                inline_keyboard: [
+                    [
+                        { text: '➕ Записаться на сдачу', web_app: { url: "https://github.com/nickname76/telegrambot" } },
+                    ],
+                    [
+                        { text: '📅 Запланировать сдачу крови', web_app: { url: "https://github.com/nickname76/telegrambot" } },
+                    ],
+                    [
+                        { text: '🏥 Найти центры сбора крови', web_app: { url: "https://github.com/nickname76/telegrambot" } },
+                    ],
+                    [
+                        { text: '📍 Где нужна моя группа крови', web_app: { url: "https://github.com/nickname76/telegrambot" } },
+                    ]
+                ],
+                resize_keyboard: true,
+            }
+        });
+        case MenuKeys[0][1]: return ctx.scene.enter('eventScene');
+        case MenuKeys[1][0]: return ctx.scene.enter('profileScene');
+        case MenuKeys[2][0]: return ctx.reply('Памятка');
+        case MenuKeys[3][0]: return ctx.reply('Donate');
         default: return ctx.reply('Пожалуйста, воспользуйтесь одной из кнопок ниже', {
             reply_markup: {
                 keyboard: MenuKeys,
                 resize_keyboard: true,
+                one_time_keyboard: true,
             }
         });
     }
 });
 
-
-bot.command('end', async (ctx) => {
-    ctx.reply('Пока-пока! Если я вас снова понадоблюсь нажмите на кнопку "Старт"', {
+profileScene.enter(async (ctx) => {
+    return ctx.reply('Профиль', {
         reply_markup: {
-            inline_keyboard: [[{ text: 'Старт', callback_data: 'start', }]],
+            keyboard: ProfileKeys, // todo: replace with inline keyboard
             resize_keyboard: true,
+            one_time_keyboard: true
         }
     });
 })
 
+profileScene.on(message('text'), async (ctx) => {
+    switch (ctx.message.text) {
+        case ProfileKeys[0][0]: return ctx.reply('1000');
+        case ProfileKeys[0][1]: return ctx.reply('top 1');
+        case ProfileKeys[1][0]: return ctx.reply('Скоро');
+        case ProfileKeys[2][0]: return ctx.reply('LIST');
+        case ProfileKeys[3][0]: return ctx.scene.enter('menuScene');
+        default: return ctx.reply('Воспользуйтесь одной из кнопок 👇');
+    }
+});
 
-
-bot.on('sendMessage', (ctx) => {
-    console.log("HIIII");
-})
 
 
 bot.command('start', (ctx) => ctx.scene.enter('authScene'));
