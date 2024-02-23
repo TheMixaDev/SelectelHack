@@ -108,7 +108,7 @@ export default {
     mounted() {
         RegionService.getCities((data) => {
             this.cities = data.results.reduce((acc, cur) => {
-                acc[cur.id] = cur.title;
+                acc[cur.city_id] = cur.title;
                 return acc;
             }, {});
             AccountService.getMe((data) => {

@@ -43,6 +43,11 @@ const router = createRouter({
       name: 'setupProfile',
       component: () => import('../views/authorized/user/SetupProfileView.vue')
     },
+    {
+      path: '/stations',
+      name: 'stations',
+      component: () => import('../views/authorized/stations/BloodStationsView.vue')
+    },
   ]
 })
 

@@ -4,6 +4,7 @@ import '@vuepic/vue-datepicker/dist/main.css';
 
 import UISelectorButton from '@/components/ui/UISelectorButton.vue';
 import UIDropdownWithSearch from '@/components/ui/UIDropdownWithSearch.vue';
+import { MainButton } from 'vue-tg';
 </script>
 <template>
     <div class="p-3 text-lg">
@@ -63,13 +64,18 @@ import UIDropdownWithSearch from '@/components/ui/UIDropdownWithSearch.vue';
             </UISelectorButton>
         </div>
     </div>
+    <MainButton @click="sendToBot" text="Создать донацию"></MainButton>
 </template>
 
 <script>
 import { RegionService } from '@/services/RegionService';
 import { StationService } from '@/services/StationService';
+import { useWebApp } from 'vue-tg';
 export default {
     name: 'CreateDonationView',
+    components: {
+        MainButton
+    },
     data() {
         return {
             date: new Date(),
@@ -111,6 +117,30 @@ export default {
             }, () => {
                 this.$notify({text: "Не удалось получить доступные станции", type: "error"});
             })
+        },
+        sendToBot() {
+            if(this.city < 1) {
+                this.$notify({text: "Выберите город", type: "error"});
+                return;
+            }
+            if(this.place == 0 && this.center < 1) {
+                this.$notify({text: "Выберите центр крови", type: "error"});
+                return;
+            }
+            useWebApp().sendData(JSON.stringify(
+                {
+                    type: "add_donation",
+                    data: {
+                        date: this.date.toISOString().slice(0, 10),
+                        type: this.donationType,
+                        place: this.place,
+                        document: this.document,
+                        city_id: this.city,
+                        center_id: this.center
+                    },
+                    hash: this.$cookies.get("hash"),
+                    id: this.$cookies.get("id")
+                }));
         }
     },
     mounted() {

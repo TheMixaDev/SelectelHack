@@ -67,7 +67,6 @@ export default {
     data() {
         return {
             date: new Date(),
-
             donationType: 0,
             donations: {
                 0: 'Цельная кровь',
@@ -94,11 +93,18 @@ export default {
             this.place = place
         },
         updateCenters() {
+            if(this.city < 1)
+                return;
             StationService.getStations(this.city, (data) => {
                 this.centers = data.results.reduce((acc, cur) => {
                     acc[cur.id] = cur.title;
                     return acc;
-                }, {})
+                }, {});
+                if(localStorage.getItem("station")) {
+                    let json  = JSON.parse(localStorage.getItem("station"));
+                    this.center = json.id;
+                    localStorage.removeItem("station");
+                }
             }, () => {
                 this.$notify({text: "Не удалось получить доступные станции", type: "error"});
             })
@@ -109,7 +115,12 @@ export default {
             this.cities = data.results.reduce((acc, cur) => {
                 acc[cur.id] = cur.title;
                 return acc;
-            }, {})
+            }, {});
+            if(localStorage.getItem("station")) {
+                let json  = JSON.parse(localStorage.getItem("station"));
+                this.city = json.city_id;
+            }
+            this.updateCenters();
         }, () => {
             this.$notify({text: "Не удалось получить доступные города", type: "error"});
         })
