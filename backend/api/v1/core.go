@@ -7,6 +7,7 @@ import (
 
 func SetupRoutesV1(root *fiber.Router) {
 	v1 := (*root).Group("/api")
+	auth.SetupAuth(&v1)
 
 	addressNeeds := v1.Group("/address_needs")
 	addressNeeds.Get("/", addressNeedsGetHandler)
@@ -114,5 +115,4 @@ func SetupRoutesV1(root *fiber.Router) {
 	usersTop := v1.Group("/users_top")
 	usersTop.Get("/", usersTopGetHandler)
 
-	auth.SetupAuth(&v1)
 }

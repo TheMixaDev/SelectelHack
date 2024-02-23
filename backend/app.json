@@ -1,18 +1,18 @@
 {
   "app": {
-    "port": "3030"
+    "port": "3033"
   },
   "dev": true,
   "db": {
     "user": "root",
-    "host": "localhost",
+    "host": "crdb",
     "port": "26257",
     "password": "",
     "dbname": "defaultdb",
-    "sslmode": "verify-full",
+    "sslmode": "disable",
     "sslrootcert": "api/auth/certs/ca.crt",
     "sslcert": "api/auth/certs/client.root.crt",
     "sslkey": "api/auth/certs/client.root.key",
-    "schema": "database/schema.sql"
+    "schema": "schema.sql"
   }
 }

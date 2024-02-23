@@ -1,28 +1,48 @@
 package v1
 
-import "github.com/gofiber/fiber/v2"
+import (
+	"github.com/gofiber/fiber/v2"
+	"github.com/invalidteam/selectel_hack/api/auth"
+	"github.com/invalidteam/selectel_hack/database"
+)
 
 func authPostChangeEmailHandler(c *fiber.Ctx) error {
 	return c.SendStatus(fiber.StatusNotImplemented)
 }
+
 func authPostChangePasswordHandler(c *fiber.Ctx) error {
 	return c.SendStatus(fiber.StatusNotImplemented)
 }
+
 func authPostChangePhoneHandler(c *fiber.Ctx) error {
 	return c.SendStatus(fiber.StatusNotImplemented)
 }
+
 func authPostConfirmPhoneHandler(c *fiber.Ctx) error {
 	return c.SendStatus(fiber.StatusNotImplemented)
 }
+
 func authGetDonorCardHandler(c *fiber.Ctx) error {
 	return c.SendStatus(fiber.StatusNotImplemented)
 }
+
 func authPostDonorCardHandler(c *fiber.Ctx) error {
 	return c.SendStatus(fiber.StatusNotImplemented)
 }
+
 func authGetMeHandler(c *fiber.Ctx) error {
-	return c.SendStatus(fiber.StatusNotImplemented)
+	id := auth.ExtractUserID(c)
+	user, err := database.GetUserById(id)
+	if err != nil {
+		return c.SendStatus(fiber.StatusInternalServerError)
+	}
+	return c.Status(fiber.StatusOK).JSON(&fiber.Map{
+		"message": "Profile fetched successfully",
+		"data":    user,
+	})
+
 }
+
 func authPostMeHandler(c *fiber.Ctx) error {
 	return c.SendStatus(fiber.StatusNotImplemented)
 }

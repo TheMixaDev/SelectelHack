@@ -178,7 +178,7 @@ pgdata
 InitDatabase
 backend/data/*
 backend/prisma/migrations
-# persistence
+persistence
 
 *.pem
 *.meta
