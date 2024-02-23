@@ -19,7 +19,7 @@
         Email*
         </label>
         <div class="text-left ml-3 w-75">
-        <input class="loginInput" placeholder="" type="email" name="email" id="email" autocomplete="off">
+        <input class="loginInput" placeholder="" type="email" name="email" id="email" autocomplete="off" v-model="email">
         </div>
     </div>
     <div class="mb-3 d-flex justify-content-between align-items-center style-EOhow" id="style-EOhow">
@@ -27,7 +27,7 @@
         Пароль*
         </label>
         <div class="text-left ml-3 w-75">
-        <input class="loginInput" autocomplete="off" placeholder="" type="password" name="password" id="password">
+        <input class="loginInput" autocomplete="off" placeholder="" type="password" name="password" id="password" v-model="password">
         <div class="mt-2">
             Пароль должен содержать минимум 8 символов и состоять из цифр и букв
         </div>
@@ -38,17 +38,24 @@
         Имя*
         </label>
         <div class="text-left ml-3 w-75">
-        <input class="loginInput" autocomplete="off" placeholder="" type="text" name="first_name" id="first_name">
+        <input class="loginInput" autocomplete="off" placeholder="" type="text" name="first_name" id="first_name" v-model="name">
         </div>
     </div>
-    <input type="submit" name="login" class="loginSubmit loginSubmitRed" data-disable-with="Зарегистрироваться" value="Зарегистрироваться">
+    <input type="button" class="loginSubmit loginSubmitRed" value="Зарегистрироваться" @click="$emit('register', email, password, name)">
     </form>
 </template>
 
 <script>
 export default {
     name: 'RegisterEmailComponent',
-    emits: ['back']
+    emits: ['back'],
+    data() {
+        return {
+            email: "",
+            password: "",
+            name: ""
+        }
+    }
 }
 </script>
 

@@ -1,5 +1,6 @@
 <script setup>
 import { RouterLink } from 'vue-router';
+import { AuthService } from '@/services/AuthService';
 </script>
 
 <template>
@@ -22,15 +23,15 @@ import { RouterLink } from 'vue-router';
             </div>
             <form class="" id="new_user" novalidate="">
             <div>
-                <input type="email" class="loginInput" autofocus="" placeholder="Номер телефона или Email" name="username" id="username" autocomplete="off">
+                <input type="text" class="loginInput" autofocus="" placeholder="Номер телефона или Email" name="username" id="username" autocomplete="off" v-model="login">
             </div>
             <div style="position:relative">
-                <input type="password" class="loginInput" autocomplete="off" placeholder="Пароль" name="password" id="password">
+                <input type="password" class="loginInput" autocomplete="off" placeholder="Пароль" name="password" id="password" v-model="password">
                 <span class="loginFooterForgot">
-                Забыли?
+                Забыли? <!--TODO-->
                 </span>
             </div>
-            <input type="submit" name="login" value="Войти" class="loginSubmit" data-disable-with="Войти">
+            <input type="button" name="login" value="Войти" class="loginSubmit" @click="auth">
             </form>
         </div>
         <div class="loginFooter">
@@ -43,6 +44,38 @@ import { RouterLink } from 'vue-router';
         </div>
     </div>
 </template>
+
+<script>
+export default {
+    name: 'AuthView',
+    data() {
+        return {
+            login: "",
+            password: ""
+        }
+    },
+    methods: {
+        auth() {
+            if(this.login.length < 1) {
+                this.$notify({text:"Введите почту или номер телефона", type: "error"});
+                return;
+            }
+            if(this.password.length < 1) {
+                this.$notify({text:"Введите пароль", type: "error"});
+                return;
+            }
+            AuthService.login(this.login, this.password, (data) => {
+                let token = data.headers.token;
+                this.$cookies.set('token', token, "30d");
+            }, (error) => {
+                Object.values(error.response.data).flat().forEach(message => {
+                    this.$notify({text: message, type: "error"});
+                });
+            })
+        }
+    }
+}
+</script>
 
 <style>
 @import url('https://fonts.googleapis.com/css?family=Roboto:100,100i,300,300i,400,400i,500,500i,700,700i,900,900i&display=swap'); 

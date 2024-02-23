@@ -19,7 +19,7 @@
         Телефон*
         </label>
         <div class="text-left ml-3 w-75">
-        <input class="loginInput" placeholder="+7 (___) ___-__-__" type="tel" name="phone" id="phone" autocomplete="off">
+        <input class="loginInput" placeholder="+7 (___) ___-__-__" type="tel" name="phone" id="phone" autocomplete="off" v-model="phone">
         <div class="mt-2">
             Регистрация по номеру телефона может быть доступна только для абонентов РФ
         </div>
@@ -30,7 +30,7 @@
         Пароль*
         </label>
         <div class="text-left ml-3 w-75">
-        <input class="loginInput" autocomplete="off" placeholder="" type="password" name="password" id="password">
+        <input class="loginInput" autocomplete="off" placeholder="" type="password" name="password" id="password" v-model="password">
         <div class="mt-2">
             Пароль должен содержать минимум 8 символов и состоять из цифр и букв
         </div>
@@ -41,17 +41,24 @@
         Имя*
         </label>
         <div class="text-left ml-3 w-75">
-        <input class="loginInput" autocomplete="off" placeholder="" type="text" name="first_name" id="first_name">
+        <input class="loginInput" autocomplete="off" placeholder="" type="text" name="first_name" id="first_name" v-model="name">
         </div>
     </div>
-    <input type="submit" name="login" class="loginSubmit loginSubmitRed" data-disable-with="Зарегистрироваться" value="Зарегистрироваться">
+    <input type="button" class="loginSubmit loginSubmitRed" value="Зарегистрироваться" @click="$emit('register', phone, password, name)">
     </form>
 </template>
 
 <script>
 export default {
     name: 'RegisterPhoneComponent',
-    emits: ['back']
+    emits: ['back'],
+    data() {
+        return {
+            phone: "",
+            password: "",
+            name: ""
+        }
+    }
 }
 </script>
 
