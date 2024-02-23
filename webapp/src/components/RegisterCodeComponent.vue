@@ -1,23 +1,23 @@
+<script setup>
+import UILargeButton from '@/components/ui/UILargeButton.vue';
+import UIOutlineInput from '@/components/ui/UIOutlineInput.vue';
+</script>
+
 <template>
     <div class="loginSignupHeader">
         <h2>
             Вам было отправлено {{ type }} с кодом на {{ login }}, введите его для подтверждения регистрации.
         </h2>
     </div>
-    <div class="mb-3 d-flex justify-content-between align-items-center">
-        <label for="email">
+    <UIOutlineInput property="code" type="text" v-model="code" tip="">
         Код
-        </label>
-        <div class="text-left ml-3 w-75">
-        <input class="loginInput" placeholder="" type="text" name="text" id="text" autocomplete="off" v-model="code">
-        </div>
-    </div>
+    </UIOutlineInput>
     <div class="loginSmall">
         <a @click="$emit('resend')">
             Отправить код еще раз
         </a>
     </div>
-    <input type="button" class="loginSubmit loginSubmitRed" value="Продолжить" @click="$emit('code', code)">
+    <UILargeButton @click="$emit('code', code)">Продолжить</UILargeButton>
 </template>
 
 <script>

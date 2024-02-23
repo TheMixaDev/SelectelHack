@@ -57,7 +57,7 @@ export const NetworkService = {
                 method: method,
                 url: `${configuration.serverUrl}${url}`,
                 data: data,
-                headers: {'Authorization': `Bearer ${cookies.get("solarToken")}`}
+                headers: {'Authorization': `Basic ${cookies.get("token")}`}
             }).catch(fail);
             if(response)
                 success(response);
