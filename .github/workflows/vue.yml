@@ -24,7 +24,7 @@ jobs:
       working-directory: ./webapp # Change this to the directory of your Vue.js project
 
     - name: Build
-      run: npm run build && echo $PWD
+      run: npm run build && echo $PWD && ls -la
       working-directory: ./webapp # Adjust if your build script is located elsewhere
       
   deploy:
@@ -36,5 +36,5 @@ jobs:
         with:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           BRANCH: gh-pages # The branch the action should deploy to.
-          FOLDER: ~/SelectelHack/webapp/dist # The folder the action should deploy.
+          FOLDER: ./webapp/dist # The folder the action should deploy.
           CLEAN: true # Automatically remove deleted files from the deployment
