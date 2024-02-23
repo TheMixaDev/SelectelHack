@@ -1,0 +1,27 @@
+services:
+  backend-api:
+    build: ./backend
+    container_name: backend-api
+    ports:
+      - '3033:3033'
+    environment:
+      - PRODUCTION=false
+      - PORT=3033
+    # depends_on:
+      # database:
+        # condition: service_healthy
+    restart: on-failure:3
+
+  # It could instead, use volume-mounts.
+  prometheus:
+    build: './monitoring/prometheus'
+    container_name: 'prometheus'
+    ports:
+      - '9090:9090'
+
+  # This could instead be a volume-mounted container.
+  grafana:
+    build: './monitoring/grafana'
+    container_name: 'grafana'
+    ports:
+      - '3000:3000'

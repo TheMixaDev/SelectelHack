@@ -1,0 +1,4861 @@
+openapi: 3.0.3
+info:
+  title: DonorSearch API
+  version: 1.0.0
+paths:
+  /api/address_needs/:
+    get:
+      operationId: address_needs_list
+      description: Retrieves a list of address needs. The list can be filtered by
+        city, main page status, and blood group.
+      summary: List Address Needs
+      parameters:
+      - in: query
+        name: blood_station
+        schema:
+          type: integer
+      - in: query
+        name: id
+        schema:
+          type: integer
+      - name: ordering
+        required: false
+        in: query
+        description: Which field to use when ordering the results.
+        schema:
+          type: string
+      - name: page
+        required: false
+        in: query
+        description: A page number within the paginated result set.
+        schema:
+          type: integer
+      - name: page_size
+        required: false
+        in: query
+        description: Number of results to return per page.
+        schema:
+          type: integer
+      - name: search
+        required: false
+        in: query
+        description: A search term.
+        schema:
+          type: string
+      tags:
+      - Address Needs
+      security:
+      - tokenAuth: []
+      - cookieAuth: []
+      - basicAuth: []
+      - {}
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PaginatedAddressNeedList'
+          description: ''
+    post:
+      operationId: address_needs_create
+      description: Creates a new address need. If the user is authenticated, it is
+        associated with their account. Otherwise, it is created with a status of on
+        moderation.
+      summary: Create an Address Need
+      tags:
+      - Address Needs
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/AddressNeed'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/AddressNeed'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/AddressNeed'
+        required: true
+      security:
+      - tokenAuth: []
+      - cookieAuth: []
+      - basicAuth: []
+      - {}
+      responses:
+        '201':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AddressNeedSerializerDetail'
+          description: ''
+  /api/address_needs/{id}/:
+    get:
+      operationId: address_needs_retrieve
+      description: Gets detailed information about a specific address need.
+      summary: Retrieve Address Need Details
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        description: A unique integer value identifying this Адресная потребность.
+        required: true
+      tags:
+      - Address Needs
+      security:
+      - tokenAuth: []
+      - cookieAuth: []
+      - basicAuth: []
+      - {}
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AddressNeedSerializerDetail'
+          description: ''
+  /api/auth/check_sms_code/:
+    post:
+      operationId: auth_check_sms_code_create
+      description: Verifies an SMS code sent to a user’s phone number.
+      summary: Check SMS Code
+      tags:
+      - Account Recovery
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                code:
+                  type: string
+              required:
+              - code
+      security:
+      - tokenAuth: []
+      - cookieAuth: []
+      - basicAuth: []
+      - {}
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  token:
+                    type: string
+          description: ''
+        '400':
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+          description: ''
+  /api/auth/confirm_email_reg/:
+    post:
+      operationId: auth_confirm_email_reg_create
+      description: Confirms a user's email address during the registration process.
+      summary: Confirm Email on Registration
+      tags:
+      - Account Creation and Confirmation
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/EmailVerificationSerialzier'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/EmailVerificationSerialzier'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/EmailVerificationSerialzier'
+        required: true
+      security:
+      - tokenAuth: []
+      - cookieAuth: []
+      - basicAuth: []
+      - {}
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/User'
+          description: ''
+  /api/auth/confirm_phone_reg/:
+    post:
+      operationId: auth_confirm_phone_reg_create
+      description: Confirms phone number registration and completes the user registration
+        process.
+      summary: Confirm Phone Registration
+      tags:
+      - Account Creation and Confirmation
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PhoneVerificationSerialzier'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/PhoneVerificationSerialzier'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/PhoneVerificationSerialzier'
+        required: true
+      security:
+      - tokenAuth: []
+      - cookieAuth: []
+      - basicAuth: []
+      - {}
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/User'
+          description: ''
+  /api/auth/login/:
+    post:
+      operationId: auth_login_create
+      description: Authenticates a user with a username and password. Handles email
+        and phone number formats for usernames.
+      summary: User Login
+      tags:
+      - Authentication
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                username:
+                  type: string
+                password:
+                  type: string
+              required:
+              - username
+              - password
+      security:
+      - tokenAuth: []
+      - cookieAuth: []
+      - basicAuth: []
+      - {}
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/User'
+          description: ''
+  /api/auth/recover/:
+    post:
+      operationId: auth_recover_create
+      description: Handles account recovery through email or phone. The method of
+        recovery depends on the user's registered login type. It sends an email or
+        SMS with recovery instructions.
+      summary: Account Recovery
+      tags:
+      - Account Recovery
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                username:
+                  type: string
+              required:
+              - username
+      security:
+      - tokenAuth: []
+      - cookieAuth: []
+      - basicAuth: []
+      - {}
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                  login_type:
+                    type: string
+          description: ''
+        '400':
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+          description: ''
+  /api/auth/registration/:
+    post:
+      operationId: auth_registration_create
+      description: Registers a new user, either through email or phone number.
+      summary: User Registration
+      tags:
+      - Account Creation and Confirmation
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Registration'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/Registration'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/Registration'
+      security:
+      - tokenAuth: []
+      - cookieAuth: []
+      - basicAuth: []
+      - {}
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  user_id:
+                    type: string
+          description: ''
+  /api/auth/resend_code/:
+    post:
+      operationId: auth_resend_code_create
+      description: Resends a phone verification code to the user.
+      summary: Resend Phone Verification Code
+      tags:
+      - Account Recovery
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                user_id:
+                  type: string
+              required:
+              - user_id
+      security:
+      - tokenAuth: []
+      - cookieAuth: []
+      - basicAuth: []
+      - {}
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: string
+          description: ''
+        '400':
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: string
+          description: ''
+  /api/auth/resend_email_code/:
+    post:
+      operationId: auth_resend_email_code_create
+      description: Sends a new email confirmation code to the user.
+      summary: Resend Email Confirmation Code
+      tags:
+      - Account Recovery
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                user_id:
+                  type: string
+              required:
+              - user_id
+      security:
+      - tokenAuth: []
+      - cookieAuth: []
+      - basicAuth: []
+      - {}
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: string
+          description: ''
+        '400':
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: string
+          description: ''
+  /api/auth/set_password/:
+    post:
+      operationId: auth_set_password_create
+      description: Allows a user to set a new password, usually as part of a password
+        reset process.
+      summary: Set Password
+      tags:
+      - Account Recovery
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ResetPassword'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/ResetPassword'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/ResetPassword'
+        required: true
+      security:
+      - tokenAuth: []
+      - cookieAuth: []
+      - basicAuth: []
+      - {}
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/User'
+          description: ''
+  /api/blood_stations/:
+    get:
+      operationId: blood_stations_list
+      description: Retrieves a list of all blood stations along with detailed information.
+      summary: List All Blood Stations
+      parameters:
+      - in: query
+        name: blood_group
+        schema:
+          type: string
+      - in: query
+        name: city_id
+        schema:
+          type: number
+      - in: query
+        name: city_slug
+        schema:
+          type: string
+      - in: query
+        name: closed
+        schema:
+          type: boolean
+      - in: query
+        name: for_moscow
+        schema:
+          type: boolean
+      - in: query
+        name: open_on_saturday
+        schema:
+          type: boolean
+      - in: query
+        name: open_on_sunday
+        schema:
+          type: boolean
+      - name: ordering
+        required: false
+        in: query
+        description: Which field to use when ordering the results.
+        schema:
+          type: string
+      - name: page
+        required: false
+        in: query
+        description: A page number within the paginated result set.
+        schema:
+          type: integer
+      - name: page_size
+        required: false
+        in: query
+        description: Number of results to return per page.
+        schema:
+          type: integer
+      - in: query
+        name: q
+        schema:
+          type: string
+      - name: search
+        required: false
+        in: query
+        description: A search term.
+        schema:
+          type: string
+      - in: query
+        name: with_typing
+        schema:
+          type: boolean
+      - in: query
+        name: without_registration
+        schema:
+          type: boolean
+      tags:
+      - Blood Station Information
+      security:
+      - tokenAuth: []
+      - cookieAuth: []
+      - basicAuth: []
+      - {}
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PaginatedBloodStationWithNeedsList'
+          description: ''
+  /api/blood_stations/{id}/:
+    get:
+      operationId: blood_stations_retrieve
+      description: Retrieves detailed information about a specific blood station.
+      summary: Retrieve Specific Blood Station Details
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        description: A unique integer value identifying this Центр крови.
+        required: true
+      tags:
+      - Blood Station Information
+      security:
+      - tokenAuth: []
+      - cookieAuth: []
+      - basicAuth: []
+      - {}
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/BloodStationWithNeeds'
+          description: ''
+  /api/blood_stations/{id}/planned/:
+    get:
+      operationId: blood_stations_planned_list
+      description: Retrieves users who have planned donations at a specific blood
+        station.
+      summary: Retrieve Users with Planned Donations
+      parameters:
+      - in: query
+        name: blood_group
+        schema:
+          type: string
+      - in: query
+        name: city_id
+        schema:
+          type: number
+      - in: query
+        name: city_slug
+        schema:
+          type: string
+      - in: query
+        name: closed
+        schema:
+          type: boolean
+      - in: query
+        name: for_moscow
+        schema:
+          type: boolean
+      - in: path
+        name: id
+        schema:
+          type: integer
+        description: A unique integer value identifying this Центр крови.
+        required: true
+      - in: query
+        name: open_on_saturday
+        schema:
+          type: boolean
+      - in: query
+        name: open_on_sunday
+        schema:
+          type: boolean
+      - name: ordering
+        required: false
+        in: query
+        description: Which field to use when ordering the results.
+        schema:
+          type: string
+      - name: page
+        required: false
+        in: query
+        description: A page number within the paginated result set.
+        schema:
+          type: integer
+      - name: page_size
+        required: false
+        in: query
+        description: Number of results to return per page.
+        schema:
+          type: integer
+      - in: query
+        name: q
+        schema:
+          type: string
+      - name: search
+        required: false
+        in: query
+        description: A search term.
+        schema:
+          type: string
+      - in: query
+        name: with_typing
+        schema:
+          type: boolean
+      - in: query
+        name: without_registration
+        schema:
+          type: boolean
+      tags:
+      - Blood Station Information
+      security:
+      - tokenAuth: []
+      - cookieAuth: []
+      - basicAuth: []
+      - {}
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PaginatedPlannedUserList'
+          description: ''
+  /api/blood_stations/{id}/top/:
+    get:
+      operationId: blood_stations_top_list
+      description: Retrieves top users based on their donation history at a specific
+        blood station.
+      summary: Retrieve Top Users for Blood Station
+      parameters:
+      - in: query
+        name: blood_group
+        schema:
+          type: string
+      - in: query
+        name: city_id
+        schema:
+          type: number
+      - in: query
+        name: city_slug
+        schema:
+          type: string
+      - in: query
+        name: closed
+        schema:
+          type: boolean
+      - in: query
+        name: for_moscow
+        schema:
+          type: boolean
+      - in: path
+        name: id
+        schema:
+          type: integer
+        description: A unique integer value identifying this Центр крови.
+        required: true
+      - in: query
+        name: open_on_saturday
+        schema:
+          type: boolean
+      - in: query
+        name: open_on_sunday
+        schema:
+          type: boolean
+      - name: ordering
+        required: false
+        in: query
+        description: Which field to use when ordering the results.
+        schema:
+          type: string
+      - name: page
+        required: false
+        in: query
+        description: A page number within the paginated result set.
+        schema:
+          type: integer
+      - name: page_size
+        required: false
+        in: query
+        description: Number of results to return per page.
+        schema:
+          type: integer
+      - in: query
+        name: q
+        schema:
+          type: string
+      - name: search
+        required: false
+        in: query
+        description: A search term.
+        schema:
+          type: string
+      - in: query
+        name: with_typing
+        schema:
+          type: boolean
+      - in: query
+        name: without_registration
+        schema:
+          type: boolean
+      tags:
+      - Blood Station Information
+      security:
+      - tokenAuth: []
+      - cookieAuth: []
+      - basicAuth: []
+      - {}
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PaginatedUserTopList'
+          description: ''
+  /api/blood_stations/{id}/top_halfyear/:
+    get:
+      operationId: blood_stations_top_halfyear_list
+      description: Retrieves top users based on their half-year donation history at
+        a specific blood station.
+      summary: Retrieve Top Users for Blood Station over Half Year
+      parameters:
+      - in: query
+        name: blood_group
+        schema:
+          type: string
+      - in: query
+        name: city_id
+        schema:
+          type: number
+      - in: query
+        name: city_slug
+        schema:
+          type: string
+      - in: query
+        name: closed
+        schema:
+          type: boolean
+      - in: query
+        name: for_moscow
+        schema:
+          type: boolean
+      - in: path
+        name: id
+        schema:
+          type: integer
+        description: A unique integer value identifying this Центр крови.
+        required: true
+      - in: query
+        name: open_on_saturday
+        schema:
+          type: boolean
+      - in: query
+        name: open_on_sunday
+        schema:
+          type: boolean
+      - name: ordering
+        required: false
+        in: query
+        description: Which field to use when ordering the results.
+        schema:
+          type: string
+      - name: page
+        required: false
+        in: query
+        description: A page number within the paginated result set.
+        schema:
+          type: integer
+      - name: page_size
+        required: false
+        in: query
+        description: Number of results to return per page.
+        schema:
+          type: integer
+      - in: query
+        name: q
+        schema:
+          type: string
+      - name: search
+        required: false
+        in: query
+        description: A search term.
+        schema:
+          type: string
+      - in: query
+        name: with_typing
+        schema:
+          type: boolean
+      - in: query
+        name: without_registration
+        schema:
+          type: boolean
+      tags:
+      - Blood Station Information
+      security:
+      - tokenAuth: []
+      - cookieAuth: []
+      - basicAuth: []
+      - {}
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PaginatedUserTopList'
+          description: ''
+  /api/blood_stations/all_names/:
+    get:
+      operationId: blood_stations_all_names_list
+      description: Retrieves a list of all blood stations, with optional search and
+        city filtering.
+      summary: List All Blood Station Names
+      parameters:
+      - in: query
+        name: blood_group
+        schema:
+          type: string
+      - in: query
+        name: city_id
+        schema:
+          type: integer
+        description: City ID to filter blood stations by their city.
+      - in: query
+        name: city_slug
+        schema:
+          type: string
+      - in: query
+        name: closed
+        schema:
+          type: boolean
+      - in: query
+        name: for_moscow
+        schema:
+          type: boolean
+      - in: query
+        name: open_on_saturday
+        schema:
+          type: boolean
+      - in: query
+        name: open_on_sunday
+        schema:
+          type: boolean
+      - name: ordering
+        required: false
+        in: query
+        description: Which field to use when ordering the results.
+        schema:
+          type: string
+      - name: page
+        required: false
+        in: query
+        description: A page number within the paginated result set.
+        schema:
+          type: integer
+      - name: page_size
+        required: false
+        in: query
+        description: Number of results to return per page.
+        schema:
+          type: integer
+      - in: query
+        name: q
+        schema:
+          type: string
+      - in: query
+        name: s
+        schema:
+          type: string
+        description: Search parameter to filter blood stations by title.
+      - name: search
+        required: false
+        in: query
+        description: A search term.
+        schema:
+          type: string
+      - in: query
+        name: with_typing
+        schema:
+          type: boolean
+      - in: query
+        name: without_registration
+        schema:
+          type: boolean
+      tags:
+      - Blood Station Information
+      security:
+      - tokenAuth: []
+      - cookieAuth: []
+      - basicAuth: []
+      - {}
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PaginatedAllNamesBloodStationList'
+          description: ''
+  /api/blood_stations/map/:
+    get:
+      operationId: blood_stations_map_list
+      description: Retrieves blood stations located within a specified map boundary.
+      summary: Retrieve Blood Stations within Map Boundary
+      parameters:
+      - in: query
+        name: blood_group
+        schema:
+          type: string
+      - in: query
+        name: city_id
+        schema:
+          type: number
+      - in: query
+        name: city_slug
+        schema:
+          type: string
+      - in: query
+        name: closed
+        schema:
+          type: boolean
+      - in: query
+        name: for_moscow
+        schema:
+          type: boolean
+      - in: query
+        name: open_on_saturday
+        schema:
+          type: boolean
+      - in: query
+        name: open_on_sunday
+        schema:
+          type: boolean
+      - name: ordering
+        required: false
+        in: query
+        description: Which field to use when ordering the results.
+        schema:
+          type: string
+      - name: page
+        required: false
+        in: query
+        description: A page number within the paginated result set.
+        schema:
+          type: integer
+      - name: page_size
+        required: false
+        in: query
+        description: Number of results to return per page.
+        schema:
+          type: integer
+      - in: query
+        name: q
+        schema:
+          type: string
+      - name: search
+        required: false
+        in: query
+        description: A search term.
+        schema:
+          type: string
+      - in: query
+        name: with_typing
+        schema:
+          type: boolean
+      - in: query
+        name: without_registration
+        schema:
+          type: boolean
+      tags:
+      - Blood Station Information
+      security:
+      - tokenAuth: []
+      - cookieAuth: []
+      - basicAuth: []
+      - {}
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PaginatedMapBloodStationSearchList'
+          description: ''
+  /api/blood_stations/search/:
+    get:
+      operationId: blood_stations_search_retrieve
+      description: Performs a search among blood stations and cities based on given
+        parameters.
+      summary: Search Blood Stations and Cities
+      tags:
+      - Blood Station Information
+      security:
+      - tokenAuth: []
+      - cookieAuth: []
+      - basicAuth: []
+      - {}
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/BloodStationSearchResponse'
+          description: ''
+  /api/blood_stations/selected/:
+    get:
+      operationId: blood_stations_selected_list
+      description: Retrieves selected blood stations based on criteria like latest,
+        favorite, and in-need.
+      summary: List Selected Blood Stations
+      parameters:
+      - in: query
+        name: blood_group
+        schema:
+          type: string
+      - in: query
+        name: city_id
+        schema:
+          type: integer
+        description: City ID to filter blood stations by their city.
+      - in: query
+        name: city_slug
+        schema:
+          type: string
+      - in: query
+        name: closed
+        schema:
+          type: boolean
+      - in: query
+        name: for_moscow
+        schema:
+          type: boolean
+      - in: query
+        name: open_on_saturday
+        schema:
+          type: boolean
+      - in: query
+        name: open_on_sunday
+        schema:
+          type: boolean
+      - name: ordering
+        required: false
+        in: query
+        description: Which field to use when ordering the results.
+        schema:
+          type: string
+      - name: page
+        required: false
+        in: query
+        description: A page number within the paginated result set.
+        schema:
+          type: integer
+      - name: page_size
+        required: false
+        in: query
+        description: Number of results to return per page.
+        schema:
+          type: integer
+      - in: query
+        name: q
+        schema:
+          type: string
+      - name: search
+        required: false
+        in: query
+        description: A search term.
+        schema:
+          type: string
+      - in: query
+        name: with_typing
+        schema:
+          type: boolean
+      - in: query
+        name: without_registration
+        schema:
+          type: boolean
+      tags:
+      - Blood Station Information
+      security:
+      - tokenAuth: []
+      - cookieAuth: []
+      - basicAuth: []
+      - {}
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PaginatedSelectedBSSerialzierList'
+          description: ''
+  /api/bonuses/:
+    get:
+      operationId: bonuses_list
+      description: Retrieve a list of available bonuses with their basic information.
+      summary: List all available bonuses
+      parameters:
+      - in: query
+        name: city_id
+        schema:
+          type: number
+      - name: ordering
+        required: false
+        in: query
+        description: Which field to use when ordering the results.
+        schema:
+          type: string
+      - name: page
+        required: false
+        in: query
+        description: A page number within the paginated result set.
+        schema:
+          type: integer
+      - name: page_size
+        required: false
+        in: query
+        description: Number of results to return per page.
+        schema:
+          type: integer
+      - name: search
+        required: false
+        in: query
+        description: A search term.
+        schema:
+          type: string
+      tags:
+      - Bonus Information
+      security:
+      - tokenAuth: []
+      - cookieAuth: []
+      - basicAuth: []
+      - {}
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PaginatedBonusListList'
+          description: ''
+  /api/bonuses/{id}/:
+    get:
+      operationId: bonuses_retrieve
+      description: Get detailed information about a specific bonus.
+      summary: Retrieve Bonus Details
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        required: true
+      tags:
+      - Bonus Information
+      security:
+      - tokenAuth: []
+      - cookieAuth: []
+      - basicAuth: []
+      - {}
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/BonusDetail'
+          description: ''
+  /api/cities/:
+    get:
+      operationId: cities_list
+      description: Retrieves a list of cities within specified CIS countries. Supports
+        optional search and filtering.
+      summary: List Cities
+      parameters:
+      - in: query
+        name: all_bs
+        schema:
+          type: boolean
+        description: Include all blood stations.
+      - in: query
+        name: country
+        schema:
+          type: integer
+      - name: ordering
+        required: false
+        in: query
+        description: Which field to use when ordering the results.
+        schema:
+          type: string
+      - name: page
+        required: false
+        in: query
+        description: A page number within the paginated result set.
+        schema:
+          type: integer
+      - name: page_size
+        required: false
+        in: query
+        description: Number of results to return per page.
+        schema:
+          type: integer
+      - in: query
+        name: region
+        schema:
+          type: integer
+      - in: query
+        name: s
+        schema:
+          type: string
+        description: Search term for city title.
+      - name: search
+        required: false
+        in: query
+        description: A search term.
+        schema:
+          type: string
+      - in: query
+        name: with_bs
+        schema:
+          type: boolean
+        description: Filter cities with blood stations.
+      tags:
+      - Regions
+      security:
+      - tokenAuth: []
+      - cookieAuth: []
+      - basicAuth: []
+      - {}
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PaginatedCityList'
+          description: ''
+  /api/cities/{id}/:
+    get:
+      operationId: cities_retrieve
+      description: Get detailed information about a specific city by ID or slug.
+      summary: Retrieve a City
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        description: A unique integer value identifying this Город.
+        required: true
+      tags:
+      - Regions
+      security:
+      - tokenAuth: []
+      - cookieAuth: []
+      - basicAuth: []
+      - {}
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/City'
+          description: ''
+  /api/cities/by_location/:
+    get:
+      operationId: cities_by_location_retrieve
+      description: Finds a city based on provided longitude and latitude.
+      summary: Find City by Location
+      parameters:
+      - in: query
+        name: lat
+        schema:
+          type: number
+          format: double
+        description: Latitude
+      - in: query
+        name: lng
+        schema:
+          type: number
+          format: double
+        description: Longitude
+      tags:
+      - Regions
+      security:
+      - tokenAuth: []
+      - cookieAuth: []
+      - basicAuth: []
+      - {}
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/City'
+          description: ''
+  /api/countries/:
+    get:
+      operationId: countries_list
+      description: Retrieves a list of countries filtered by optional search criteria.
+        This endpoint allows any user.
+      summary: List Countries
+      parameters:
+      - name: ordering
+        required: false
+        in: query
+        description: Which field to use when ordering the results.
+        schema:
+          type: string
+      - name: page
+        required: false
+        in: query
+        description: A page number within the paginated result set.
+        schema:
+          type: integer
+      - name: page_size
+        required: false
+        in: query
+        description: Number of results to return per page.
+        schema:
+          type: integer
+      - in: query
+        name: s
+        schema:
+          type: string
+        description: Search term to filter countries by title.
+      - name: search
+        required: false
+        in: query
+        description: A search term.
+        schema:
+          type: string
+      tags:
+      - Regions
+      security:
+      - tokenAuth: []
+      - cookieAuth: []
+      - basicAuth: []
+      - {}
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PaginatedCountryList'
+          description: ''
+  /api/countries/{id}/:
+    get:
+      operationId: countries_retrieve
+      description: Retrieves a single country by its ID. This endpoint allows any
+        user.
+      summary: Retrieve a Country
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        description: A unique integer value identifying this Страна.
+        required: true
+      tags:
+      - Regions
+      security:
+      - tokenAuth: []
+      - cookieAuth: []
+      - basicAuth: []
+      - {}
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Country'
+          description: ''
+  /api/events/:
+    get:
+      operationId: events_list
+      description: Retrieves a list of events with optional filtering and ordering.
+      summary: List Events
+      parameters:
+      - in: query
+        name: blood_station
+        schema:
+          type: integer
+      - in: query
+        name: by_blood_station
+        schema:
+          type: string
+      - in: query
+        name: by_date
+        schema:
+          type: string
+      - in: query
+        name: id
+        schema:
+          type: integer
+      - name: ordering
+        required: false
+        in: query
+        description: Which field to use when ordering the results.
+        schema:
+          type: string
+      - in: query
+        name: organization_id
+        schema:
+          type: string
+      - name: page
+        required: false
+        in: query
+        description: A page number within the paginated result set.
+        schema:
+          type: integer
+      - name: page_size
+        required: false
+        in: query
+        description: Number of results to return per page.
+        schema:
+          type: integer
+      - name: search
+        required: false
+        in: query
+        description: A search term.
+        schema:
+          type: string
+      tags:
+      - Events
+      security:
+      - tokenAuth: []
+      - cookieAuth: []
+      - basicAuth: []
+      - {}
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PaginatedEventListList'
+          description: ''
+  /api/events/{id}/:
+    get:
+      operationId: events_retrieve
+      description: Retrieves detailed information about a specific event.
+      summary: Retrieve Specific Event Details
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        description: A unique integer value identifying this Мероприятие.
+        required: true
+      tags:
+      - Events
+      security:
+      - tokenAuth: []
+      - cookieAuth: []
+      - basicAuth: []
+      - {}
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/EventBase'
+          description: ''
+  /api/needs/:
+    get:
+      operationId: needs_list
+      description: Retrieves a list of blood stations with their current needs. Supports
+        filtering by city and blood group.
+      summary: List Blood Stations with Needs
+      parameters:
+      - in: query
+        name: blood_group
+        schema:
+          type: string
+        description: Blood group to filter blood stations.
+      - in: query
+        name: city_id
+        schema:
+          type: integer
+        description: City ID to filter blood stations.
+      - in: query
+        name: msk
+        schema:
+          type: boolean
+      - name: ordering
+        required: false
+        in: query
+        description: Which field to use when ordering the results.
+        schema:
+          type: string
+      - name: page
+        required: false
+        in: query
+        description: A page number within the paginated result set.
+        schema:
+          type: integer
+      - name: page_size
+        required: false
+        in: query
+        description: Number of results to return per page.
+        schema:
+          type: integer
+      - name: search
+        required: false
+        in: query
+        description: A search term.
+        schema:
+          type: string
+      tags:
+      - Blood Station Information
+      security:
+      - tokenAuth: []
+      - cookieAuth: []
+      - basicAuth: []
+      - {}
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PaginatedBloodStationWithNeedsList'
+          description: ''
+  /api/needs/{id}/:
+    get:
+      operationId: needs_retrieve
+      description: Get detailed information about a specific blood station by ID.
+      summary: Retrieve Blood Station Details
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        description: A unique integer value identifying this Центр крови.
+        required: true
+      tags:
+      - Blood Station Information
+      security:
+      - tokenAuth: []
+      - cookieAuth: []
+      - basicAuth: []
+      - {}
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/BloodStationWithNeeds'
+          description: ''
+  /api/needs/available/:
+    get:
+      operationId: needs_available_retrieve
+      description: Retrieves available blood stations based on city and blood group
+        needs.
+      summary: Get Available Blood Stations
+      tags:
+      - Blood Station Information
+      security:
+      - tokenAuth: []
+      - cookieAuth: []
+      - basicAuth: []
+      - {}
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  cities:
+                    type: array
+                  groups:
+                    type: array
+          description: ''
+  /api/picture/:
+    post:
+      operationId: picture_create
+      description: |-
+        Accepts multipart form with the only field called `image`, or a raw body, like this:
+
+        ```
+        curl       -X PUT       -H "Authorization: Token 50152a5d7af1fab20a87744e2024b2a110916edc"       -H "Content-Disposition: attachment; filename=filename.jpg"       --data-binary @"/Downloads/tsjh.jpg"       http://127.0.0.1:8000/api/picture/
+        ```
+      tags:
+      - picture
+      requestBody:
+        content:
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/Picture'
+          '*/*':
+            schema:
+              $ref: '#/components/schemas/Picture'
+        required: true
+      security:
+      - tokenAuth: []
+      - cookieAuth: []
+      - basicAuth: []
+      - {}
+      responses:
+        '201':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Picture'
+          description: ''
+  /api/regions/:
+    get:
+      operationId: regions_list
+      description: Retrieves a list of regions within specified CIS countries. Supports
+        optional search.
+      summary: List Regions
+      parameters:
+      - in: query
+        name: country
+        schema:
+          type: integer
+      - name: ordering
+        required: false
+        in: query
+        description: Which field to use when ordering the results.
+        schema:
+          type: string
+      - name: page
+        required: false
+        in: query
+        description: A page number within the paginated result set.
+        schema:
+          type: integer
+      - name: page_size
+        required: false
+        in: query
+        description: Number of results to return per page.
+        schema:
+          type: integer
+      - in: query
+        name: s
+        schema:
+          type: string
+        description: Search term for region title.
+      - name: search
+        required: false
+        in: query
+        description: A search term.
+        schema:
+          type: string
+      tags:
+      - Regions
+      security:
+      - tokenAuth: []
+      - cookieAuth: []
+      - basicAuth: []
+      - {}
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PaginatedRegionList'
+          description: ''
+  /api/regions/{id}/:
+    get:
+      operationId: regions_retrieve
+      description: Get detailed information about a specific region by ID.
+      summary: Retrieve a Region
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        description: A unique integer value identifying this Регион.
+        required: true
+      tags:
+      - Regions
+      security:
+      - tokenAuth: []
+      - cookieAuth: []
+      - basicAuth: []
+      - {}
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Region'
+          description: ''
+  /api/users_top/:
+    get:
+      operationId: users_top_retrieve
+      description: Retrieves a list of top 100 users based on various filters like
+        age, blood group, etc.
+      summary: Top 100 Users
+      parameters:
+      - in: query
+        name: age_end
+        schema:
+          type: integer
+      - in: query
+        name: age_start
+        schema:
+          type: integer
+      - in: query
+        name: blood_group
+        schema:
+          type: string
+      - in: query
+        name: blood_station_id
+        schema:
+          type: integer
+      - in: query
+        name: by_year
+        schema:
+          type: boolean
+      - in: query
+        name: city
+        schema:
+          type: integer
+      - in: query
+        name: components
+        schema:
+          type: string
+      - in: query
+        name: country
+        schema:
+          type: integer
+      - in: query
+        name: gender
+        schema:
+          type: string
+      - in: query
+        name: kell
+        schema:
+          type: string
+      - in: query
+        name: organization_id
+        schema:
+          type: integer
+      - in: query
+        name: region
+        schema:
+          type: integer
+      tags:
+      - User Information
+      security:
+      - tokenAuth: []
+      - cookieAuth: []
+      - basicAuth: []
+      - {}
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Top100Response'
+          description: ''
+components:
+  schemas:
+    AMinusAf7Enum:
+      enum:
+      - need
+      - no_need
+      type: string
+      description: |-
+        * `need` - нужна
+        * `no_need` - не нужна
+    AMinusC07Enum:
+      enum:
+      - need
+      - no_need
+      - unknown
+      type: string
+      description: |-
+        * `need` - нужна
+        * `no_need` - не нужна
+        * `unknown` - нет данных
+    APlusAf7Enum:
+      enum:
+      - need
+      - no_need
+      type: string
+      description: |-
+        * `need` - нужна
+        * `no_need` - не нужна
+    APlusC07Enum:
+      enum:
+      - need
+      - no_need
+      - unknown
+      type: string
+      description: |-
+        * `need` - нужна
+        * `no_need` - не нужна
+        * `unknown` - нет данных
+    AbMinusAf7Enum:
+      enum:
+      - need
+      - no_need
+      type: string
+      description: |-
+        * `need` - нужна
+        * `no_need` - не нужна
+    AbMinusC07Enum:
+      enum:
+      - need
+      - no_need
+      - unknown
+      type: string
+      description: |-
+        * `need` - нужна
+        * `no_need` - не нужна
+        * `unknown` - нет данных
+    AbPlusAf7Enum:
+      enum:
+      - need
+      - no_need
+      type: string
+      description: |-
+        * `need` - нужна
+        * `no_need` - не нужна
+    AbPlusC07Enum:
+      enum:
+      - need
+      - no_need
+      - unknown
+      type: string
+      description: |-
+        * `need` - нужна
+        * `no_need` - не нужна
+        * `unknown` - нет данных
+    AddressNeed:
+      type: object
+      properties:
+        id:
+          type: integer
+          readOnly: true
+        author:
+          type: string
+          readOnly: true
+        total_joined_count:
+          type: integer
+          readOnly: true
+        image:
+          type: string
+        blood_station_id:
+          type: integer
+        blood_station:
+          allOf:
+          - $ref: '#/components/schemas/BloodStationSmall'
+          readOnly: true
+        time_slots:
+          type: array
+          items:
+            $ref: '#/components/schemas/AddressNeedTimeSlotForBase'
+          readOnly: true
+        joined_users:
+          type: array
+          items:
+            $ref: '#/components/schemas/AddressNeedJoinedUserForBase'
+          readOnly: true
+        object_id:
+          type: integer
+          maximum: 2147483647
+          minimum: 0
+          nullable: true
+          title: Автор
+        o_plus:
+          allOf:
+          - $ref: '#/components/schemas/OPlusAf7Enum'
+          title: O(I) Rh+
+        o_minus:
+          allOf:
+          - $ref: '#/components/schemas/OMinusAf7Enum'
+          title: O(I) Rh-
+        a_plus:
+          allOf:
+          - $ref: '#/components/schemas/APlusAf7Enum'
+          title: A(II) Rh+
+        a_minus:
+          allOf:
+          - $ref: '#/components/schemas/AMinusAf7Enum'
+          title: A(II) Rh-
+        b_plus:
+          allOf:
+          - $ref: '#/components/schemas/BPlusAf7Enum'
+          title: B(III) Rh+
+        b_minus:
+          allOf:
+          - $ref: '#/components/schemas/BMinusAf7Enum'
+          title: B(III) Rh-
+        ab_plus:
+          allOf:
+          - $ref: '#/components/schemas/AbPlusAf7Enum'
+          title: AB(IV) Rh+
+        ab_minus:
+          allOf:
+          - $ref: '#/components/schemas/AbMinusAf7Enum'
+          title: AB(IV) Rh-
+        blood_class:
+          allOf:
+          - $ref: '#/components/schemas/BloodClassEnum'
+          title: Тип крови
+        last_date:
+          type: string
+          format: date
+          title: Крайний срок
+        required_donors_count:
+          type: integer
+          maximum: 2147483647
+          minimum: 0
+          title: Требуемое количество доноров
+        birth_date:
+          type: string
+          format: date
+          nullable: true
+          title: Дата рождения реципиента
+        last_name:
+          type: string
+          title: Фамилия реципиента
+          maxLength: 255
+        first_name:
+          type: string
+          title: Имя реципиента
+          maxLength: 255
+        middle_name:
+          type: string
+          nullable: true
+          title: Отчество реципиента
+          maxLength: 255
+        _image:
+          type: string
+          format: uri
+          nullable: true
+          title: Фото реципиента
+          description: Минимальный размер 190x190, Максимальный размер 10000x10000
+        cropping:
+          type: string
+          title: Отображаемая часть
+          maxLength: 255
+        search_reason:
+          type: string
+          title: Причина поиска
+        status:
+          nullable: true
+          title: Статус
+          oneOf:
+          - $ref: '#/components/schemas/StatusEnum'
+          - $ref: '#/components/schemas/BlankEnum'
+          - $ref: '#/components/schemas/NullEnum'
+        time_by_blood_station:
+          type: boolean
+          title: По расписанию центра крови
+        created_at:
+          type: string
+          format: date-time
+          readOnly: true
+          nullable: true
+          title: Дата добавления
+        content_type:
+          type: integer
+          nullable: true
+          title: Тип автора
+      required:
+      - author
+      - blood_station
+      - blood_station_id
+      - created_at
+      - first_name
+      - id
+      - image
+      - joined_users
+      - last_date
+      - last_name
+      - required_donors_count
+      - search_reason
+      - time_slots
+      - total_joined_count
+    AddressNeedJoinedUserForBase:
+      type: object
+      properties:
+        id:
+          type: integer
+          readOnly: true
+        user:
+          allOf:
+          - $ref: '#/components/schemas/UserTop'
+          readOnly: true
+        created_at:
+          type: string
+          format: date-time
+          readOnly: true
+          title: Дата добавления
+        updated_at:
+          type: string
+          format: date-time
+          readOnly: true
+          title: Дата изменения
+        timeslot:
+          type: integer
+          title: Выбранное время
+      required:
+      - created_at
+      - id
+      - timeslot
+      - updated_at
+      - user
+    AddressNeedSerializerDetail:
+      type: object
+      properties:
+        id:
+          type: integer
+          readOnly: true
+        author:
+          type: string
+          readOnly: true
+        total_joined_count:
+          type: integer
+          readOnly: true
+        image:
+          type: string
+          readOnly: true
+        blood_station_id:
+          type: integer
+        blood_station:
+          allOf:
+          - $ref: '#/components/schemas/BloodStationSmall'
+          readOnly: true
+        time_slots:
+          type: array
+          items:
+            $ref: '#/components/schemas/AddressNeedTimeSlotForBase'
+          readOnly: true
+        joined_users:
+          type: array
+          items:
+            $ref: '#/components/schemas/AddressNeedJoinedUserForBase'
+          readOnly: true
+        user_status:
+          type: string
+          readOnly: true
+        requested_blood_type:
+          type: array
+          items: {}
+          writeOnly: true
+        time_by_blood_station:
+          type: boolean
+          default: true
+        object_id:
+          type: integer
+          maximum: 2147483647
+          minimum: 0
+          nullable: true
+          title: Автор
+        o_plus:
+          allOf:
+          - $ref: '#/components/schemas/OPlusAf7Enum'
+          title: O(I) Rh+
+        o_minus:
+          allOf:
+          - $ref: '#/components/schemas/OMinusAf7Enum'
+          title: O(I) Rh-
+        a_plus:
+          allOf:
+          - $ref: '#/components/schemas/APlusAf7Enum'
+          title: A(II) Rh+
+        a_minus:
+          allOf:
+          - $ref: '#/components/schemas/AMinusAf7Enum'
+          title: A(II) Rh-
+        b_plus:
+          allOf:
+          - $ref: '#/components/schemas/BPlusAf7Enum'
+          title: B(III) Rh+
+        b_minus:
+          allOf:
+          - $ref: '#/components/schemas/BMinusAf7Enum'
+          title: B(III) Rh-
+        ab_plus:
+          allOf:
+          - $ref: '#/components/schemas/AbPlusAf7Enum'
+          title: AB(IV) Rh+
+        ab_minus:
+          allOf:
+          - $ref: '#/components/schemas/AbMinusAf7Enum'
+          title: AB(IV) Rh-
+        blood_class:
+          allOf:
+          - $ref: '#/components/schemas/BloodClassEnum'
+          title: Тип крови
+        last_date:
+          type: string
+          format: date
+          title: Крайний срок
+        required_donors_count:
+          type: integer
+          maximum: 2147483647
+          minimum: 0
+          title: Требуемое количество доноров
+        birth_date:
+          type: string
+          format: date
+          nullable: true
+          title: Дата рождения реципиента
+        last_name:
+          type: string
+          title: Фамилия реципиента
+          maxLength: 255
+        first_name:
+          type: string
+          title: Имя реципиента
+          maxLength: 255
+        middle_name:
+          type: string
+          nullable: true
+          title: Отчество реципиента
+          maxLength: 255
+        _image:
+          type: string
+          format: uri
+          nullable: true
+          title: Фото реципиента
+          description: Минимальный размер 190x190, Максимальный размер 10000x10000
+        cropping:
+          type: string
+          title: Отображаемая часть
+          maxLength: 255
+        search_reason:
+          type: string
+          title: Причина поиска
+        status:
+          nullable: true
+          title: Статус
+          oneOf:
+          - $ref: '#/components/schemas/StatusEnum'
+          - $ref: '#/components/schemas/BlankEnum'
+          - $ref: '#/components/schemas/NullEnum'
+        created_at:
+          type: string
+          format: date-time
+          readOnly: true
+          nullable: true
+          title: Дата добавления
+        content_type:
+          type: integer
+          nullable: true
+          title: Тип автора
+      required:
+      - author
+      - birth_date
+      - blood_class
+      - blood_station
+      - blood_station_id
+      - created_at
+      - first_name
+      - id
+      - image
+      - joined_users
+      - last_date
+      - last_name
+      - requested_blood_type
+      - required_donors_count
+      - search_reason
+      - time_slots
+      - total_joined_count
+      - user_status
+    AddressNeedTimeSlotForBase:
+      type: object
+      properties:
+        id:
+          type: integer
+          readOnly: true
+        joined_count:
+          type: integer
+          readOnly: true
+        date:
+          type: string
+          format: date
+          title: День
+      required:
+      - date
+      - id
+      - joined_count
+    AllNamesBloodStation:
+      type: object
+      properties:
+        id:
+          type: integer
+          readOnly: true
+        title:
+          type: string
+          title: Название
+          maxLength: 255
+      required:
+      - id
+      - title
+    BMinusAf7Enum:
+      enum:
+      - need
+      - no_need
+      type: string
+      description: |-
+        * `need` - нужна
+        * `no_need` - не нужна
+    BMinusC07Enum:
+      enum:
+      - need
+      - no_need
+      - unknown
+      type: string
+      description: |-
+        * `need` - нужна
+        * `no_need` - не нужна
+        * `unknown` - нет данных
+    BPlusAf7Enum:
+      enum:
+      - need
+      - no_need
+      type: string
+      description: |-
+        * `need` - нужна
+        * `no_need` - не нужна
+    BPlusC07Enum:
+      enum:
+      - need
+      - no_need
+      - unknown
+      type: string
+      description: |-
+        * `need` - нужна
+        * `no_need` - не нужна
+        * `unknown` - нет данных
+    BlankEnum:
+      enum:
+      - ''
+    BloodClassEnum:
+      enum:
+      - blood
+      - plasma
+      - platelets
+      - erythrocytes
+      - leukocytes
+      - any
+      type: string
+      description: |-
+        * `blood` - Цельная кровь
+        * `plasma` - Плазма
+        * `platelets` - Тромбоциты
+        * `erythrocytes` - Эритроциты
+        * `leukocytes` - Гранулоциты (Лейкоциты)
+        * `any` - Любой
+    BloodGroupEnum:
+      enum:
+      - o_plus
+      - o_minus
+      - a_plus
+      - a_minus
+      - b_plus
+      - b_minus
+      - ab_plus
+      - ab_minus
+      type: string
+      description: |-
+        * `o_plus` - O(I) Rh+
+        * `o_minus` - O(I) Rh-
+        * `a_plus` - A(II) Rh+
+        * `a_minus` - A(II) Rh-
+        * `b_plus` - B(III) Rh+
+        * `b_minus` - B(III) Rh-
+        * `ab_plus` - AB(IV) Rh+
+        * `ab_minus` - AB(IV) Rh-
+    BloodStationAddress:
+      type: object
+      properties:
+        address:
+          type: string
+          title: Адрес
+          maxLength: 255
+    BloodStationPhone:
+      type: object
+      properties:
+        id:
+          type: integer
+          readOnly: true
+        phone:
+          type: string
+          title: Номер телефона
+          maxLength: 25
+        comment:
+          type: string
+          title: Коментарий
+      required:
+      - id
+      - phone
+    BloodStationSchedule:
+      type: object
+      properties:
+        id:
+          type: integer
+          readOnly: true
+        dow:
+          type: string
+          readOnly: true
+        start:
+          type: string
+          format: time
+        end:
+          type: string
+          format: time
+      required:
+      - dow
+      - end
+      - id
+      - start
+    BloodStationSearch:
+      type: object
+      properties:
+        id:
+          type: integer
+          readOnly: true
+        title:
+          type: string
+          title: Название
+          maxLength: 255
+        address:
+          type: string
+          readOnly: true
+        lat:
+          type: string
+          readOnly: true
+        lng:
+          type: string
+          readOnly: true
+        city:
+          $ref: '#/components/schemas/City'
+        city_id:
+          type: integer
+        type:
+          type: string
+          readOnly: true
+          default: blood_station
+        priority:
+          type: integer
+          maximum: 2147483647
+          minimum: 0
+          title: Донаций добавлено
+        without_registration:
+          type: boolean
+          title: Можно сдавать без прописки
+          description: Центры крови принимает доноров без местной прописки
+        with_typing:
+          type: boolean
+          title: Можно пройти типирование
+          description: Здесь вы можете войти в <a href="https://wmdd2020.donorsearch.org"
+            target="_blank">регистр доноров костного мозга</a>
+        for_moscow:
+          type: boolean
+          title: В зачёт почётного донора Москвы
+          description: Сдавая в этом центре крови можно получить звание Почётного
+            донора Москвы
+        closed:
+          type: boolean
+          title: Ликвидирован
+          description: Если данный центр крови больше не существует, то не будет показан
+            в поиске, где сдать кровь. Однако при добавлении донаций, доноры могут
+            найти этот центр крови, чтобы отметить свои старые донации.
+        schedule:
+          type: array
+          items:
+            $ref: '#/components/schemas/BloodStationSchedule'
+        phone_numbers:
+          type: array
+          items:
+            $ref: '#/components/schemas/BloodStationPhone'
+      required:
+      - address
+      - city
+      - city_id
+      - id
+      - lat
+      - lng
+      - phone_numbers
+      - schedule
+      - title
+      - type
+    BloodStationSearchResponse:
+      type: object
+      properties:
+        blood_stations:
+          type: array
+          items:
+            $ref: '#/components/schemas/BloodStationSearch'
+        cities:
+          type: array
+          items:
+            $ref: '#/components/schemas/CitySearch'
+      required:
+      - blood_stations
+      - cities
+    BloodStationSmall:
+      type: object
+      properties:
+        id:
+          type: integer
+          readOnly: true
+        city_id:
+          type: integer
+        city:
+          $ref: '#/components/schemas/City'
+        lat:
+          type: string
+          readOnly: true
+        lng:
+          type: string
+          readOnly: true
+        title:
+          type: string
+          title: Название
+          maxLength: 255
+        blood_group:
+          title: Потребности центра крови
+          oneOf:
+          - $ref: '#/components/schemas/BloodGroupEnum'
+          - $ref: '#/components/schemas/BlankEnum'
+        parser_url:
+          type: string
+          format: uri
+          nullable: true
+          title: Страница в службе крови
+          maxLength: 200
+        is_get_from_parser:
+          type: boolean
+          title: Принимать потребности у службы крови?
+          description: Данные будут обновляться каждый день в час ночи.
+        o_plus:
+          allOf:
+          - $ref: '#/components/schemas/OPlusC07Enum'
+          title: O(I) Rh+
+        o_minus:
+          allOf:
+          - $ref: '#/components/schemas/OMinusC07Enum'
+          title: O(I) Rh-
+        a_plus:
+          allOf:
+          - $ref: '#/components/schemas/APlusC07Enum'
+          title: A(II) Rh+
+        a_minus:
+          allOf:
+          - $ref: '#/components/schemas/AMinusC07Enum'
+          title: A(II) Rh-
+        b_plus:
+          allOf:
+          - $ref: '#/components/schemas/BPlusC07Enum'
+          title: B(III) Rh+
+        b_minus:
+          allOf:
+          - $ref: '#/components/schemas/BMinusC07Enum'
+          title: B(III) Rh-
+        ab_plus:
+          allOf:
+          - $ref: '#/components/schemas/AbPlusC07Enum'
+          title: AB(IV) Rh+
+        ab_minus:
+          allOf:
+          - $ref: '#/components/schemas/AbMinusC07Enum'
+          title: AB(IV) Rh-
+        blood:
+          allOf:
+          - $ref: '#/components/schemas/LeukocytesEnum'
+          title: Цельная кровь
+        plasma:
+          allOf:
+          - $ref: '#/components/schemas/LeukocytesEnum'
+          title: Плазма
+        platelets:
+          allOf:
+          - $ref: '#/components/schemas/LeukocytesEnum'
+          title: Тромбоциты
+        erythrocytes:
+          allOf:
+          - $ref: '#/components/schemas/LeukocytesEnum'
+          title: Эритроциты
+        leukocytes:
+          allOf:
+          - $ref: '#/components/schemas/LeukocytesEnum'
+          title: Гранулоциты (Лейкоциты)
+        address:
+          type: string
+          title: Адрес
+          maxLength: 255
+        site:
+          type: string
+          title: Сайт
+          maxLength: 255
+        phones:
+          type: string
+          title: Телефоны
+          description: Устаревшее поле
+          maxLength: 255
+        email:
+          type: string
+          format: email
+          maxLength: 254
+        worktime:
+          type: string
+          title: Режим работы
+          description: Устаревшее поле
+          maxLength: 255
+        without_registration:
+          type: boolean
+          title: Можно сдавать без прописки
+          description: Центры крови принимает доноров без местной прописки
+        with_typing:
+          type: boolean
+          title: Можно пройти типирование
+          description: Здесь вы можете войти в <a href="https://wmdd2020.donorsearch.org"
+            target="_blank">регистр доноров костного мозга</a>
+        for_moscow:
+          type: boolean
+          title: В зачёт почётного донора Москвы
+          description: Сдавая в этом центре крови можно получить звание Почётного
+            донора Москвы
+        closed:
+          type: boolean
+          title: Ликвидирован
+          description: Если данный центр крови больше не существует, то не будет показан
+            в поиске, где сдать кровь. Однако при добавлении донаций, доноры могут
+            найти этот центр крови, чтобы отметить свои старые донации.
+        priority:
+          type: integer
+          maximum: 2147483647
+          minimum: 0
+          title: Донаций добавлено
+      required:
+      - city
+      - city_id
+      - id
+      - lat
+      - lng
+      - title
+    BloodStationWithNeeds:
+      type: object
+      properties:
+        id:
+          type: integer
+          readOnly: true
+        city_id:
+          type: integer
+        city:
+          $ref: '#/components/schemas/City'
+        has_blood_group:
+          type: string
+          readOnly: true
+        schedule:
+          type: array
+          items:
+            $ref: '#/components/schemas/BloodStationSchedule'
+        phone_numbers:
+          type: array
+          items:
+            $ref: '#/components/schemas/BloodStationPhone'
+        lat:
+          type: string
+          readOnly: true
+        lng:
+          type: string
+          readOnly: true
+        blood_group:
+          type: string
+          readOnly: true
+        blood_status:
+          type: string
+          readOnly: true
+        title:
+          type: string
+          title: Название
+          maxLength: 255
+        parser_url:
+          type: string
+          format: uri
+          nullable: true
+          title: Страница в службе крови
+          maxLength: 200
+        is_get_from_parser:
+          type: boolean
+          title: Принимать потребности у службы крови?
+          description: Данные будут обновляться каждый день в час ночи.
+        o_plus:
+          allOf:
+          - $ref: '#/components/schemas/OPlusC07Enum'
+          title: O(I) Rh+
+        o_minus:
+          allOf:
+          - $ref: '#/components/schemas/OMinusC07Enum'
+          title: O(I) Rh-
+        a_plus:
+          allOf:
+          - $ref: '#/components/schemas/APlusC07Enum'
+          title: A(II) Rh+
+        a_minus:
+          allOf:
+          - $ref: '#/components/schemas/AMinusC07Enum'
+          title: A(II) Rh-
+        b_plus:
+          allOf:
+          - $ref: '#/components/schemas/BPlusC07Enum'
+          title: B(III) Rh+
+        b_minus:
+          allOf:
+          - $ref: '#/components/schemas/BMinusC07Enum'
+          title: B(III) Rh-
+        ab_plus:
+          allOf:
+          - $ref: '#/components/schemas/AbPlusC07Enum'
+          title: AB(IV) Rh+
+        ab_minus:
+          allOf:
+          - $ref: '#/components/schemas/AbMinusC07Enum'
+          title: AB(IV) Rh-
+        blood:
+          allOf:
+          - $ref: '#/components/schemas/LeukocytesEnum'
+          title: Цельная кровь
+        plasma:
+          allOf:
+          - $ref: '#/components/schemas/LeukocytesEnum'
+          title: Плазма
+        platelets:
+          allOf:
+          - $ref: '#/components/schemas/LeukocytesEnum'
+          title: Тромбоциты
+        erythrocytes:
+          allOf:
+          - $ref: '#/components/schemas/LeukocytesEnum'
+          title: Эритроциты
+        leukocytes:
+          allOf:
+          - $ref: '#/components/schemas/LeukocytesEnum'
+          title: Гранулоциты (Лейкоциты)
+        address:
+          type: string
+          title: Адрес
+          maxLength: 255
+        site:
+          type: string
+          title: Сайт
+          maxLength: 255
+        phones:
+          type: string
+          title: Телефоны
+          description: Устаревшее поле
+          maxLength: 255
+        email:
+          type: string
+          format: email
+          maxLength: 254
+        worktime:
+          type: string
+          title: Режим работы
+          description: Устаревшее поле
+          maxLength: 255
+        without_registration:
+          type: boolean
+          title: Можно сдавать без прописки
+          description: Центры крови принимает доноров без местной прописки
+        with_typing:
+          type: boolean
+          title: Можно пройти типирование
+          description: Здесь вы можете войти в <a href="https://wmdd2020.donorsearch.org"
+            target="_blank">регистр доноров костного мозга</a>
+        for_moscow:
+          type: boolean
+          title: В зачёт почётного донора Москвы
+          description: Сдавая в этом центре крови можно получить звание Почётного
+            донора Москвы
+        closed:
+          type: boolean
+          title: Ликвидирован
+          description: Если данный центр крови больше не существует, то не будет показан
+            в поиске, где сдать кровь. Однако при добавлении донаций, доноры могут
+            найти этот центр крови, чтобы отметить свои старые донации.
+        priority:
+          type: integer
+          maximum: 2147483647
+          minimum: 0
+          title: Донаций добавлено
+      required:
+      - blood_group
+      - blood_status
+      - city
+      - city_id
+      - has_blood_group
+      - id
+      - lat
+      - lng
+      - phone_numbers
+      - schedule
+      - title
+    BonusDetail:
+      type: object
+      properties:
+        id:
+          type: integer
+          readOnly: true
+        _bonus_image:
+          type: string
+          format: uri
+          title: Изображение бонуса
+          description: Минимальный размер 10x10, Максимальный размер 10000x10000
+        partner_image:
+          type: string
+        is_taken:
+          type: string
+          readOnly: true
+        bonus_name:
+          type: string
+          title: Название бонуса
+          description: Максимум 48 символов
+          maxLength: 48
+        bonus_description:
+          type: string
+          title: Описание бонуса
+        partner_name:
+          type: string
+          title: Имя партнера
+          description: Максимум 29 символов
+          maxLength: 29
+        date_validity:
+          type: string
+          format: date
+          title: Срок действия
+        is_published:
+          type: boolean
+          title: Опубликован?
+        is_expired:
+          type: boolean
+          readOnly: true
+          default: false
+        has_feedback:
+          type: boolean
+          readOnly: true
+          default: false
+        partner_url:
+          type: string
+          format: uri
+          title: Ссылка на партнера
+          maxLength: 200
+        state:
+          type: string
+          readOnly: true
+        bonus_confines:
+          type: string
+          title: Ограничения бонуса
+        promocode:
+          type: string
+          readOnly: true
+        w:
+          type: integer
+        h:
+          type: integer
+        cities:
+          type: array
+          items:
+            $ref: '#/components/schemas/City'
+      required:
+      - _bonus_image
+      - bonus_confines
+      - bonus_description
+      - bonus_name
+      - cities
+      - date_validity
+      - h
+      - has_feedback
+      - id
+      - is_expired
+      - is_taken
+      - partner_image
+      - partner_name
+      - partner_url
+      - promocode
+      - state
+      - w
+    BonusList:
+      type: object
+      properties:
+        id:
+          type: integer
+          readOnly: true
+        bonus_image:
+          type: string
+        partner_image:
+          type: string
+        is_taken:
+          type: string
+          readOnly: true
+        bonus_name:
+          type: string
+          title: Название бонуса
+          description: Максимум 48 символов
+          maxLength: 48
+        partner_name:
+          type: string
+          title: Имя партнера
+          description: Максимум 29 символов
+          maxLength: 29
+        date_validity:
+          type: string
+          format: date
+          title: Срок действия
+        is_published:
+          type: boolean
+          title: Опубликован?
+        h:
+          type: integer
+        w:
+          type: integer
+        cities:
+          type: array
+          items:
+            type: integer
+            title: Доступен в городах
+          title: Доступен в городах
+        priority:
+          type: integer
+          maximum: 2147483647
+          minimum: 0
+          title: Приоритет
+          description: Чем больше число, тем выше в списке
+      required:
+      - bonus_image
+      - bonus_name
+      - date_validity
+      - h
+      - id
+      - is_taken
+      - partner_image
+      - partner_name
+      - w
+    City:
+      type: object
+      properties:
+        id:
+          type: integer
+          readOnly: true
+        title:
+          type: string
+          title: Название
+          maxLength: 255
+        slug:
+          type: string
+          title: Название
+          description: Строковый идентификатор сущности.
+          maxLength: 255
+        region_id:
+          type: integer
+        region:
+          allOf:
+          - $ref: '#/components/schemas/Region'
+          readOnly: true
+        country:
+          allOf:
+          - $ref: '#/components/schemas/Country'
+          readOnly: true
+        priority:
+          type: integer
+          maximum: 2147483647
+          minimum: 0
+          title: Приоритет
+        lat:
+          type: string
+          readOnly: true
+        lng:
+          type: string
+          readOnly: true
+      required:
+      - country
+      - id
+      - lat
+      - lng
+      - region
+      - region_id
+      - title
+    CitySearch:
+      type: object
+      properties:
+        id:
+          type: integer
+          readOnly: true
+        title:
+          type: string
+          title: Название
+          maxLength: 255
+        address:
+          type: string
+          readOnly: true
+        lat:
+          type: string
+          readOnly: true
+        lng:
+          type: string
+          readOnly: true
+        type:
+          type: string
+          readOnly: true
+          default: city
+        slug:
+          type: string
+          title: Название
+          description: Строковый идентификатор сущности.
+          maxLength: 255
+      required:
+      - address
+      - id
+      - lat
+      - lng
+      - title
+      - type
+    Country:
+      type: object
+      properties:
+        id:
+          type: integer
+          readOnly: true
+        title:
+          type: string
+          title: Название
+          maxLength: 255
+      required:
+      - id
+      - title
+    DonationAgg:
+      type: object
+      properties:
+        count:
+          type: integer
+          maximum: 2147483647
+          minimum: 0
+          title: Донаций за все время
+        last_donation_at:
+          type: string
+          format: date
+          nullable: true
+          title: Дата последней донации
+        blood:
+          type: integer
+          maximum: 2147483647
+          minimum: 0
+          title: Цельная кровь
+        plasma:
+          type: integer
+          maximum: 2147483647
+          minimum: 0
+          title: Плазма
+        platelets:
+          type: integer
+          maximum: 2147483647
+          minimum: 0
+          title: Тромбоциты
+        erythrocytes:
+          type: integer
+          maximum: 2147483647
+          minimum: 0
+          title: Эритроциты
+        leukocytes:
+          type: integer
+          maximum: 2147483647
+          minimum: 0
+          title: Гранулоциты (Лейкоциты)
+        unconfirmed_donations:
+          type: integer
+          maximum: 2147483647
+          minimum: 0
+          title: Не подтверждённые
+    DonationAggTop:
+      type: object
+      properties:
+        count:
+          type: integer
+          maximum: 2147483647
+          minimum: 0
+          title: Донаций за все время
+        last_donation_at:
+          type: string
+          format: date
+          nullable: true
+          title: Дата последней донации
+        blood:
+          type: integer
+          maximum: 2147483647
+          minimum: 0
+          title: Цельная кровь
+        plasma:
+          type: integer
+          maximum: 2147483647
+          minimum: 0
+          title: Плазма
+        platelets:
+          type: integer
+          maximum: 2147483647
+          minimum: 0
+          title: Тромбоциты
+        erythrocytes:
+          type: integer
+          maximum: 2147483647
+          minimum: 0
+          title: Эритроциты
+        leukocytes:
+          type: integer
+          maximum: 2147483647
+          minimum: 0
+          title: Гранулоциты (Лейкоциты)
+        unconfirmed_donations:
+          type: integer
+          maximum: 2147483647
+          minimum: 0
+          title: Не подтверждённые
+        count_year:
+          type: integer
+          maximum: 2147483647
+          minimum: 0
+          title: Донаций за донорский год
+        blood_year:
+          type: integer
+          maximum: 2147483647
+          minimum: 0
+          title: Цельная кровь за донорский год
+        plasma_year:
+          type: integer
+          maximum: 2147483647
+          minimum: 0
+          title: Плазма за донорский год
+        platelets_year:
+          type: integer
+          maximum: 2147483647
+          minimum: 0
+          title: Тромбоциты за донорский год
+        erythrocytes_year:
+          type: integer
+          maximum: 2147483647
+          minimum: 0
+          title: Эритроциты за донорский год
+        leukocytes_year:
+          type: integer
+          maximum: 2147483647
+          minimum: 0
+          title: Лейкоциты за донорский год
+    DonationAggTopLight:
+      type: object
+      properties:
+        count:
+          type: integer
+          maximum: 2147483647
+          minimum: 0
+          title: Донаций за все время
+        blood:
+          type: integer
+          maximum: 2147483647
+          minimum: 0
+          title: Цельная кровь
+        plasma:
+          type: integer
+          maximum: 2147483647
+          minimum: 0
+          title: Плазма
+        platelets:
+          type: integer
+          maximum: 2147483647
+          minimum: 0
+          title: Тромбоциты
+        erythrocytes:
+          type: integer
+          maximum: 2147483647
+          minimum: 0
+          title: Эритроциты
+        leukocytes:
+          type: integer
+          maximum: 2147483647
+          minimum: 0
+          title: Гранулоциты (Лейкоциты)
+    DonorStatus:
+      type: object
+      properties:
+        id:
+          type: integer
+          readOnly: true
+        name:
+          type: string
+          title: Название
+          maxLength: 50
+        donations_count:
+          type: integer
+          maximum: 2147483647
+          minimum: 0
+          title: Количество донаций
+        background_color:
+          type: string
+          title: Цвет фона
+          maxLength: 100
+        text_color:
+          type: string
+          title: Цвет текста
+          maxLength: 100
+      required:
+      - donations_count
+      - id
+      - name
+    DonorsRequirement:
+      type: object
+      properties:
+        id:
+          type: integer
+          readOnly: true
+        requirement:
+          type: string
+          title: Требование
+          maxLength: 255
+        event:
+          type: integer
+          title: Требования к донорам
+      required:
+      - event
+      - id
+      - requirement
+    EmailRegistration:
+      type: object
+      properties:
+        email:
+          type: string
+          format: email
+        password:
+          type: string
+        first_name:
+          type: string
+        tag:
+          type: string
+      required:
+      - email
+      - first_name
+      - password
+    EmailVerificationSerialzier:
+      type: object
+      properties:
+        code:
+          type: integer
+        user_id:
+          type: integer
+        email:
+          type: string
+          format: email
+      required:
+      - code
+      - email
+      - user_id
+    EventBase:
+      type: object
+      properties:
+        id:
+          type: integer
+          readOnly: true
+        city:
+          allOf:
+          - $ref: '#/components/schemas/City'
+          readOnly: true
+        city_id:
+          type: integer
+        time_slots:
+          type: array
+          items:
+            $ref: '#/components/schemas/EventTimeSlotForBase'
+          readOnly: true
+        joined_users:
+          type: string
+          readOnly: true
+        reports:
+          type: array
+          items:
+            $ref: '#/components/schemas/EventReport'
+          readOnly: true
+        author:
+          type: string
+          readOnly: true
+        category:
+          allOf:
+          - $ref: '#/components/schemas/EventCategory'
+          readOnly: true
+        user_status:
+          type: string
+          readOnly: true
+        type:
+          type: string
+          readOnly: true
+        individual_partners:
+          type: array
+          items:
+            $ref: '#/components/schemas/IndividualEventPartner'
+          readOnly: true
+        unity_partners:
+          type: array
+          items:
+            $ref: '#/components/schemas/UnityEventPartner'
+          readOnly: true
+        donors_requirements:
+          type: array
+          items:
+            $ref: '#/components/schemas/DonorsRequirement'
+          readOnly: true
+        blood_station:
+          allOf:
+          - $ref: '#/components/schemas/BloodStationSmall'
+          readOnly: true
+        available_slots:
+          type: string
+          readOnly: true
+        socialnetworks:
+          type: array
+          items:
+            $ref: '#/components/schemas/EventSocialNetworks'
+          readOnly: true
+        created_at:
+          type: string
+          format: date-time
+          readOnly: true
+          title: Дата добавления
+        updated_at:
+          type: string
+          format: date-time
+          readOnly: true
+          title: Дата изменения
+        object_id:
+          type: integer
+          maximum: 2147483647
+          minimum: 0
+          title: ID Организатора
+        name:
+          type: string
+          title: Название
+          maxLength: 255
+        description:
+          type: string
+          title: Описание
+        start_date:
+          type: string
+          format: date-time
+          title: Начало
+        end_date:
+          type: string
+          format: date-time
+          title: Конец
+        address:
+          type: string
+          nullable: true
+          title: Адрес
+          description: Необязательно для онлайн мероприятий
+          maxLength: 255
+        email:
+          type: string
+          format: email
+          maxLength: 254
+        website:
+          type: string
+          title: Web-сайт
+          format: uri
+          maxLength: 200
+        phone:
+          type: string
+          title: Телефон
+          maxLength: 25
+        joined_count:
+          type: integer
+          maximum: 2147483647
+          minimum: 0
+          title: Количество записавшихся
+        is_private:
+          type: boolean
+          title: Приватное
+          description: Статус "Приватное" означает, что мероприятие будет доступно
+            только по прямой ссылке.
+        content_type:
+          type: integer
+          title: Тип организатора
+      required:
+      - author
+      - available_slots
+      - blood_station
+      - category
+      - city
+      - city_id
+      - content_type
+      - created_at
+      - description
+      - donors_requirements
+      - end_date
+      - id
+      - individual_partners
+      - joined_users
+      - name
+      - object_id
+      - reports
+      - socialnetworks
+      - start_date
+      - time_slots
+      - type
+      - unity_partners
+      - updated_at
+      - user_status
+    EventCategory:
+      type: object
+      properties:
+        id:
+          type: integer
+          readOnly: true
+        name:
+          type: string
+          maxLength: 255
+      required:
+      - id
+      - name
+    EventList:
+      type: object
+      properties:
+        id:
+          type: integer
+          readOnly: true
+        name:
+          type: string
+          title: Название
+          maxLength: 255
+        description:
+          type: string
+          title: Описание
+        city:
+          allOf:
+          - $ref: '#/components/schemas/City'
+          readOnly: true
+        city_id:
+          type: integer
+        author:
+          type: string
+          readOnly: true
+        type:
+          type: string
+          readOnly: true
+        object_id:
+          type: integer
+          maximum: 2147483647
+          minimum: 0
+          title: ID Организатора
+        start_date:
+          type: string
+          format: date-time
+          title: Начало
+        end_date:
+          type: string
+          format: date-time
+          title: Конец
+        address:
+          type: string
+          nullable: true
+          title: Адрес
+          description: Необязательно для онлайн мероприятий
+          maxLength: 255
+        joined_users:
+          type: string
+          readOnly: true
+        category:
+          allOf:
+          - $ref: '#/components/schemas/EventCategory'
+          readOnly: true
+        joined_count:
+          type: integer
+          maximum: 2147483647
+          minimum: 0
+          title: Количество записавшихся
+        available_slots:
+          type: string
+          readOnly: true
+        individual_partners:
+          type: array
+          items:
+            $ref: '#/components/schemas/IndividualEventPartner'
+          readOnly: true
+        unity_partners:
+          type: array
+          items:
+            $ref: '#/components/schemas/OrganizationPartner'
+          readOnly: true
+        blood_station:
+          allOf:
+          - $ref: '#/components/schemas/BloodStationAddress'
+          readOnly: true
+      required:
+      - author
+      - available_slots
+      - blood_station
+      - category
+      - city
+      - city_id
+      - description
+      - end_date
+      - id
+      - individual_partners
+      - joined_users
+      - name
+      - object_id
+      - start_date
+      - type
+      - unity_partners
+    EventReport:
+      type: object
+      properties:
+        id:
+          type: integer
+          readOnly: true
+        images:
+          type: array
+          items:
+            $ref: '#/components/schemas/EventReportImages'
+        video_urls:
+          type: array
+          items:
+            $ref: '#/components/schemas/EventReportVideoURL'
+        massmedia_about:
+          type: string
+          title: СМИ о нас
+      required:
+      - id
+      - images
+      - video_urls
+    EventReportImages:
+      type: object
+      properties:
+        id:
+          type: integer
+        image:
+          type: string
+          format: uri
+    EventReportVideoURL:
+      type: object
+      properties:
+        id:
+          type: integer
+        url:
+          type: string
+          title: Видео с мероприятия
+    EventSocialNetworks:
+      type: object
+      properties:
+        id:
+          type: integer
+          readOnly: true
+        social:
+          allOf:
+          - $ref: '#/components/schemas/SocialEnum'
+          title: Название
+        url:
+          type: string
+          title: Ссылка
+          format: uri
+          maxLength: 200
+      required:
+      - id
+      - social
+      - url
+    EventTimeSlotForBase:
+      type: object
+      properties:
+        id:
+          type: integer
+        joined_count:
+          type: integer
+          readOnly: true
+        date:
+          type: string
+          format: date
+          title: День
+        start_time:
+          type: string
+          format: time
+          title: Начало
+        end_time:
+          type: string
+          format: time
+          title: Конец
+        count:
+          type: integer
+          maximum: 2147483647
+          minimum: 0
+          title: Количество участников
+      required:
+      - date
+      - end_time
+      - joined_count
+      - start_time
+    GenderEnum:
+      enum:
+      - male
+      - female
+      type: string
+      description: |-
+        * `male` - Мужской
+        * `female` - Женский
+    IndividualEventPartner:
+      type: object
+      properties:
+        id:
+          type: integer
+          readOnly: true
+        image:
+          type: string
+          format: uri
+        created_at:
+          type: string
+          format: date-time
+          readOnly: true
+          title: Дата добавления
+        updated_at:
+          type: string
+          format: date-time
+          readOnly: true
+          title: Дата изменения
+        name:
+          type: string
+          title: Название
+          maxLength: 255
+        url:
+          type: string
+          title: Ссылка
+          format: uri
+          maxLength: 200
+        cropping:
+          type: string
+          title: Отображаемая часть
+          maxLength: 255
+        event:
+          type: integer
+      required:
+      - created_at
+      - event
+      - id
+      - image
+      - name
+      - updated_at
+      - url
+    InlinePicture:
+      type: object
+      properties:
+        image:
+          type: string
+          format: uri
+          readOnly: true
+      required:
+      - image
+    LeukocytesEnum:
+      enum:
+      - accept
+      - no_accept
+      - unknown
+      type: string
+      description: |-
+        * `accept` - принимает
+        * `no_accept` - не принимает
+        * `unknown` - нет данных
+    MainPageDonationAggTop:
+      type: object
+      properties:
+        count:
+          type: integer
+          maximum: 2147483647
+          minimum: 0
+          title: Донаций за все время
+        last_donation_at:
+          type: string
+          format: date
+          nullable: true
+          title: Дата последней донации
+        blood:
+          type: integer
+          maximum: 2147483647
+          minimum: 0
+          title: Цельная кровь
+        plasma:
+          type: integer
+          maximum: 2147483647
+          minimum: 0
+          title: Плазма
+        platelets:
+          type: integer
+          maximum: 2147483647
+          minimum: 0
+          title: Тромбоциты
+        erythrocytes:
+          type: integer
+          maximum: 2147483647
+          minimum: 0
+          title: Эритроциты
+        leukocytes:
+          type: integer
+          maximum: 2147483647
+          minimum: 0
+          title: Гранулоциты (Лейкоциты)
+        count_year:
+          type: integer
+          maximum: 2147483647
+          minimum: 0
+          title: Донаций за донорский год
+        blood_year:
+          type: integer
+          maximum: 2147483647
+          minimum: 0
+          title: Цельная кровь за донорский год
+        plasma_year:
+          type: integer
+          maximum: 2147483647
+          minimum: 0
+          title: Плазма за донорский год
+        platelets_year:
+          type: integer
+          maximum: 2147483647
+          minimum: 0
+          title: Тромбоциты за донорский год
+        erythrocytes_year:
+          type: integer
+          maximum: 2147483647
+          minimum: 0
+          title: Эритроциты за донорский год
+        leukocytes_year:
+          type: integer
+          maximum: 2147483647
+          minimum: 0
+          title: Лейкоциты за донорский год
+    MapBloodStationSearch:
+      type: object
+      properties:
+        id:
+          type: integer
+          readOnly: true
+        city_id:
+          type: integer
+        city:
+          $ref: '#/components/schemas/City'
+        has_blood_group:
+          type: string
+          readOnly: true
+        schedule:
+          type: array
+          items:
+            $ref: '#/components/schemas/BloodStationSchedule'
+        phone_numbers:
+          type: array
+          items:
+            $ref: '#/components/schemas/BloodStationPhone'
+        lat:
+          type: string
+          readOnly: true
+        lng:
+          type: string
+          readOnly: true
+        blood_group:
+          type: string
+          readOnly: true
+        blood_status:
+          type: string
+          readOnly: true
+        type:
+          type: string
+          readOnly: true
+          default: blood_station
+        address:
+          type: string
+          readOnly: true
+        title:
+          type: string
+          title: Название
+          maxLength: 255
+        parser_url:
+          type: string
+          format: uri
+          nullable: true
+          title: Страница в службе крови
+          maxLength: 200
+        is_get_from_parser:
+          type: boolean
+          title: Принимать потребности у службы крови?
+          description: Данные будут обновляться каждый день в час ночи.
+        o_plus:
+          allOf:
+          - $ref: '#/components/schemas/OPlusC07Enum'
+          title: O(I) Rh+
+        o_minus:
+          allOf:
+          - $ref: '#/components/schemas/OMinusC07Enum'
+          title: O(I) Rh-
+        a_plus:
+          allOf:
+          - $ref: '#/components/schemas/APlusC07Enum'
+          title: A(II) Rh+
+        a_minus:
+          allOf:
+          - $ref: '#/components/schemas/AMinusC07Enum'
+          title: A(II) Rh-
+        b_plus:
+          allOf:
+          - $ref: '#/components/schemas/BPlusC07Enum'
+          title: B(III) Rh+
+        b_minus:
+          allOf:
+          - $ref: '#/components/schemas/BMinusC07Enum'
+          title: B(III) Rh-
+        ab_plus:
+          allOf:
+          - $ref: '#/components/schemas/AbPlusC07Enum'
+          title: AB(IV) Rh+
+        ab_minus:
+          allOf:
+          - $ref: '#/components/schemas/AbMinusC07Enum'
+          title: AB(IV) Rh-
+        blood:
+          allOf:
+          - $ref: '#/components/schemas/LeukocytesEnum'
+          title: Цельная кровь
+        plasma:
+          allOf:
+          - $ref: '#/components/schemas/LeukocytesEnum'
+          title: Плазма
+        platelets:
+          allOf:
+          - $ref: '#/components/schemas/LeukocytesEnum'
+          title: Тромбоциты
+        erythrocytes:
+          allOf:
+          - $ref: '#/components/schemas/LeukocytesEnum'
+          title: Эритроциты
+        leukocytes:
+          allOf:
+          - $ref: '#/components/schemas/LeukocytesEnum'
+          title: Гранулоциты (Лейкоциты)
+        site:
+          type: string
+          title: Сайт
+          maxLength: 255
+        phones:
+          type: string
+          title: Телефоны
+          description: Устаревшее поле
+          maxLength: 255
+        email:
+          type: string
+          format: email
+          maxLength: 254
+        worktime:
+          type: string
+          title: Режим работы
+          description: Устаревшее поле
+          maxLength: 255
+        without_registration:
+          type: boolean
+          title: Можно сдавать без прописки
+          description: Центры крови принимает доноров без местной прописки
+        with_typing:
+          type: boolean
+          title: Можно пройти типирование
+          description: Здесь вы можете войти в <a href="https://wmdd2020.donorsearch.org"
+            target="_blank">регистр доноров костного мозга</a>
+        for_moscow:
+          type: boolean
+          title: В зачёт почётного донора Москвы
+          description: Сдавая в этом центре крови можно получить звание Почётного
+            донора Москвы
+        closed:
+          type: boolean
+          title: Ликвидирован
+          description: Если данный центр крови больше не существует, то не будет показан
+            в поиске, где сдать кровь. Однако при добавлении донаций, доноры могут
+            найти этот центр крови, чтобы отметить свои старые донации.
+        priority:
+          type: integer
+          maximum: 2147483647
+          minimum: 0
+          title: Донаций добавлено
+      required:
+      - address
+      - blood_group
+      - blood_status
+      - city
+      - city_id
+      - has_blood_group
+      - id
+      - lat
+      - lng
+      - phone_numbers
+      - schedule
+      - title
+      - type
+    NullEnum:
+      enum:
+      - null
+    OMinusAf7Enum:
+      enum:
+      - need
+      - no_need
+      type: string
+      description: |-
+        * `need` - нужна
+        * `no_need` - не нужна
+    OMinusC07Enum:
+      enum:
+      - need
+      - no_need
+      - unknown
+      type: string
+      description: |-
+        * `need` - нужна
+        * `no_need` - не нужна
+        * `unknown` - нет данных
+    OPlusAf7Enum:
+      enum:
+      - need
+      - no_need
+      type: string
+      description: |-
+        * `need` - нужна
+        * `no_need` - не нужна
+    OPlusC07Enum:
+      enum:
+      - need
+      - no_need
+      - unknown
+      type: string
+      description: |-
+        * `need` - нужна
+        * `no_need` - не нужна
+        * `unknown` - нет данных
+    OrganizationPartner:
+      type: object
+      properties:
+        id:
+          type: integer
+        name:
+          type: string
+          title: Название
+          maxLength: 255
+        image:
+          type: string
+          readOnly: true
+        _image:
+          type: string
+          format: uri
+          nullable: true
+          title: Изображение
+          description: Минимальный размер 190x190, Максимальный размер 10000x10000
+      required:
+      - id
+      - image
+      - name
+    PaginatedAddressNeedList:
+      type: object
+      properties:
+        count:
+          type: integer
+          example: 123
+        next:
+          type: string
+          nullable: true
+          format: uri
+          example: http://api.example.org/accounts/?page=4
+        previous:
+          type: string
+          nullable: true
+          format: uri
+          example: http://api.example.org/accounts/?page=2
+        results:
+          type: array
+          items:
+            $ref: '#/components/schemas/AddressNeed'
+    PaginatedAllNamesBloodStationList:
+      type: object
+      properties:
+        count:
+          type: integer
+          example: 123
+        next:
+          type: string
+          nullable: true
+          format: uri
+          example: http://api.example.org/accounts/?page=4
+        previous:
+          type: string
+          nullable: true
+          format: uri
+          example: http://api.example.org/accounts/?page=2
+        results:
+          type: array
+          items:
+            $ref: '#/components/schemas/AllNamesBloodStation'
+    PaginatedBloodStationWithNeedsList:
+      type: object
+      properties:
+        count:
+          type: integer
+          example: 123
+        next:
+          type: string
+          nullable: true
+          format: uri
+          example: http://api.example.org/accounts/?page=4
+        previous:
+          type: string
+          nullable: true
+          format: uri
+          example: http://api.example.org/accounts/?page=2
+        results:
+          type: array
+          items:
+            $ref: '#/components/schemas/BloodStationWithNeeds'
+    PaginatedBonusListList:
+      type: object
+      properties:
+        count:
+          type: integer
+          example: 123
+        next:
+          type: string
+          nullable: true
+          format: uri
+          example: http://api.example.org/accounts/?page=4
+        previous:
+          type: string
+          nullable: true
+          format: uri
+          example: http://api.example.org/accounts/?page=2
+        results:
+          type: array
+          items:
+            $ref: '#/components/schemas/BonusList'
+    PaginatedCityList:
+      type: object
+      properties:
+        count:
+          type: integer
+          example: 123
+        next:
+          type: string
+          nullable: true
+          format: uri
+          example: http://api.example.org/accounts/?page=4
+        previous:
+          type: string
+          nullable: true
+          format: uri
+          example: http://api.example.org/accounts/?page=2
+        results:
+          type: array
+          items:
+            $ref: '#/components/schemas/City'
+    PaginatedCountryList:
+      type: object
+      properties:
+        count:
+          type: integer
+          example: 123
+        next:
+          type: string
+          nullable: true
+          format: uri
+          example: http://api.example.org/accounts/?page=4
+        previous:
+          type: string
+          nullable: true
+          format: uri
+          example: http://api.example.org/accounts/?page=2
+        results:
+          type: array
+          items:
+            $ref: '#/components/schemas/Country'
+    PaginatedEventListList:
+      type: object
+      properties:
+        count:
+          type: integer
+          example: 123
+        next:
+          type: string
+          nullable: true
+          format: uri
+          example: http://api.example.org/accounts/?page=4
+        previous:
+          type: string
+          nullable: true
+          format: uri
+          example: http://api.example.org/accounts/?page=2
+        results:
+          type: array
+          items:
+            $ref: '#/components/schemas/EventList'
+    PaginatedMapBloodStationSearchList:
+      type: object
+      properties:
+        count:
+          type: integer
+          example: 123
+        next:
+          type: string
+          nullable: true
+          format: uri
+          example: http://api.example.org/accounts/?page=4
+        previous:
+          type: string
+          nullable: true
+          format: uri
+          example: http://api.example.org/accounts/?page=2
+        results:
+          type: array
+          items:
+            $ref: '#/components/schemas/MapBloodStationSearch'
+    PaginatedPlannedUserList:
+      type: object
+      properties:
+        count:
+          type: integer
+          example: 123
+        next:
+          type: string
+          nullable: true
+          format: uri
+          example: http://api.example.org/accounts/?page=4
+        previous:
+          type: string
+          nullable: true
+          format: uri
+          example: http://api.example.org/accounts/?page=2
+        results:
+          type: array
+          items:
+            $ref: '#/components/schemas/PlannedUser'
+    PaginatedRegionList:
+      type: object
+      properties:
+        count:
+          type: integer
+          example: 123
+        next:
+          type: string
+          nullable: true
+          format: uri
+          example: http://api.example.org/accounts/?page=4
+        previous:
+          type: string
+          nullable: true
+          format: uri
+          example: http://api.example.org/accounts/?page=2
+        results:
+          type: array
+          items:
+            $ref: '#/components/schemas/Region'
+    PaginatedSelectedBSSerialzierList:
+      type: object
+      properties:
+        count:
+          type: integer
+          example: 123
+        next:
+          type: string
+          nullable: true
+          format: uri
+          example: http://api.example.org/accounts/?page=4
+        previous:
+          type: string
+          nullable: true
+          format: uri
+          example: http://api.example.org/accounts/?page=2
+        results:
+          type: array
+          items:
+            $ref: '#/components/schemas/SelectedBSSerialzier'
+    PaginatedUserTopList:
+      type: object
+      properties:
+        count:
+          type: integer
+          example: 123
+        next:
+          type: string
+          nullable: true
+          format: uri
+          example: http://api.example.org/accounts/?page=4
+        previous:
+          type: string
+          nullable: true
+          format: uri
+          example: http://api.example.org/accounts/?page=2
+        results:
+          type: array
+          items:
+            $ref: '#/components/schemas/UserTop'
+    PhoneRegistration:
+      type: object
+      properties:
+        phone:
+          type: string
+        password:
+          type: string
+        first_name:
+          type: string
+        tag:
+          type: string
+      required:
+      - first_name
+      - password
+      - phone
+    PhoneVerificationSerialzier:
+      type: object
+      properties:
+        code:
+          type: integer
+        user_id:
+          type: integer
+        phone:
+          type: string
+      required:
+      - code
+      - phone
+      - user_id
+    Picture:
+      type: object
+      properties:
+        id:
+          type: integer
+          readOnly: true
+        image:
+          type: string
+          format: uri
+        date_added:
+          type: string
+          format: date-time
+          readOnly: true
+          title: Дата добавления
+      required:
+      - date_added
+      - id
+      - image
+    PlannedUser:
+      type: object
+      properties:
+        id:
+          type: integer
+          readOnly: true
+        first_name:
+          type: string
+          title: Имя
+          maxLength: 255
+        last_name:
+          type: string
+          title: Фамилия
+          maxLength: 255
+        middle_name:
+          type: string
+          title: Отчество
+          maxLength: 255
+        photo:
+          allOf:
+          - $ref: '#/components/schemas/InlinePicture'
+          readOnly: true
+        legacy_avatar:
+          type: string
+          readOnly: true
+      required:
+      - first_name
+      - id
+      - legacy_avatar
+      - photo
+    ProviderEnum:
+      enum:
+      - facebook
+      - vkontakte
+      - twitter
+      - odnoklassniki
+      - google
+      - yandex
+      - apple
+      type: string
+      description: |-
+        * `facebook` - Facebook
+        * `vkontakte` - VK
+        * `twitter` - Twitter
+        * `odnoklassniki` - Odnoklassniki
+        * `google` - Google
+        * `yandex` - Yandex
+        * `apple` - Apple
+    Region:
+      type: object
+      properties:
+        id:
+          type: integer
+          readOnly: true
+        title:
+          type: string
+          title: Название
+          maxLength: 255
+      required:
+      - id
+      - title
+    Registration:
+      oneOf:
+      - $ref: '#/components/schemas/EmailRegistration'
+      - $ref: '#/components/schemas/PhoneRegistration'
+    ResetPassword:
+      type: object
+      properties:
+        token:
+          type: string
+        password:
+          type: string
+      required:
+      - password
+      - token
+    SelectedBSSerialzier:
+      type: object
+      properties:
+        id:
+          type: integer
+          readOnly: true
+        city_id:
+          type: integer
+        city:
+          $ref: '#/components/schemas/City'
+        lat:
+          type: string
+          readOnly: true
+        lng:
+          type: string
+          readOnly: true
+        schedule:
+          type: array
+          items:
+            $ref: '#/components/schemas/BloodStationSchedule'
+        phone_numbers:
+          type: array
+          items:
+            $ref: '#/components/schemas/BloodStationPhone'
+        blood_group:
+          type: string
+          readOnly: true
+        status:
+          type: string
+          readOnly: true
+        title:
+          type: string
+          title: Название
+          maxLength: 255
+        parser_url:
+          type: string
+          format: uri
+          nullable: true
+          title: Страница в службе крови
+          maxLength: 200
+        is_get_from_parser:
+          type: boolean
+          title: Принимать потребности у службы крови?
+          description: Данные будут обновляться каждый день в час ночи.
+        o_plus:
+          allOf:
+          - $ref: '#/components/schemas/OPlusC07Enum'
+          title: O(I) Rh+
+        o_minus:
+          allOf:
+          - $ref: '#/components/schemas/OMinusC07Enum'
+          title: O(I) Rh-
+        a_plus:
+          allOf:
+          - $ref: '#/components/schemas/APlusC07Enum'
+          title: A(II) Rh+
+        a_minus:
+          allOf:
+          - $ref: '#/components/schemas/AMinusC07Enum'
+          title: A(II) Rh-
+        b_plus:
+          allOf:
+          - $ref: '#/components/schemas/BPlusC07Enum'
+          title: B(III) Rh+
+        b_minus:
+          allOf:
+          - $ref: '#/components/schemas/BMinusC07Enum'
+          title: B(III) Rh-
+        ab_plus:
+          allOf:
+          - $ref: '#/components/schemas/AbPlusC07Enum'
+          title: AB(IV) Rh+
+        ab_minus:
+          allOf:
+          - $ref: '#/components/schemas/AbMinusC07Enum'
+          title: AB(IV) Rh-
+        blood:
+          allOf:
+          - $ref: '#/components/schemas/LeukocytesEnum'
+          title: Цельная кровь
+        plasma:
+          allOf:
+          - $ref: '#/components/schemas/LeukocytesEnum'
+          title: Плазма
+        platelets:
+          allOf:
+          - $ref: '#/components/schemas/LeukocytesEnum'
+          title: Тромбоциты
+        erythrocytes:
+          allOf:
+          - $ref: '#/components/schemas/LeukocytesEnum'
+          title: Эритроциты
+        leukocytes:
+          allOf:
+          - $ref: '#/components/schemas/LeukocytesEnum'
+          title: Гранулоциты (Лейкоциты)
+        address:
+          type: string
+          title: Адрес
+          maxLength: 255
+        site:
+          type: string
+          title: Сайт
+          maxLength: 255
+        phones:
+          type: string
+          title: Телефоны
+          description: Устаревшее поле
+          maxLength: 255
+        email:
+          type: string
+          format: email
+          maxLength: 254
+        worktime:
+          type: string
+          title: Режим работы
+          description: Устаревшее поле
+          maxLength: 255
+        without_registration:
+          type: boolean
+          title: Можно сдавать без прописки
+          description: Центры крови принимает доноров без местной прописки
+        with_typing:
+          type: boolean
+          title: Можно пройти типирование
+          description: Здесь вы можете войти в <a href="https://wmdd2020.donorsearch.org"
+            target="_blank">регистр доноров костного мозга</a>
+        for_moscow:
+          type: boolean
+          title: В зачёт почётного донора Москвы
+          description: Сдавая в этом центре крови можно получить звание Почётного
+            донора Москвы
+        closed:
+          type: boolean
+          title: Ликвидирован
+          description: Если данный центр крови больше не существует, то не будет показан
+            в поиске, где сдать кровь. Однако при добавлении донаций, доноры могут
+            найти этот центр крови, чтобы отметить свои старые донации.
+        priority:
+          type: integer
+          maximum: 2147483647
+          minimum: 0
+          title: Донаций добавлено
+      required:
+      - blood_group
+      - city
+      - city_id
+      - id
+      - lat
+      - lng
+      - phone_numbers
+      - schedule
+      - status
+      - title
+    SimpleUserSocialAuth:
+      type: object
+      properties:
+        id:
+          type: integer
+          readOnly: true
+        provider:
+          allOf:
+          - $ref: '#/components/schemas/ProviderEnum'
+          readOnly: true
+          title: Провайдер
+        uid:
+          type: string
+          readOnly: true
+          title: ID профиля
+        is_public:
+          type: boolean
+          title: Публичный профиль
+        email:
+          type: string
+          readOnly: true
+          nullable: true
+      required:
+      - email
+      - id
+      - provider
+      - uid
+    SocialEnum:
+      enum:
+      - vk
+      - facebook
+      - twitter
+      - instagram
+      - ok
+      - telegram
+      type: string
+      description: |-
+        * `vk` - Вконтакте
+        * `facebook` - Facebook
+        * `twitter` - Twitter
+        * `instagram` - Instagram
+        * `ok` - Одноклассники
+        * `telegram` - Telegram
+    StatusEnum:
+      enum:
+      - donors_found
+      - search_completed
+      - search_in_progress
+      - on_moderation
+      - rejected
+      type: string
+      description: |-
+        * `donors_found` - Доноры найдены
+        * `search_completed` - Поиск завершен
+        * `search_in_progress` - Поиск доноров продолжается
+        * `on_moderation` - На модерации
+        * `rejected` - Отклонена
+    Top100Response:
+      type: object
+      properties:
+        items:
+          type: array
+          items:
+            $ref: '#/components/schemas/Top100User'
+        user_info:
+          $ref: '#/components/schemas/UserInfo'
+      required:
+      - items
+      - user_info
+    Top100User:
+      type: object
+      properties:
+        id:
+          type: integer
+          readOnly: true
+        photo:
+          allOf:
+          - $ref: '#/components/schemas/InlinePicture'
+          readOnly: true
+        first_name:
+          type: string
+          title: Имя
+          maxLength: 255
+        last_name:
+          type: string
+          title: Фамилия
+          maxLength: 255
+        donation_agg:
+          allOf:
+          - $ref: '#/components/schemas/DonationAggTopLight'
+          readOnly: true
+        blood_group:
+          type: string
+          readOnly: true
+        bs_count:
+          type: string
+          readOnly: true
+        city:
+          allOf:
+          - $ref: '#/components/schemas/City'
+          readOnly: true
+        donor_status:
+          allOf:
+          - $ref: '#/components/schemas/DonorStatus'
+          readOnly: true
+        is_request_user:
+          type: boolean
+          readOnly: true
+        count_temp:
+          type: string
+          readOnly: true
+        count_blood_temp:
+          type: string
+          readOnly: true
+        count_plasma_temp:
+          type: string
+          readOnly: true
+        count_leukocytes_temp:
+          type: string
+          readOnly: true
+        count_erythrocytes_temp:
+          type: string
+          readOnly: true
+        count_platelets_temp:
+          type: string
+          readOnly: true
+      required:
+      - blood_group
+      - bs_count
+      - city
+      - count_blood_temp
+      - count_erythrocytes_temp
+      - count_leukocytes_temp
+      - count_plasma_temp
+      - count_platelets_temp
+      - count_temp
+      - donation_agg
+      - donor_status
+      - first_name
+      - id
+      - is_request_user
+      - photo
+    TopUsers:
+      type: object
+      properties:
+        id:
+          type: integer
+          readOnly: true
+        photo:
+          allOf:
+          - $ref: '#/components/schemas/InlinePicture'
+          readOnly: true
+        first_name:
+          type: string
+          title: Имя
+          maxLength: 255
+        last_name:
+          type: string
+          title: Фамилия
+          maxLength: 255
+        donation_agg:
+          allOf:
+          - $ref: '#/components/schemas/DonationAggTop'
+          readOnly: true
+        blood_group:
+          type: string
+          readOnly: true
+        bs_count:
+          type: string
+          readOnly: true
+        city:
+          allOf:
+          - $ref: '#/components/schemas/City'
+          readOnly: true
+        donor_status:
+          allOf:
+          - $ref: '#/components/schemas/DonorStatus'
+          readOnly: true
+        is_request_user:
+          type: boolean
+          readOnly: true
+      required:
+      - blood_group
+      - bs_count
+      - city
+      - donation_agg
+      - donor_status
+      - first_name
+      - id
+      - is_request_user
+      - photo
+    UnityEventPartner:
+      type: object
+      properties:
+        id:
+          type: integer
+        name:
+          type: string
+          title: Название
+          maxLength: 255
+        image:
+          type: string
+      required:
+      - id
+      - image
+      - name
+    User:
+      type: object
+      properties:
+        id:
+          type: integer
+          readOnly: true
+        date_joined:
+          type: string
+          format: date-time
+          readOnly: true
+          title: Дата регистрации
+        username:
+          type: string
+          maxLength: 50
+        first_name:
+          type: string
+          title: Имя
+          maxLength: 255
+        last_name:
+          type: string
+          title: Фамилия
+          maxLength: 255
+        middle_name:
+          type: string
+          title: Отчество
+          maxLength: 255
+        maiden_name:
+          type: string
+          title: Девичья фамилия
+          maxLength: 255
+        birth_date:
+          type: string
+          format: date
+          nullable: true
+          title: Дата рождения
+        gender:
+          title: Пол
+          oneOf:
+          - $ref: '#/components/schemas/GenderEnum'
+          - $ref: '#/components/schemas/BlankEnum'
+        email:
+          type: string
+          format: email
+          readOnly: true
+          title: Адрес электронной почты
+        phone:
+          type: string
+          readOnly: true
+          title: Номер телефона
+        login_via_phone:
+          type: boolean
+          title: Вход по номеру телефон
+        about:
+          type: string
+          title: О себе
+          maxLength: 130
+        city_id:
+          type: integer
+        city:
+          allOf:
+          - $ref: '#/components/schemas/City'
+          readOnly: true
+        is_pin_20:
+          type: boolean
+          title: '20'
+        is_pin_100:
+          type: boolean
+          title: '100'
+        donation_agg:
+          allOf:
+          - $ref: '#/components/schemas/DonationAgg'
+          readOnly: true
+        socials:
+          type: array
+          items:
+            $ref: '#/components/schemas/SimpleUserSocialAuth'
+          readOnly: true
+        photo:
+          allOf:
+          - $ref: '#/components/schemas/InlinePicture'
+          readOnly: true
+        photo_id:
+          type: integer
+          nullable: true
+        next_donation_date:
+          type: string
+          readOnly: true
+        next_donation:
+          type: string
+          readOnly: true
+        blood_group:
+          type: string
+          readOnly: true
+        has_password:
+          type: string
+          readOnly: true
+        is_email_verified:
+          type: string
+          readOnly: true
+        is_phone_verified:
+          type: string
+          readOnly: true
+        email_reconfirmed_at:
+          type: string
+          format: date-time
+          nullable: true
+          title: Дата подтверждения почты через баннер
+        phone_reconfirmed_at:
+          type: string
+          format: date-time
+          nullable: true
+          title: Дата подтверждения телефона через баннер
+        legacy_avatar:
+          type: string
+          readOnly: true
+        start_donor_year:
+          type: string
+          readOnly: true
+        referal_code:
+          type: string
+          format: uuid
+          readOnly: true
+          title: Реферальный код
+        parent_user:
+          allOf:
+          - $ref: '#/components/schemas/TopUsers'
+          readOnly: true
+        invited_users:
+          type: array
+          items:
+            $ref: '#/components/schemas/TopUsers'
+          readOnly: true
+        donor_status:
+          allOf:
+          - $ref: '#/components/schemas/DonorStatus'
+          readOnly: true
+        managed_organizations:
+          type: string
+          readOnly: true
+        joined_events:
+          type: string
+          readOnly: true
+        joined_organizations:
+          type: string
+          readOnly: true
+        donor_certificate:
+          type: boolean
+          title: Получено удостоверение почётного донора
+      required:
+      - blood_group
+      - city
+      - city_id
+      - date_joined
+      - donation_agg
+      - donor_status
+      - email
+      - first_name
+      - has_password
+      - id
+      - invited_users
+      - is_email_verified
+      - is_phone_verified
+      - joined_events
+      - joined_organizations
+      - legacy_avatar
+      - managed_organizations
+      - next_donation
+      - next_donation_date
+      - parent_user
+      - phone
+      - photo
+      - referal_code
+      - socials
+      - start_donor_year
+      - username
+    UserInfo:
+      type: object
+      properties:
+        place:
+          type: string
+      required:
+      - place
+    UserTop:
+      type: object
+      properties:
+        id:
+          type: integer
+          readOnly: true
+        first_name:
+          type: string
+          title: Имя
+          maxLength: 255
+        last_name:
+          type: string
+          title: Фамилия
+          maxLength: 255
+        middle_name:
+          type: string
+          title: Отчество
+          maxLength: 255
+        blood_group:
+          type: string
+          readOnly: true
+        photo:
+          allOf:
+          - $ref: '#/components/schemas/InlinePicture'
+          readOnly: true
+        legacy_avatar:
+          type: string
+          readOnly: true
+        honor_donor:
+          type: boolean
+          title: Почетный донор
+        count:
+          type: string
+          readOnly: true
+        count_bs:
+          type: string
+          readOnly: true
+        count_blood:
+          type: string
+          readOnly: true
+        count_plasma:
+          type: string
+          readOnly: true
+        count_leukocytes:
+          type: string
+          readOnly: true
+        count_erythrocytes:
+          type: string
+          readOnly: true
+        count_platelets:
+          type: string
+          readOnly: true
+        donor_status:
+          allOf:
+          - $ref: '#/components/schemas/DonorStatus'
+          readOnly: true
+        donation_agg:
+          allOf:
+          - $ref: '#/components/schemas/MainPageDonationAggTop'
+          readOnly: true
+        is_request_user:
+          type: string
+          readOnly: true
+      required:
+      - blood_group
+      - count
+      - count_blood
+      - count_bs
+      - count_erythrocytes
+      - count_leukocytes
+      - count_plasma
+      - count_platelets
+      - donation_agg
+      - donor_status
+      - first_name
+      - id
+      - is_request_user
+      - legacy_avatar
+      - photo
+  securitySchemes:
+    basicAuth:
+      type: http
+      scheme: basic
+    cookieAuth:
+      type: apiKey
+      in: cookie
+      name: sessionid
+    oauth2:
+      type: oauth2
+      flows: {}
+    tokenAuth:
+      type: apiKey
+      in: header
+      name: Authorization
+      description: Token-based authentication with required prefix "Token"

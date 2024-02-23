@@ -1,0 +1,18 @@
+{
+  "app": {
+    "port": "3030"
+  },
+  "dev": true,
+  "db": {
+    "user": "root",
+    "host": "localhost",
+    "port": "26257",
+    "password": "",
+    "dbname": "defaultdb",
+    "sslmode": "verify-full",
+    "sslrootcert": "api/auth/certs/ca.crt",
+    "sslcert": "api/auth/certs/client.root.crt",
+    "sslkey": "api/auth/certs/client.root.key",
+    "schema": "database/schema.sql"
+  }
+}
