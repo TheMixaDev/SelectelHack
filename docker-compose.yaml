@@ -50,3 +50,8 @@ services:
       timeout: 5s
       retries: 5
       start_period: 10s
+  nginx:
+    container_name: nginx
+    build: ./frontend
+    ports:
+      - '80:80'
