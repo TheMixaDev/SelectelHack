@@ -17,14 +17,14 @@ jobs:
     - name: Set up Node.js
       uses: actions/setup-node@v1
       with:
-        node-version: '14' # Set this to the node version you are using
+        node-version: '21' # Set this to the node version you are using
 
     - name: Install dependencies
       run: npm install
       working-directory: ./webapp # Change this to the directory of your Vue.js project
 
     - name: Build
-      run: npm run build
+      run: npm run build && echo $PWD
       working-directory: ./webapp # Adjust if your build script is located elsewhere
       
   deploy:
@@ -36,5 +36,5 @@ jobs:
         with:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           BRANCH: gh-pages # The branch the action should deploy to.
-          FOLDER: ~/webapp/dist # The folder the action should deploy.
+          FOLDER: ~/SelectelHack/webapp/dist # The folder the action should deploy.
           CLEAN: true # Automatically remove deleted files from the deployment
