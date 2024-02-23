@@ -33,49 +33,53 @@ import { MainButton } from 'vue-tg';
                         </div>
                         <div>
                             <b>Тип донации</b>
-                            <UISelectorButton
-                                name="Безвозмездно"
-                                @select="selectType(0)"
-                                :active="type == 0"
-                                class="mt-2"
-                                :features="[
-                                    'Питание или компенсация питания.',
-                                    '5% МРОТ порядка 700-1500 ₽.',
-                                    'Учитывается при получении звания Почетного донора.'
-                                ]"/>
-                            <UISelectorButton
-                                name="Платно"
-                                @select="selectType(1)"
-                                :active="type == 1"
-                                class="mt-2"
-                                :features="[
-                                    'Деньги или социальная поддержка.'
-                                ]"
-                                :debuffs="[
-                                    'Не учитывается при получении звания почетного донора.'
-                                ]"/>
+                            <div class="grid gap-2 mb-6 grid-cols-2">
+                                <UISelectorButton
+                                    name="Безвозмездно"
+                                    @select="selectType(0)"
+                                    :active="type == 0"
+                                    class="mt-2"
+                                    :features="[
+                                        'Питание или компенсация питания.',
+                                        '5% МРОТ порядка 700-1500 ₽.',
+                                        'Учитывается при получении звания Почетного донора.'
+                                    ]"/>
+                                <UISelectorButton
+                                    name="Платно"
+                                    @select="selectType(1)"
+                                    :active="type == 1"
+                                    class="mt-2"
+                                    :features="[
+                                        'Деньги или социальная поддержка.'
+                                    ]"
+                                    :debuffs="[
+                                        'Не учитывается при получении звания почетного донора.'
+                                    ]"/>
+                            </div>
                         </div>
                         <div>
                             <b>Место сдачи</b>
-                            <UISelectorButton
-                                name="Стационарный пункт"
-                                @select="selectPlace(0)"
-                                :active="place == 0"
-                                class="mt-2"
-                                :features="[
-                                    'Центр крови.',
-                                    'Станция переливания.'
-                                ]"/>
-                            <UISelectorButton
-                                name="Выездная акция"
-                                @select="selectPlace(1)"
-                                :active="place == 1"
-                                class="mt-2"
-                                :features="[
-                                    'День донора.',
-                                    'Выезды в ВУЗы.',
-                                    'Предвижные мобильные бригады.'
-                                ]"/>
+                            <div class="grid gap-2 mb-6 grid-cols-2">
+                                <UISelectorButton
+                                    name="Стационарный пункт"
+                                    @select="selectPlace(0)"
+                                    :active="place == 0"
+                                    class="mt-2"
+                                    :features="[
+                                        'Центр крови.',
+                                        'Станция переливания.'
+                                    ]"/>
+                                <UISelectorButton
+                                    name="Выездная акция"
+                                    @select="selectPlace(1)"
+                                    :active="place == 1"
+                                    class="mt-2"
+                                    :features="[
+                                        'День донора.',
+                                        'Выезды в ВУЗы.',
+                                        'Предвижные мобильные бригады.'
+                                    ]"/>
+                            </div>
                         </div>
                         <div>
                             <b>Город</b>
