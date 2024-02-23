@@ -11,15 +11,16 @@ sleep 30
 kubectl create -f ./cockroachdb/config.yaml
 sleep 30
 kubectl create -f ./cockroachdb/client-secure-operator.yaml
+echo 'CREATE USER usr WITH PASSWORD 'usr';'
+echo 'GRANT admin TO usr;'
+echo '\q'
 kubectl exec -it cockroachdb-client-secure -- ./cockroach sql --certs-dir=/cockroach/cockroach-certs --host=cockroachdb-public
-# CREATE USER usr WITH PASSWORD 'usr';
-# GRANT admin TO usr;
-# \q
 
 # redis
 echo 'Creating redis cluster...'
 kubectl apply -f ./redis/config.yaml
 
-echo 'All done...'
-# kubectl port-forward service/cockroachdb-public 8080
-# kubectl port-forward deployment/redisinsight 5540
+echo 'Now you can run:'
+echo 'docker exec -it redis redis-cli'
+echo 'kubectl port-forward service/cockroachdb-public 8080'
+echo 'kubectl port-forward deployment/redisinsight 5540'
