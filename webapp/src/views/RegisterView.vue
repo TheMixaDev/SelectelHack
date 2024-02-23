@@ -44,7 +44,7 @@ import RegisterCodeComponent from '@/components/RegisterCodeComponent.vue';
 </template>
 
 <script>
-const emailRegex = /^(([^<>()[\]\.,;:\s@\"]+(\.[^<>()[\]\.,;:\s@\"]+)*)|(\".+\"))@(([^<>()[\]\.,;:\s@\"]+\.)+[^<>()[\]\.,;:\s@\"]{2,})$/i;
+const emailRegex = /^(([^<>()[\].,;:\s@"]+(\.[^<>()[\].,;:\s@"]+)*)|(".+"))@(([^<>()[\].,;:\s@"]+\.)+[^<>()[\].,;:\s@"]{2,})$/i;
 const phoneRegex = /^\+7\d{10}$/;
 const nameRegex = /^[A-Za-zА-Яа-я]+$/;
 export default {

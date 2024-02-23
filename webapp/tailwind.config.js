@@ -6,7 +6,7 @@ import forms from '@tailwindcss/forms'
 import animations from 'tailwindcss-animated'
 
 export default {
-  darkMode: 'media',
+  darkMode: 'class',
   content: [
     "./index.html",
     "./src/**/*.{js,ts,jsx,tsx}",

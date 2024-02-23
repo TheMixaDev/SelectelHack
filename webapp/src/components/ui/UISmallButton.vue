@@ -13,7 +13,6 @@ export default {
 
 <style>
 .button { 
-    margin: 0; 
     -webkit-transition: all .2s ease; 
     transition: all .2s ease; 
     display: -webkit-inline-flex; 

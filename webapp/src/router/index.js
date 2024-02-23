@@ -28,6 +28,11 @@ const router = createRouter({
       name: 'confidential',
       component: () => import('../views/static/ConfidentialView.vue')
     },
+    {
+      path: '/donation/create',
+      name: 'createDonation',
+      component: () => import('../views/authorized/donations/CreateDonationView.vue')
+    },
   ]
 })
 
