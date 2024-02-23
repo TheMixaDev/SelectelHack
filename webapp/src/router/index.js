@@ -53,6 +53,11 @@ const router = createRouter({
       name: 'bonuses',
       component: () => import('../views/authorized/bonuses/BonusesView.vue')
     },
+    {
+      path: '/top',
+      name: 'top',
+      component: () => import('../views/authorized/user/DonationsTopView.vue')
+    },
   ]
 })
 

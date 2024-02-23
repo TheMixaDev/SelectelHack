@@ -1,22 +1,5 @@
 <template>
-  <RouterLink to="/auth">
-    Auth
-  </RouterLink>
-  <RouterLink to="/register">
-    Register
-  </RouterLink>
-  <RouterLink to="/rules">
-    Rules
-  </RouterLink>
-  <RouterLink to="/confidential">
-    confidential
-  </RouterLink>
-  <RouterLink to="/donations/plan">
-    Plan
-  </RouterLink>
-  <RouterLink to="/donations/create">
-    Create
-  </RouterLink>
+  <div></div>
 </template>
 <script>
 export default {

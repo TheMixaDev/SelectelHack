@@ -21,5 +21,12 @@ export const AccountService = {
                 success(response.data);
             else fail(response.data);
         }, fail)
+    },
+    getTopDonors(success, fail, cookies) {
+        NetworkService.AuthRequest("GET", "users_top/", {}, cookies, (response) => {
+            if(response.status === 200)
+                success(response.data);
+            else fail(response.data);
+        }, fail)
     }
 }

@@ -4,6 +4,7 @@ import '@vuepic/vue-datepicker/dist/main.css';
 
 import UISelectorButton from '@/components/ui/UISelectorButton.vue';
 import UIDropdownWithSearch from '@/components/ui/UIDropdownWithSearch.vue';
+import { MainButton } from 'vue-tg';
 </script>
 <template>
     <div class="p-3 text-lg">
@@ -13,7 +14,7 @@ import UIDropdownWithSearch from '@/components/ui/UIDropdownWithSearch.vue';
         <div class="text-center pt-6">
             <b>Выберите тип донации</b><br>
             <span>После выбора типа донации автоматически отобразится ближайшая доступная дата с учётом интервалов между донациями</span><br>
-            <UIDropdownWithSearch :options="donations" v-model="donationType"/>
+            <UIDropdownWithSearch :options="donations" v-model="blood_type"/>
         </div>
         <div class="text-center pt-6">
             <b>Дата донации</b><br>
@@ -57,23 +58,28 @@ import UIDropdownWithSearch from '@/components/ui/UIDropdownWithSearch.vue';
             <b>Планирование не означает запись на донацию в центр крови</b>
         </div>
     </div>
+    <MainButton @click="sendToBot" text="Создать напоминание"></MainButton>
 </template>
 
 <script>
 import { RegionService } from '@/services/RegionService';
 import { StationService } from '@/services/StationService';
+import { useWebApp } from 'vue-tg';
 export default {
     name: 'CreateDonationView',
+    components: {
+        MainButton
+    },
     data() {
         return {
             date: new Date(),
-            donationType: 0,
+            blood_type: "blood",
             donations: {
-                0: 'Цельная кровь',
-                1: 'Плазма',
-                2: 'Тромбоциты',
-                3: 'Эритроциты',
-                4: 'Гранулоциты'
+                "blood": 'Цельная кровь',
+                "plasma": 'Плазма',
+                "platelets": 'Тромбоциты',
+                "erythrocytes": 'Эритроциты',
+                "leukocytes": 'Гранулоциты'
             },
             type: 0,
             place: 0,
@@ -108,6 +114,31 @@ export default {
             }, () => {
                 this.$notify({text: "Не удалось получить доступные станции", type: "error"});
             })
+        },
+        sendToBot() {
+            if(this.city < 1) {
+                this.$notify({text: "Выберите город", type: "error"});
+                return;
+            }
+            if(this.place == 0 && this.center < 1) {
+                this.$notify({text: "Выберите центр крови", type: "error"});
+                return;
+            }
+            useWebApp().sendData(JSON.stringify(
+                {
+                    type: "plan_donation",
+                    data: {
+                        date: this.date.toISOString().slice(0, 10),
+                        blood_type: this.blood_type,
+                        type: this.type,
+                        place: this.place,
+                        document: this.document,
+                        city_id: this.city,
+                        center_id: this.center
+                    },
+                    hash: this.$cookies.get("hash"),
+                    id: this.$cookies.get("id")
+                }));
         }
     },
     mounted() {
