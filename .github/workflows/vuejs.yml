@@ -1,76 +1,36 @@
-# Sample workflow for building and deploying a vuejs site to GitHub Pages
-
-name: Deploy Vuejs site to Pages
+name: Deploy Vue.js Application to GitHub Pages
 
 on:
-  # Runs on pushes targeting the default branch
   push:
-    branches: ["master", "actions"]
-
-  # Allows you to run this workflow manually from the Actions tab
-  workflow_dispatch:
-
-# Sets permissions of the GITHUB_TOKEN to allow deployment to GitHub Pages
-permissions:
-  contents: read
-  pages: write
-  id-token: write
-
-# Allow one concurrent deployment
-concurrency:
-  group: "pages"
-  cancel-in-progress: true
+    branches:
+      - frontend # Trigger the workflow on push events to the frontend branch.
 
 jobs:
-  # Build job
-  build:
+  build-and-deploy:
     runs-on: ubuntu-latest
-    steps:
-      - name: Checkout
-        uses: actions/checkout@v3
-      - name: Detect package manager
-        id: detect-package-manager
-        run: |
-          if [ -f "${{ github.workspace }}/webapp/package.json" ]; then
-            echo "manager=npm" >> $GITHUB_OUTPUT
-            echo "command=install" >> $GITHUB_OUTPUT
-            exit 0
-          else
-            echo "Unable to determine packager manager"
-            exit 1
-          fi
-      - name: Setup Node
-        uses: actions/setup-node@v3
-        with:
-          node-version: "14"
-          cache: ${{ steps.detect-package-manager.outputs.manager }}
-      - name: Install dependencies
-        run: ${{ steps.detect-package-manager.outputs.manager }} ${{ steps.detect-package-manager.outputs.command }}
-      - name: Static HTML export with Vuejs
-        run: ${{ steps.detect-package-manager.outputs.manager }} run build -- --base=/webapp/
-      - name: Upload artifact
-        uses: actions/upload-artifact@v2
-        with:
-          name: webapp
-          path: ./webapp/dist
 
-  # Deployment job
-  deploy:
-    environment:
-      name: github-pages
-      url: ${{ steps.deployment.outputs.page_url }}
-    runs-on: ubuntu-latest
-    needs: build
     steps:
-      - name: Download artifact
-        uses: actions/download-artifact@v2
-        with:
-          name: webapp
-          path: ./webapp
-      - name: Deploy to GitHub Pages
-        id: deployment
-        uses: actions/deploy-pages@v3
-        with:
-          branch: gh-pages
-          folder: ./webapp/dist
-          token: ${{ secrets.GITHUB_TOKEN }}
+    - uses: actions/checkout@v2
+      with:
+        persist-credentials: false
+
+    - name: Set up Node.js
+      uses: actions/setup-node@v1
+      with:
+        node-version: '14' # Set this to the node version you are using
+
+    - name: Install dependencies
+      run: npm install
+      working-directory: ./webapp # Change this to the directory of your Vue.js project
+
+    - name: Build
+      run: npm run build
+      working-directory: ./webapp # Adjust if your build script is located elsewhere
+
+    - name: Deploy to GitHub Pages
+      uses: JamesIves/github-pages-deploy-action@4.1.4
+      with:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        BRANCH: gh-pages # The branch the action should deploy to.
+        FOLDER: webapp/dist # The folder the action should deploy.
+        CLEAN: true # Automatically remove deleted files from the deployment
