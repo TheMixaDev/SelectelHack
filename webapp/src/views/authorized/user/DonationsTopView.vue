@@ -11,7 +11,7 @@ import DonorComponent from '@/components/DonorComponent.vue';
                         Топ доноров
                     </h1>
                     <div class="grid gap-8 mb-6 lg:mb-16 grid-cols-2">
-                        <DonorComponent v-for="donor in top" :json="donor" :key="donor.id"/>
+                        <DonorComponent v-for="(donor, index) in top" :json="donor" :key="donor.id" :position="index+1"/>
                     </div>
                 </div>
             </div>
