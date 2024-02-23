@@ -20,7 +20,12 @@ kubectl exec -it cockroachdb-client-secure -- ./cockroach sql --certs-dir=/cockr
 echo 'Creating redis cluster...'
 kubectl apply -f ./redis/config.yaml
 
+# minio
+echo 'Creating minio cluster...'
+kubectl apply -f ./minio/config.yaml
+
 echo 'Now you can run:'
 echo 'docker exec -it redis redis-cli'
+echo 'kubectl port-forward pod/minio 9000 9090 -n minio-dev'
 echo 'kubectl port-forward service/cockroachdb-public 8080'
 echo 'kubectl port-forward deployment/redisinsight 5540'
