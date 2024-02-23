@@ -1,37 +1,29 @@
 <script setup>
 import { RouterLink } from 'vue-router';
+import RegisterSelectorComponent from '@/components/RegisterSelectorComponent.vue';
+import RegisterEmailComponent from '@/components/RegisterEmailComponent.vue';
+import RegisterPhoneComponent from '@/components/RegisterPhoneComponent.vue';
 </script>
 
 <template>
     <div class="loginBlock">
         <div class="loginNav d-flex justify-content-center">
             <div class="loginItem">
-                <a class="loginActiveItem">
+                <RouterLink to="/auth">
                     Вход
-                </a>
+                </RouterLink>
             </div>
             <div class="loginItem">
-                <RouterLink to="/register">
+                <a class="loginActiveItem">
                     Регистрация
-                </RouterLink>
+                </a>
             </div>
         </div>
         <div class="loginInputBlock">
-            <div class="loginSmall">
-                Email или по номеру телефона
-            </div>
-            <form class="" id="new_user" novalidate="">
-            <div>
-                <input type="email" class="loginInput" autofocus="" placeholder="Номер телефона или Email" name="username" id="username" autocomplete="off">
-            </div>
-            <div style="position:relative">
-                <input type="password" class="loginInput" autocomplete="off" placeholder="Пароль" name="password" id="password">
-                <span class="loginFooterForgot">
-                Забыли?
-                </span>
-            </div>
-            <input type="submit" name="login" value="Войти" class="loginSubmit" data-disable-with="Войти">
-            </form>
+            <br>
+            <RegisterSelectorComponent v-if="selected == 0" @select="selected = $event"/>
+            <RegisterEmailComponent v-if="selected == 1" @back="selected = 0"/>
+            <RegisterPhoneComponent v-if="selected == 2" @back="selected = 0"/>
         </div>
         <div class="loginFooter">
             <span>
@@ -43,6 +35,17 @@ import { RouterLink } from 'vue-router';
         </div>
     </div>
 </template>
+
+<script>
+export default {
+    name: 'RegisterView',
+    data() {
+        return {
+            selected: 0
+        }
+    }
+}
+</script>
 
 <style>
 @import url('https://fonts.googleapis.com/css?family=Roboto:100,100i,300,300i,400,400i,500,500i,700,700i,900,900i&display=swap'); 

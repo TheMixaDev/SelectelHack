@@ -13,6 +13,21 @@ const router = createRouter({
       name: 'auth',
       component: () => import('../views/AuthView.vue')
     },
+    {
+      path: '/register',
+      name: 'register',
+      component: () => import('../views/RegisterView.vue')
+    },
+    {
+      path: '/rules',
+      name: 'rules',
+      component: () => import('../views/static/RulesView.vue')
+    },
+    {
+      path: '/confidential',
+      name: 'confidential',
+      component: () => import('../views/static/ConfidentialView.vue')
+    },
   ]
 })
 
