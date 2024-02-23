@@ -13,7 +13,7 @@ import { MainButton } from 'vue-tg';
         </div>
         <div class="text-center pt-6">
             <b>Выберите тип донации</b><br>
-            <UIDropdownWithSearch :options="donations" v-model="donationType"/>
+            <UIDropdownWithSearch :options="donations" v-model="blood_type"/>
         </div>
         <div class="text-center pt-6">
             <b>Дата донации</b><br>
@@ -80,13 +80,13 @@ export default {
         return {
             date: new Date(),
 
-            donationType: 0,
+            blood_type: "blood",
             donations: {
-                0: 'Цельная кровь',
-                1: 'Плазма',
-                2: 'Тромбоциты',
-                3: 'Эритроциты',
-                4: 'Гранулоциты'
+                "blood": 'Цельная кровь',
+                "plasma": 'Плазма',
+                "platelets": 'Тромбоциты',
+                "erythrocytes": 'Эритроциты',
+                "leukocytes": 'Гранулоциты'
             },
             type: 0,
             place: 0,
@@ -132,7 +132,8 @@ export default {
                     type: "add_donation",
                     data: {
                         date: this.date.toISOString().slice(0, 10),
-                        type: this.donationType,
+                        blood_type: this.blood_type,
+                        type: this.type,
                         place: this.place,
                         document: this.document,
                         city_id: this.city,
