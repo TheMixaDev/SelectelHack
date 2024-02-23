@@ -1,4 +1,4 @@
-import './assets/main.css'
+import VueTelegram from 'vue-tg'
 
 import { createApp } from 'vue'
 import { createPinia } from 'pinia'
@@ -9,6 +9,7 @@ import router from './router'
 const app = createApp(App)
 
 app.use(createPinia())
+app.use(VueTelegram)
 app.use(router)
 
 app.mount('#app')
