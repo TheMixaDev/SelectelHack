@@ -14,7 +14,7 @@ kubectl create -f ./cockroachdb/client-secure-operator.yaml
 echo 'CREATE USER usr WITH PASSWORD 'usr';'
 echo 'GRANT admin TO usr;'
 echo '\q'
-kubectl kubectl exec -it -n cockroach-dev cockroachdb-0 -- ./cockroach sql --certs-dir=/cockroach/cockroach-certs --host=cockroachdb-public
+kubectl -n cockroach-dev exec -it cockroachdb-client-secure -- ./cockroach sql --certs-dir=/cockroach/cockroach-certs --host=cockroachdb-public
 
 # redis
 echo 'Creating redis cluster...'

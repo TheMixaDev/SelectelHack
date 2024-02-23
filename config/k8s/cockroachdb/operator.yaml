@@ -372,7 +372,7 @@ spec:
         - info
         env:
         - name: RELATED_IMAGE_COCKROACH_v23_1_11
-          value: cockroachdb/cockroach:v23.1.11
+          value: cockroachdb/cockroach:latest
         - name: OPERATOR_NAME
           value: cockroachdb
         - name: POD_NAME
