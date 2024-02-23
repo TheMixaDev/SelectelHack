@@ -2,7 +2,7 @@ apiVersion: crdb.cockroachlabs.com/v1alpha1
 kind: CrdbCluster
 metadata:
   name: cockroachdb
-spec:
+  namespace: cockroach-dev
   dataStore:
     pvc:
       spec:
@@ -23,7 +23,8 @@ spec:
   tlsEnabled: true
 
   image:
-    name: cockroachdb/cockroach:v23.1.11
+    name: cockroachdb/cockroach:latest
+    pullPolicy: IfNotPresent
   nodes: 3
   additionalLabels:
     crdb: is-cool
