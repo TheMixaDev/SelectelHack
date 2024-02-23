@@ -13,7 +13,7 @@ redisClient.on('error', (err) => {
 });
 
 redisClient.on('connect', () => {
-    console.log('Redis connected');
+    console.log('Redis connected to', config.get('redis.address'));
 });
 
 
@@ -25,7 +25,7 @@ redisClient.on('connect', () => {
  */
 async function isUserAuthorized(telegramId, userID) {
     // redisClient.set(telegramId + ":auth", userID);
-    let id = await redisClient.get(telegramId + ":auth");
+    const id = await redisClient.get(telegramId + ":auth");
     return id == userID;
 }
 
@@ -34,11 +34,18 @@ async function isUserAuthorized(telegramId, userID) {
  * @param {string} telegramId - the telegram id of the user
  * @param {string} userId - the user id of the user
  */
-async function connectTgToUser(telegramId, userId) {
-    redisClient.set(telegramId + ":auth", userId);
+async function setTgIdForUser(hash, userId) {
+    redisClient.set(hash + ":auth", userId);
 }
 
+async function setUserToken(hash, token) {
+    redisClient.set(hash + ":token", token);
+}
 
-export { redisClient, connectTgToUser, isUserAuthorized };
+async function getUserToken(hash) {
+    return redisClient.get(hash + ":token");
+}
+
+export { redisClient, setTgIdForUser, isUserAuthorized, setUserToken, getUserToken};
 
 
