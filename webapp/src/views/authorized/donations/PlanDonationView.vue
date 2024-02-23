@@ -8,13 +8,12 @@ import UIDropdownWithSearch from '@/components/ui/UIDropdownWithSearch.vue';
 <template>
     <div class="p-3 text-lg">
         <div class="p-3 text-center">
-            <b class="text-3xl">Добавление донации</b>
+            <b class="text-3xl">Напоминание о донации</b>
         </div>
         <div class="text-center pt-6">
             <b>Выберите тип донации</b><br>
-            <UIDropdownWithSearch :options="donations" v-model="donationType">
-                
-            </UIDropdownWithSearch>
+            <span>После выбора типа донации автоматически отобразится ближайшая доступная дата с учётом интервалов между донациями</span><br>
+            <UIDropdownWithSearch :options="donations" v-model="donationType"></UIDropdownWithSearch>
         </div>
         <div class="text-center pt-6">
             <b>Дата донации</b><br>
@@ -22,7 +21,7 @@ import UIDropdownWithSearch from '@/components/ui/UIDropdownWithSearch.vue';
             locale="ru-RU"
             :enable-time-picker="false"
             class="p-3"
-            :max-date="new Date()"
+            :min-date="new Date()"
             format="dd.MM.yyyy"/>
         </div>
         <div class="text-center pt-6">
@@ -51,18 +50,11 @@ import UIDropdownWithSearch from '@/components/ui/UIDropdownWithSearch.vue';
         </div>
         <div class="text-center pt-6" v-if="place == 0">
             <b>Центр крови</b><br>
+            <span>Важно: если ваш центр крови принимает по записи, то нужно отдельно записаться на сайте центра крови или через Госуслуги. Планирование донации на сайте DonorSearch позволит нам за 3 дня до указанной даты напомнить о вашем намерении совершить донацию и подготовиться к ней.</span><br>
             <UIDropdownWithSearch :options="centers" v-model="center">
                 Выберите центр крови
             </UIDropdownWithSearch>
-        </div>
-        <div class="text-center pt-6">
-            <b>Справка</b><br>
-            <UISelectorButton name="Загрузить сейчас" @click="selectDocument(0)" :active="document == 0">
-                Справку выданную в центре крови. Загрузка через телеграм бота.
-            </UISelectorButton><br>
-            <UISelectorButton name="Загрузить потом" @click="selectDocument(1)" :active="document == 1">
-                Справку можно будет загрузить позже. Донация без справки не будет учитываться для пути почетного донора.
-            </UISelectorButton>
+            <b>Планирование не означает запись на донацию в центр крови</b>
         </div>
     </div>
 </template>
@@ -100,9 +92,6 @@ export default {
         },
         selectPlace(place) {
             this.place = place
-        },
-        selectDocument(document) {
-            this.document = document
         },
         updateCenters() {
             StationService.getStations(this.city, (data) => {
