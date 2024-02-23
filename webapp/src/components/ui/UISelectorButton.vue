@@ -1,94 +1,39 @@
+<script setup>
+import GreenMarkIcon from '@/assets/icons/GreenMarkIcon.vue';
+import RedCrossIcon from '@/assets/icons/RedCrossIcon.vue';
+import UIButton from './UIButton.vue';
+</script>
+
 <template>
-    <div :class="['selector', active ? 'active' : '']">
-        <label for="free">
-            <div class="check_text">
-            <span>
-                {{ name }}
-            </span>
-            <span>
-                <slot></slot>
-            </span>
-            </div>
-        </label>
+    <div :class="['flex flex-col p-6 mx-auto max-w-lg text-center text-gray-900 bg-white rounded-lg border border-gray-100 shadow dark:border-gray-600 xl:p-8 dark:bg-gray-800 dark:text-white', active ? 'active' : '']">
+        <h3 class="mb-4 text-lg font-semibold">{{ name }}</h3>
+        <ul role="list" class="mb-8 space-y-4 text-left">
+            <li class="flex items-center space-x-3" v-for="feature in features" :key="feature">
+                <GreenMarkIcon/>
+                <span>{{ feature }}</span>
+            </li>
+            <li class="flex items-center space-x-3" v-for="debuff in debuffs" :key="debuff">
+                <RedCrossIcon/>
+                <span>{{ debuff }}</span>
+            </li>
+        </ul>
+        <UIButton
+            @click="$emit('select')"
+            classExtension="w-full px-5 py-2.5"
+            :disabled="active">{{ active ? "Выбрано" : "Выбрать"}}</UIButton>
     </div>
 </template>
 
 <script>
 export default {
     name: 'UISelectorButton',
-    props: ['name', 'active']
+    emits: ['select'],
+    props: ['name', 'active', 'features', 'debuffs']
 }
 </script>
 
 <style>
-div > label  { 
-    cursor: pointer;
-} 
-
-.selector {
-    transition: .3s;
-    cursor: pointer;
-    background: #fff; 
-    border-radius: 4px; 
-    min-height: 111px; 
-    position: relative; 
-    padding: 16px;
-    -moz-box-sizing: border-box; 
-    box-sizing: border-box; 
-    border-radius: 4px; 
-    position: relative;
-    border: 1px solid lightgray; 
-} 
-
 .active { 
     border: 1px solid #f73e3e; 
 }
-.active > label::before {
-    position: absolute;
-    top: 10px;
-    right: 10px;
-    z-index: 2;
-    width: 18px;
-    height: 18px;
-    text-align: center;
-    cursor: pointer;
-    color: #f73e3e;
-    content: "◉";
-}
-
-.check_text  { 
-    display: -webkit-flex; 
-    display: -moz-box; 
-    display: flex; 
-    -webkit-flex-direction: column; 
-    -moz-box-orient: vertical; 
-    -moz-box-direction: normal; 
-    flex-direction: column;
-} 
-
-.selector .check_text > span  { 
-    font-weight: 400; 
-    font-size: 12px; 
-    line-height: 150%; 
-    letter-spacing: -.01em; 
-    color: #5f6177;
-} 
-
-.selector .check_text > span:first-child  { 
-    font-weight: 500; 
-    font-size: 16px; 
-    line-height: 20px; 
-    letter-spacing: -.01em; 
-    color: #37333f; 
-    margin-bottom: 8px;
-} 
-
-.selector .check_text > span:last-child  { 
-    font-weight: 400; 
-    font-size: 12px; 
-    line-height: 150%; 
-    letter-spacing: -.01em; 
-    color: #5f6177;
-} 
-
 </style>

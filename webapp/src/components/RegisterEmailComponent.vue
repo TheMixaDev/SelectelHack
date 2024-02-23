@@ -1,41 +1,50 @@
 <script setup>
-import UILargeButton from '@/components/ui/UILargeButton.vue';
-import UIOutlineInput from '@/components/ui/UIOutlineInput.vue';
+import UILabeledInput from './ui/UILabeledInput.vue';
+import UIButton from './ui/UIButton.vue';
 </script>
 
 <template>
-    <div class="loginBack">
-        <div>
-            <a @click="$emit('back')">
-                <i class="zmdi zmdi-arrow-left mr-2">
-                </i>
-                Назад
-            </a>
-        </div>
-    </div>
-    <div class="loginSignupHeader">
-        <h2>
-        Регистрация по Email
-        </h2>
-    </div>
-    <form class="" id="registration">
-    <UIOutlineInput property="email" type="email" v-model="email" tip="">
-        Email*
-    </UIOutlineInput>
-    <UIOutlineInput property="password" type="password" v-model="password" tip="Пароль должен содержать минимум 8 символов и состоять из цифр и букв">
-        Пароль*
-    </UIOutlineInput>
-    <UIOutlineInput property="first_name" type="text" v-model="name" tip="">
-        Имя*
-    </UIOutlineInput>
-    <UILargeButton type="button" @click="$emit('register', email, password, name)">Зарегистрироваться</UILargeButton>
-    </form>
+    <UILabeledInput
+        v-model="email"
+        type="text"
+        property="email"
+        placeholder="">
+        Почта
+    </UILabeledInput>
+    <UILabeledInput
+        v-model="password"
+        type="text"
+        property="password"
+        placeholder="">
+        Пароль
+    </UILabeledInput>
+    <small>Пароль должен содержать минимум 8 символов и состоять из цифр и букв</small>
+    <UILabeledInput
+        v-model="name"
+        type="text"
+        property="name"
+        placeholder="">
+        Имя
+    </UILabeledInput>
+    <UIButton @click="$emit('register', email, password, name)" :disabled="loading || !isInputsSet" classExtension="w-full px-5 py-2.5">
+        Зарегистрироваться
+    </UIButton>
+    <p class="text-sm font-light text-gray-500 dark:text-gray-400">
+        <a @click="$emit('back')" :disabled="loading" class="font-medium text-primary-600 hover:underline dark:text-primary-500">
+            Вернуться на выбор типа регистрации
+        </a>
+    </p>
 </template>
 
 <script>
 export default {
     name: 'RegisterEmailComponent',
     emits: ['back'],
+    computed: {
+        isInputsSet() {
+            return this.email.length > 0 && this.password.length > 0 && this.name.length > 0;
+        }
+    },
     data() {
         return {
             email: "",
@@ -45,10 +54,3 @@ export default {
     }
 }
 </script>
-
-<style>
-.loginSignupHeader > h2  { 
-    font-weight: 400; 
-    margin: 16px 0;
-} 
-</style>

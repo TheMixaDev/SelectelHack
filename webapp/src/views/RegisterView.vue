@@ -9,38 +9,30 @@ import RegisterCodeComponent from '@/components/RegisterCodeComponent.vue';
 </script>
 
 <template>
-    <div class="loginBlock">
-        <div class="loginNav d-flex justify-content-center">
-            <div class="loginItem">
-                <RouterLink to="/auth">
-                    Вход
-                </RouterLink>
+    <section class="bg-gray-50 dark:bg-gray-900">
+        <div class="flex flex-col items-center justify-center px-6 py-8 mx-auto md:h-screen lg:py-0">
+            <div class="w-full bg-white rounded-lg shadow dark:border md:mt-0 sm:max-w-md xl:p-0 dark:bg-gray-800 dark:border-gray-700">
+                <div class="p-6 space-y-4 md:space-y-6 sm:p-8">
+                    <h1 class="text-xl font-bold leading-tight tracking-tight text-gray-900 md:text-2xl dark:text-white text-center">
+                        Регистрация
+                    </h1>
+                    <RegisterSelectorComponent v-if="selected == 0" @select="selected = $event"/>
+                    <RegisterEmailComponent v-if="selected == 1" @back="selected = 0" @register="register"/>
+                    <RegisterPhoneComponent v-if="selected == 2" @back="selected = 0" @register="register"/>
+                    <RegisterCodeComponent v-if="selected == 3" @code="checkCode"
+                                                                @resend="resend"
+                                                                v-bind:type="verificationType"
+                                                                v-bind:login="login"/>
+                    <p class="text-sm font-light text-gray-500 dark:text-gray-400">
+                        Есть аккаунт?
+                        <RouterLink to="/auth" :disabled="loading" class="font-medium text-primary-600 hover:underline dark:text-primary-500">
+                            Авторизоваться
+                        </RouterLink>
+                    </p>
+                </div>
             </div>
-            <div class="loginItem">
-                <a class="loginActiveItem">
-                    Регистрация
-                </a>
-            </div>
         </div>
-        <div class="loginInputBlock">
-            <br>
-            <RegisterSelectorComponent v-if="selected == 0" @select="selected = $event"/>
-            <RegisterEmailComponent v-if="selected == 1" @back="selected = 0" @register="register"/>
-            <RegisterPhoneComponent v-if="selected == 2" @back="selected = 0" @register="register"/>
-            <RegisterCodeComponent v-if="selected == 3" @code="checkCode"
-                                                        @resend="resend"
-                                                        v-bind:type="verificationType"
-                                                        v-bind:login="login"/>
-        </div>
-        <div class="loginFooter">
-            <span>
-            Не можете войти? Напишите нам на 
-            <a href="mailto:support@donorsearch.org">
-                support@donorsearch.org
-            </a>
-            </span>
-        </div>
-    </div>
+    </section>
 </template>
 
 <script>
@@ -145,92 +137,3 @@ export default {
     }
 }
 </script>
-
-<style>
-.loginBlock { 
-    max-width: 460px; 
-    margin: 0 auto; 
-    background-color: #fff; 
-    padding: 40px 50px; 
-    box-shadow: 0 1px 1px #f2f2f2; 
-    border-radius: 4px;
-} 
-
-.loginNav { 
-    display: -webkit-flex; 
-    display: -moz-box; 
-    display: flex; 
-    -webkit-align-items: center; 
-    -moz-box-align: center; 
-    align-items: center; 
-    border-bottom: 1px solid rgba(182,185,193,.4);
-} 
-
-.loginInputBlock { 
-    text-align: center; 
-    color: #86807a;
-} 
-
-.loginFooter { 
-    text-align: center; 
-    border-top: 1px solid rgba(182,185,193,.4); 
-    padding-top: 24px; 
-    margin-top: 24px;
-} 
-
-.loginItem { 
-    -webkit-flex-basis: 50%; 
-    flex-basis: 50%; 
-    max-width: 50%; 
-    position: relative; 
-    text-align: center;
-} 
-
-.loginSmall { 
-    font-size: 1em; 
-    line-height: 1.5; 
-    text-align: center; 
-    color: #828282; 
-    margin: 16px 0; 
-    font-weight: 400;
-}  
-
-.loginInputBlock > form  { 
-    font-weight: 400;
-} 
-
-.loginFooter > span  { 
-    text-align: center; 
-    color: #86807a; 
-    font-weight: 400;
-} 
-
-.loginActiveItem { 
-    color: #000!important; 
-    border-bottom: 2px solid #f7c41c;
-} 
-
-.loginItem a  { 
-    font-size: 1.625em; 
-    font-weight: 400; 
-    line-height: 1.5; 
-    padding-bottom: 10px; 
-    display: block; 
-    color: #5f6177;
-} 
-
-.loginInputBlock > form > div  { 
-    margin-bottom: 16px;
-} 
-
-.loginFooter > span > a  { 
-    color: #3892ea; 
-    font-weight: 400; 
-    -webkit-transition: .2s ease-in-out; 
-    transition: .2s ease-in-out;
-} 
-
-.loginFooter > span > a:hover { 
-    color: #4183c4;
-} 
-</style>

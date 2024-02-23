@@ -1,6 +1,5 @@
 import { configuration } from "@/assets/configuration";
 
-import { useAuthStore } from "@/stores/user";
 import router from "@/router";
 
 import axios from "axios";
@@ -13,11 +12,9 @@ export const NetworkService = {
      * @param {Object} error - The error data.
      * @param {function} fail - The callback function to be executed if the reason of failure is not "unauthorized".
      */
-    handleUnauthorized(cookies, error, fail) {
+    handleUnauthorized(error, fail) {
         if(error.request.status == 401) {
-            const AuthStorage = useAuthStore();
-            AuthStorage.logout(cookies);
-            return router.push({ name: "login" });
+            return router.push({ name: "auth" });
         }
         fail();
     },

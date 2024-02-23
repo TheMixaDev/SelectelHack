@@ -19,16 +19,6 @@ const router = createRouter({
       component: () => import('../views/RegisterView.vue')
     },
     {
-      path: '/rules',
-      name: 'rules',
-      component: () => import('../views/static/RulesView.vue')
-    },
-    {
-      path: '/confidential',
-      name: 'confidential',
-      component: () => import('../views/static/ConfidentialView.vue')
-    },
-    {
       path: '/donation/create',
       name: 'createDonation',
       component: () => import('../views/authorized/donations/CreateDonationView.vue')

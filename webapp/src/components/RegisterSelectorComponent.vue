@@ -1,28 +1,14 @@
+<script setup>
+import UIButton from './ui/UIButton.vue';
+</script>
+
 <template>
-    <div class="loginSmall">
-        <a @click="$emit('select', 1)">
-            Регистрация по Email
-        </a>
-    </div>
-    <div class="loginSmall">
-        <a @click="$emit('select', 2)">
-            Регистрация по номеру телефона
-        </a>
-    </div>
-    <div class="loginSmall">
-        Я принимаю условия
-        <br>
-        <RouterLink to="/rules/">
-            Пользовательского соглашения
-        </RouterLink>
-            и даю своё согласие DonorSearch на обработку моей персональной информации на условиях, определенных 
-        <br>
-        <RouterLink to="/confidential/">
-            Политикой конфиденциальности.
-        </RouterLink>
-        <br>
-        И на получение рекламных рассылок
-    </div>
+    <UIButton @click="$emit('select', 1)" classExtension="w-full px-5 py-2.5">
+        Регистрация по Email
+    </UIButton>
+    <UIButton @click="$emit('select', 2)" classExtension="w-full px-5 py-2.5">
+        Регистрация по номеру телефона
+    </UIButton>
 </template>
 
 <script>

@@ -7,63 +7,113 @@ import UIDropdownWithSearch from '@/components/ui/UIDropdownWithSearch.vue';
 import { MainButton } from 'vue-tg';
 </script>
 <template>
-    <div class="p-3 text-lg">
-        <div class="p-3 text-center">
-            <b class="text-3xl">Добавление донации</b>
+    <section class="bg-gray-50 dark:bg-gray-900">
+        <div class="flex flex-col items-center justify-center px-6 py-8 mx-auto md:h-screen lg:py-0">
+            <div class="w-full bg-white rounded-lg shadow dark:border md:mt-0 sm:max-w-md xl:p-0 dark:bg-gray-800 dark:border-gray-700">
+                <div class="p-6 space-y-4 md:space-y-6 sm:p-8">
+                    <h1 class="text-xl font-bold leading-tight tracking-tight text-gray-900 md:text-2xl dark:text-white text-center">
+                        Добавление донации
+                    </h1>
+                    <div class="space-y-4 md:space-y-6" action="#">
+                        <div>
+                            <b>Выберите тип донации</b>
+                            <UIDropdownWithSearch :options="donations" v-model="blood_type" class="mt-1"/>
+                        </div>
+                        <div>
+                            <b>Дата донации</b>
+                            <Datepicker v-model="date"
+                            locale="ru-RU"
+                            class="mt-1"
+                            :enable-time-picker="false"
+                            :max-date="new Date()"
+                            format="dd.MM.yyyy"/>
+                        </div>
+                        <div>
+                            <b>Тип донации</b>
+                            <UISelectorButton
+                                name="Безвозмездно"
+                                @select="selectType(0)"
+                                :active="type == 0"
+                                class="mt-2"
+                                :features="[
+                                    'Питание или компенсация питания.',
+                                    '5% МРОТ порядка 700-1500 ₽.',
+                                    'Учитывается при получении звания Почетного донора.'
+                                ]"/>
+                            <UISelectorButton
+                                name="Платно"
+                                @select="selectType(1)"
+                                :active="type == 1"
+                                class="mt-2"
+                                :features="[
+                                    'Деньги или социальная поддержка.'
+                                ]"
+                                :debuffs="[
+                                    'Не учитывается при получении звания почетного донора.'
+                                ]"/>
+                        </div>
+                        <div>
+                            <b>Место сдачи</b>
+                            <UISelectorButton
+                                name="Стационарный пункт"
+                                @select="selectPlace(0)"
+                                :active="place == 0"
+                                class="mt-2"
+                                :features="[
+                                    'Центр крови.',
+                                    'Станция переливания.'
+                                ]"/>
+                            <UISelectorButton
+                                name="Выездная акция"
+                                @select="selectPlace(1)"
+                                :active="place == 1"
+                                class="mt-2"
+                                :features="[
+                                    'День донора.',
+                                    'Выезды в ВУЗы.',
+                                    'Предвижные мобильные бригады.'
+                                ]"/>
+                        </div>
+                        <div>
+                            <b>Город</b>
+                            <UIDropdownWithSearch :options="cities" v-model="city" @changed="updateCenters" class="mt-1">
+                                Выберите город
+                            </UIDropdownWithSearch>
+                        </div>
+                        <div v-if="place == 0">
+                            <b>Центр крови</b>
+                            <UIDropdownWithSearch :options="centers" v-model="center" class="mt-1">
+                                Выберите центр крови
+                            </UIDropdownWithSearch>
+                        </div>
+                        <div>
+                            <b>Справка</b>
+                            <UISelectorButton
+                                name="Загрузить сейчас"
+                                @select="selectDocument(0)"
+                                :active="document == 0"
+                                class="mt-2"
+                                :features="[
+                                    'Справка выданная в центре крови.',
+                                    'Загрузка через телеграм бота.'
+                                ]"/>
+                            <UISelectorButton
+                                name="Загрузить потом"
+                                @select="selectDocument(1)"
+                                :active="document == 1"
+                                class="mt-2"
+                                :features="[
+                                    'Справку можно будет загрузить позже.'
+                                ]"
+                                :debuffs="[
+                                    'Донация без справки не будет учитываться для пути почетного донора.'
+                                ]"/>
+                        </div>
+                    </div>
+                </div>
+            </div>
         </div>
-        <div class="text-center pt-6">
-            <b>Выберите тип донации</b><br>
-            <UIDropdownWithSearch :options="donations" v-model="blood_type"/>
-        </div>
-        <div class="text-center pt-6">
-            <b>Дата донации</b><br>
-            <Datepicker v-model="date"
-            locale="ru-RU"
-            :enable-time-picker="false"
-            class="p-3"
-            :max-date="new Date()"
-            format="dd.MM.yyyy"/>
-        </div>
-        <div class="text-center pt-6">
-            <b>Тип донации</b><br>
-            <UISelectorButton name="Безвозмездно" @click="selectType(0)" :active="type == 0">
-                Питание или компенсация питания (5% МРОТ порядка 700-1500 ₽. Учитывается при получении звания Почетного донора.)
-            </UISelectorButton><br>
-            <UISelectorButton name="Платно" @click="selectType(1)" :active="type == 1">
-                Деньги или социальная поддержка. Не учитывается при получении звания почетного донора
-            </UISelectorButton>
-        </div>
-        <div class="text-center pt-6">
-            <b>Место сдачи</b><br>
-            <UISelectorButton name="Стационарный пункт" @click="selectPlace(0)" :active="place == 0">
-                Центр крови или станция переливания в вашем городе
-            </UISelectorButton><br>
-            <UISelectorButton name="Выездная акция" @click="selectPlace(1)" :active="place == 1">
-                День донора, выезды в ВУЗы, передвижные мобильные бригады
-            </UISelectorButton>
-        </div>
-        <div class="text-center pt-6">
-            <b>Город</b><br>
-            <UIDropdownWithSearch :options="cities" v-model="city" @changed="updateCenters">
-                Выберите город
-            </UIDropdownWithSearch>
-        </div>
-        <div class="text-center pt-6" v-if="place == 0">
-            <b>Центр крови</b><br>
-            <UIDropdownWithSearch :options="centers" v-model="center">
-                Выберите центр крови
-            </UIDropdownWithSearch>
-        </div>
-        <div class="text-center pt-6">
-            <b>Справка</b><br>
-            <UISelectorButton name="Загрузить сейчас" @click="selectDocument(0)" :active="document == 0">
-                Справку выданную в центре крови. Загрузка через телеграм бота.
-            </UISelectorButton><br>
-            <UISelectorButton name="Загрузить потом" @click="selectDocument(1)" :active="document == 1">
-                Справку можно будет загрузить позже. Донация без справки не будет учитываться для пути почетного донора.
-            </UISelectorButton>
-        </div>
-    </div>
+    </section>
     <MainButton @click="sendToBot" text="Создать донацию"></MainButton>
 </template>
 

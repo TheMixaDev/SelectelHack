@@ -3,20 +3,26 @@ import UIDropdownWithSearch from '@/components/ui/UIDropdownWithSearch.vue';
 import BloodStationComponent from '@/components/BloodStationComponent.vue';
 </script>
 <template>
-    <div class="p-3 text-lg">
-        <div class="p-3 text-center">
-            <b class="text-3xl">Центры сдачи крови</b>
+    <section class="bg-gray-50 dark:bg-gray-900">
+        <div class="flex flex-col items-center justify-center px-6 py-8 mx-auto md:h-screen lg:py-0">
+            <div class="w-full bg-white rounded-lg shadow dark:border md:mt-0 sm:max-w-md xl:p-0 dark:bg-gray-800 dark:border-gray-700">
+                <div class="p-6 space-y-4 md:space-y-6 sm:p-8">
+                    <h1 class="text-xl font-bold leading-tight tracking-tight text-gray-900 md:text-2xl dark:text-white text-center">
+                        Центры сдачи крови
+                    </h1>
+                    <div class="space-y-4 md:space-y-6" action="#">
+                        <p class="mb-2">Город</p>
+                        <UIDropdownWithSearch :options="cities" v-model="city_id" @changed="loadStations"/>
+                        <p class="mb-2">Группа крови</p>
+                        <UIDropdownWithSearch :options="blood_groups" v-model="blood_group" @changed="loadStations"/>
+                    </div>
+                    <div>
+                        <BloodStationComponent v-for="station in stations" :json="station" :key="station.id" class="mb-2" @donate="planDonation"/>
+                    </div>
+                </div>
+            </div>
         </div>
-        <div class="p-3 text-center">
-            <p class="mb-2">Город</p>
-            <UIDropdownWithSearch :options="cities" v-model="city_id" @changed="loadStations"/>
-            <p class="mb-2">Группа крови</p>
-            <UIDropdownWithSearch :options="blood_groups" v-model="blood_group" @changed="loadStations"/>
-        </div>
-        <div>
-            <BloodStationComponent v-for="station in stations" :json="station" :key="station.id" class="mb-2" @donate="planDonation"/>
-        </div>
-    </div>
+    </section>
 </template>
 
 <script>

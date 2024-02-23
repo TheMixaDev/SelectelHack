@@ -20,9 +20,9 @@ export default {
       }
     },
     colors: {
-      primary: colors.blue,
+      primary: colors.rose,
       secondary: colors.indigo,
-      danger: colors.rose,
+      danger: colors.red,
       warning: colors.yellow
     }
   },
