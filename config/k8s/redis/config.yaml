@@ -1,9 +1,18 @@
+# Deploys a new Namespace for the MinIO Pod
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: redis-dev # Change this value if you want a different namespace name
+  labels:
+    name: redis-dev # Change this value to match metadata.name
+---
 apiVersion: v1
 kind: Service
 metadata:
   name: redis
   labels:
     app: redis
+  namespace: redis-dev
 spec:
   type: LoadBalancer
   selector:
@@ -19,6 +28,7 @@ metadata:
   name: redis
   labels:
     app: redis
+  namespace: redis-dev
 spec:
   replicas: 2
   selector:
@@ -45,6 +55,7 @@ metadata:
   name: redisinsight
   labels:
     app: redisinsight
+  namespace: redis-dev
 spec:
   type: LoadBalancer
   selector:

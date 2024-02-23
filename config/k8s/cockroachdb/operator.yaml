@@ -3,7 +3,7 @@ kind: Namespace
 metadata:
   labels:
     control-plane: cockroach-operator
-  name: cockroach-operator-system
+  name: cockroach-dev
 ---
 apiVersion: v1
 kind: ServiceAccount
@@ -11,7 +11,7 @@ metadata:
   labels:
     app: cockroach-operator
   name: cockroach-operator-sa
-  namespace: cockroach-operator-system
+  namespace: cockroach-dev
 ---
 apiVersion: rbac.authorization.k8s.io/v1
 kind: ClusterRole
@@ -333,7 +333,7 @@ roleRef:
 subjects:
 - kind: ServiceAccount
   name: cockroach-operator-sa
-  namespace: cockroach-operator-system
+  namespace: cockroach-dev
 ---
 apiVersion: v1
 kind: Service
@@ -341,7 +341,7 @@ metadata:
   labels:
     control-plane: cockroach-operator
   name: cockroach-operator-webhook-service
-  namespace: cockroach-operator-system
+  namespace: cockroach-dev
 spec:
   ports:
   - port: 443
@@ -355,7 +355,7 @@ metadata:
   labels:
     app: cockroach-operator
   name: cockroach-operator-manager
-  namespace: cockroach-operator-system
+  namespace: cockroach-dev
 spec:
   replicas: 1
   selector:
@@ -403,7 +403,7 @@ webhooks:
   clientConfig:
     service:
       name: cockroach-operator-webhook-service
-      namespace: cockroach-operator-system
+      namespace: cockroach-dev
       path: /mutate-crdb-cockroachlabs-com-v1alpha1-crdbcluster
   failurePolicy: Fail
   name: mcrdbcluster.kb.io
@@ -430,7 +430,7 @@ webhooks:
   clientConfig:
     service:
       name: cockroach-operator-webhook-service
-      namespace: cockroach-operator-system
+      namespace: cockroach-dev
       path: /validate-crdb-cockroachlabs-com-v1alpha1-crdbcluster
   failurePolicy: Fail
   name: vcrdbcluster.kb.io
