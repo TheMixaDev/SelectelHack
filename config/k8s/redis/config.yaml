@@ -71,6 +71,7 @@ metadata:
   name: redisinsight
   labels:
     app: redisinsight
+  namespace: redis-dev
 spec:
   replicas: 1
   selector:
