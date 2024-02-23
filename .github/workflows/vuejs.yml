@@ -5,7 +5,7 @@ name: Deploy Vuejs site to Pages
 on:
   # Runs on pushes targeting the default branch
   push:
-    branches: ["frontend", "actions"]
+    branches: ["master", "actions"]
 
   # Allows you to run this workflow manually from the Actions tab
   workflow_dispatch:
@@ -42,33 +42,17 @@ jobs:
       - name: Setup Node
         uses: actions/setup-node@v3
         with:
-          node-version: "16"
+          node-version: "14"
           cache: ${{ steps.detect-package-manager.outputs.manager }}
-#       - name: Setup Pages
-#         uses: actions/configure-pages@v2
-#         with:
-#           # Automatically inject router.base in your Nuxt configuration file and set
-#           # target to static (https://nuxtjs.org/docs/configuration-glossary/configuration-target/).
-#           #
-#           # You may remove this line if you want to manage the configuration yourself.
-#           static_site_generator: nuxt
-#       - name: Restore cache
-#         uses: actions/cache@v3
-#         with:
-#           path: |
-#             dist
-#             .nuxt
-#           key: ${{ runner.os }}-nuxt-build-${{ hashFiles('dist') }}
-#           restore-keys: |
-#             ${{ runner.os }}-nuxt-build-
       - name: Install dependencies
         run: ${{ steps.detect-package-manager.outputs.manager }} ${{ steps.detect-package-manager.outputs.command }}
       - name: Static HTML export with Vuejs
-        run: ${{ steps.detect-package-manager.outputs.manager }} run build -- --base=/${{ github.event.repository.name }}/
+        run: ${{ steps.detect-package-manager.outputs.manager }} run build -- --base=/webapp/
       - name: Upload artifact
-        uses: actions/upload-pages-artifact@v1
+        uses: actions/upload-artifact@v2
         with:
-          path: ./dist
+          name: webapp
+          path: ./webapp/dist
 
   # Deployment job
   deploy:
@@ -78,6 +62,15 @@ jobs:
     runs-on: ubuntu-latest
     needs: build
     steps:
+      - name: Download artifact
+        uses: actions/download-artifact@v2
+        with:
+          name: webapp
+          path: ./webapp
       - name: Deploy to GitHub Pages
         id: deployment
-        uses: actions/deploy-pages@v1
+        uses: actions/deploy-pages@v3
+        with:
+          branch: gh-pages
+          folder: ./webapp/dist
+          token: ${{ secrets.GITHUB_TOKEN }}
