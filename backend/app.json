@@ -5,7 +5,7 @@
   "dev": true,
   "db": {
     "user": "root",
-    "host": "crdb",
+    "host": "localhost",
     "port": "26257",
     "password": "",
     "dbname": "defaultdb",

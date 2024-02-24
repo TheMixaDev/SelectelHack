@@ -15,6 +15,6 @@ func picturePostHandler(c *fiber.Ctx) error {
 	// TODO: Save bytes to database + return image id
 	return c.Status(200).JSON(&fiber.Map{
 		"message": "OK",
-		"id":      0, // TODO: REPLACE WITH ACTUAL ID
+		"id":      22, // TODO: REPLACE WITH ACTUAL ID
 	})
 }

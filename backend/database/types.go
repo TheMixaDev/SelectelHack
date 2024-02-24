@@ -14,34 +14,6 @@ type User struct {
 	BloodGroup   string    `json:"blood_group"`
 	HashPassword string    `json:"hash_password"`
 }
-type DonationCreate struct {
-	ID               uint `json:"id"`
-	BloodStationID   int  `json:"blood_station_id,omitempty"`
-	Image            string
-	ImageID          int       `json:"image_id,omitempty"`
-	CityID           int       `json:"city_id"`
-	LegacyImage      string    `json:"legacy_image,omitempty"`
-	HasReply         string    `json:"has_reply,omitempty"`
-	ReplyViewed      string    `json:"reply_viewed,omitempty"`
-	AllowedModify    string    `json:"allowed_modify,omitempty"`
-	FirstName        string    `json:"first_name,omitempty"`
-	LastName         string    `json:"last_name,omitempty"`
-	MiddleName       string    `json:"middle_name,omitempty"`
-	CreatedAt        time.Time `json:"created_at"`
-	UpdatedAt        time.Time `json:"updated_at"`
-	Status           string    `json:"status"`
-	RejectReason     string    `json:"reject_reason,omitempty"`
-	DonateAt         string    `json:"donate_at,omitempty"`
-	BloodClass       string    `json:"blood_class,omitempty"`
-	PaymentType      string    `json:"payment_type,omitempty"`
-	IsOut            bool      `json:"is_out,omitempty"`
-	Volume           float64   `json:"volume,omitempty"`
-	PaymentCost      float64   `json:"payment_cost,omitempty"`
-	OnModerationDate string    `json:"on_moderation_date,omitempty"`
-	WithImage        bool      `json:"with_image,omitempty"`
-	CreatedUsingOCR  bool      `json:"created_using_ocr,omitempty"`
-	User             int       `json:"user"`
-}
 
 type DonationDetail struct {
 	ID                     uint `json:"id"`
@@ -107,4 +79,17 @@ type DonorCard struct {
 	BoneDonor                  bool   `json:"bone_donor,omitempty"`
 	DonationsBeforeReg         int    `json:"donations_before_reg,omitempty"`
 	DonorStatus                int    `json:"donor_status,omitempty"`
+}
+
+
+type Donation struct {
+	ID             int       `json:"id"`
+	BloodStationID int       `json:"blood_station_id"`
+	ImageID        int       `json:"image_id"`
+	CityID         int       `json:"city_id"`
+	DonateAt       time.Time `json:"donate_at"`
+	BloodClass     string    `json:"blood_class"`
+	PaymentType    string    `json:"payment_type"`
+	WithImage      bool      `json:"with_image"`
+	UserID         int       `json:"user_id"`
 }

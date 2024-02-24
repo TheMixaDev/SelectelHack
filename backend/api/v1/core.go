@@ -37,7 +37,6 @@ func SetupRoutesV1(v1 *fiber.Router) {
 	// extra
 	authentication.Post("/set_two_factor_auth", authPostSetTwoFactorAuthHandler)
 
-	// TODO ????
 	// donation plan management
 	donationPlan := (*v1).Group("/donation_plan").Use(jwtware.New(jwtware.Config{
 		SigningKey: jwtware.SigningKey{
@@ -64,7 +63,7 @@ func SetupRoutesV1(v1 *fiber.Router) {
 	donations.Post("/", donationsPostHandler)
 	donations.Get("/:id", donationsGetWithIdHandler)
 	donations.Put("/:id", donationsPutWithIdHandler)
-	donations.Patch("/:id", donationsPatchWithIdHandler)
+	donations.Patch("/", donationsPatchWithIdHandler)
 	donations.Delete("/:id", donationsDeleteWithIdHandler)
 	donations.Get("/is-exists", donationsGetIsExistsHandler)
 
