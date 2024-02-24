@@ -24,6 +24,7 @@ func SetupAuth(api *fiber.Router) {
 	// Login route
 	(*api).Post("/login", loginRouter)
 	// Registration route
+	// TODO: Prohibit registration if phone/email is the db
 	(*api).Post("/registration", registrationRouter)
 
 	// JWT Middleware
@@ -89,7 +90,7 @@ func loginRouter(c *fiber.Ctx) error {
 			"message": "Unable to sign new token!",
 		})
 	}
-	
+
 	zap.S().Debugln("User logged in successfully!", zap.Any("id", id))
 	return c.Status(fiber.StatusOK).JSON(&fiber.Map{
 		"token": token,

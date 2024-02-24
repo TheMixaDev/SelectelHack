@@ -1,12 +1,7 @@
 package v1
 
 import (
-	"bytes"
-	"io"
-	"net/http"
-
 	"github.com/gofiber/fiber/v2"
-	"github.com/gofiber/fiber/v2/middleware/proxy"
 	"github.com/invalidteam/selectel_hack/api/auth"
 	"github.com/invalidteam/selectel_hack/database"
 	"go.uber.org/zap"
@@ -25,28 +20,7 @@ func authPostChangePhoneHandler(c *fiber.Ctx) error {
 }
 
 func authPostConfirmEmailHandler(c *fiber.Ctx) error {
-	zap.S().Debugln("Redirecting to https://hackaton.donorsearch.org/api/auth/confirm_email")
-
-	url := "https://hackaton.donorsearch.org/api/auth/confirm_email/"
-	client := &http.Client{}
-
-	req, err := http.NewRequest("POST", url, c.Request().BodyStream())
-	if err != nil {
-		return c.Status(http.StatusInternalServerError).SendString("Failed to create request")
-	}
-
-	resp, err := client.Do(req)
-	if err != nil {
-		return c.Status(http.StatusInternalServerError).SendString("Failed to send request")
-	}
-	defer resp.Body.Close()
-
-	body, err := io.ReadAll(resp.Body)
-	if err != nil {
-		return c.Status(http.StatusInternalServerError).SendString("Failed to read response body")
-	}
-
-	return c.Status(resp.StatusCode).Send(body)
+	return c.SendStatus(fiber.StatusNotImplemented)
 }
 
 func authGetDonorCardHandler(c *fiber.Ctx) error {
@@ -104,28 +78,7 @@ func authPostCheckSmsCodeHandler(c *fiber.Ctx) error {
 
 // Implement logic for POST /auth/confirm_email_reg
 func authPostConfirmEmailRegHandler(c *fiber.Ctx) error {
-	zap.S().Debugln("Redirecting to https://hackaton.donorsearch.org/api/auth/confirm_email_reg")
-
-	url := "https://hackaton.donorsearch.org/api/auth/confirm_email_reg/"
-	client := &http.Client{}
-
-	req, err := http.NewRequest("POST", url, c.Request().BodyStream())
-	if err != nil {
-		return c.Status(http.StatusInternalServerError).SendString("Failed to create request")
-	}
-
-	resp, err := client.Do(req)
-	if err != nil {
-		return c.Status(http.StatusInternalServerError).SendString("Failed to send request")
-	}
-	defer resp.Body.Close()
-
-	body, err := io.ReadAll(resp.Body)
-	if err != nil {
-		return c.Status(http.StatusInternalServerError).SendString("Failed to read response body")
-	}
-
-	return c.Status(resp.StatusCode).Send(body)
+	return c.SendStatus(fiber.StatusNotImplemented)
 }
 
 // func authPostConfirmPhoneRegHandler(c *fiber.Ctx) error {
@@ -147,53 +100,22 @@ func authPostLogoutHandler(c *fiber.Ctx) error {
 
 func authPostRecoverHandler(c *fiber.Ctx) error {
 	// Implement logic for POST /auth/recover
-	zap.S().Debugln("Redirecting to https://hackaton.donorsearch.org/api/auth/recover")
-	return proxy.Do(c, "https://hackaton.donorsearch.org/api/auth/recover")
+	return c.SendStatus(fiber.StatusNotImplemented)
 }
 
 // Implement logic for POST /auth/registration
 func authPostRegistrationHandler(c *fiber.Ctx) error {
-	zap.S().Debugln("Redirecting to https://hackaton.donorsearch.org/api/auth/registration")
-
-	url := "https://hackaton.donorsearch.org/api/auth/registration/"
-	client := &http.Client{}
-
-	req, err := http.NewRequest("POST", url, bytes.NewReader(c.Request().Body()))
-	if err != nil {
-		return c.Status(http.StatusInternalServerError).SendString("Failed to create request")
-	}
-
-	req.Header.Set("Content-Type", "application/json")
-	req.Header.Set("accept", "application/json")
-	req.Header.Set("accept-encoding", "gzip, deflate, br")
-
-	resp, err := client.Do(req)
-	if err != nil {
-		return c.Status(http.StatusInternalServerError).SendString("Failed to send request")
-	}
-	defer resp.Body.Close()
-
-	zap.S().Debugln("Response status code:", resp.StatusCode)
-	zap.S().Debugln("Response headers:", resp.Header)
-
-	body, err := io.ReadAll(resp.Body)
-	if err != nil {
-		return c.Status(http.StatusInternalServerError).SendString("Failed to read response body")
-	}
-
-	return c.Status(resp.StatusCode).Send(body)
+	return c.SendStatus(fiber.StatusNotImplemented)
 }
 
 func authPostResendCodeHandler(c *fiber.Ctx) error {
 	// Implement logic for POST /auth/resend_code
-	zap.S().Debugln("Redirecting to https://hackaton.donorsearch.org/api/auth/resend_code")
-	return proxy.Do(c, "https://hackaton.donorsearch.org/api/auth/resend_code")
+	return c.SendStatus(fiber.StatusNotImplemented)
 }
 
 func authPostResendEmailCodeHandler(c *fiber.Ctx) error {
 	// Implement logic for POST /auth/resend_email_code
-	zap.S().Debugln("Redirecting to https://hackaton.donorsearch.org/api/auth/resend_email_code")
-	return proxy.Do(c, "https://hackaton.donorsearch.org/api/auth/resend_email_code")
+	return c.SendStatus(fiber.StatusNotImplemented)
 }
 
 func authPostSetPasswordHandler(c *fiber.Ctx) error {

@@ -12,7 +12,7 @@ import (
 
 // TODO move outside
 func redirect(c *fiber.Ctx) error {
-	url := "https://hackaton.donorsearch.org" + c.Route().Path + "/"
+	url := "https://hackaton.donorsearch.org" + c.OriginalURL()
 	zap.S().Debugln(fmt.Sprintf("Redirecting to %s", url))
 
 	client := &http.Client{}
@@ -24,7 +24,6 @@ func redirect(c *fiber.Ctx) error {
 
 	req.Header.Set("Content-Type", "application/json")
 	req.Header.Set("accept", "application/json")
-	req.Header.Set("accept-encoding", "gzip, deflate, br")
 
 	resp, err := client.Do(req)
 	if err != nil {
