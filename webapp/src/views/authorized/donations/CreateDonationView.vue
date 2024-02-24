@@ -170,6 +170,7 @@ export default {
             this.document = document
         },
         updateCenters() {
+            if(this.city < 1) return;
             StationService.getStations(this.city, (data) => {
                 this.centers = data.results.reduce((acc, cur) => {
                     acc[cur.id] = cur.title;
