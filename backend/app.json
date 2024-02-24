@@ -18,6 +18,7 @@
   "redis": {
     "ttl" : 60,
     "host": "localhost:6379",
-    "password": ""
+    "password": "",
+    "poll": 5
   }
 }

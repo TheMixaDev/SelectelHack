@@ -19,6 +19,11 @@ var (
 	redisConfig *RedisConfig
 )
 
+func UploadConfig(config *RedisConfig) {
+	redisConfig = config
+	redisClient = getRedisClient()
+}
+
 // ScheduleTask schedules a task and returns the task name or an error.
 //
 // It takes a pointer to a Task struct as a parameter.

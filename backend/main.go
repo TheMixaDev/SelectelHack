@@ -53,6 +53,11 @@ func main() {
 	zap.L().Info("Schema created")
 
 	cache.RedisPoolInit(viper.GetString("redis.host"))
+	scheduler.UploadConfig(&scheduler.RedisConfig{
+		Host:         viper.GetString("redis.host"),
+		DbID:         0,
+		PollInterval: 10,
+	})
 	scheduler.RunScheduler()
 
 	api.CreateApi(viper.GetString("app.address"), viper.GetString("app.port")).ConfigureApp().Run()
