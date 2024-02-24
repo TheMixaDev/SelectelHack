@@ -183,10 +183,10 @@ CREATE TABLE IF NOT EXISTS EventReports (
   --   CONSTRAINT fk_report FOREIGN KEY (report_id) REFERENCES Reports(id)
 );
 
-
+CREATE SEQUENCE donation_sequence;
 -- Donation and DonationPlan tables were defined but might need foreign key adjustments based on actual relationships.
 CREATE TABLE IF NOT EXISTS Donation (
-    id SERIAL UNIQUE NOT NULL,
+    id INT4 PRIMARY KEY DEFAULT nextval('donation_sequence'),
     blood_station_id INT,
     image_id INT,
     city_id INT NOT NULL,
