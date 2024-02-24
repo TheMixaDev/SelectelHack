@@ -19,30 +19,31 @@ async function GetDonations(hash, page, page_size) {
         });
         return res;
     } catch (error) {
-        console.error(`Error getting donation info. User hash: ${hash}`);
+        console.error(`Error getting donation info. User hash: ${hash} | ${error}`);
         return null;
     }
 }
-
 /**
  * Get the user info based on the user's hash
  * @param {string} hash - The user's hash
+ * @param {string} token - The user's token
  * @returns {object} The user info
  */
-async function GetUserInfo(hash) {
-    const token = await GetUserToken(hash);
+async function GetUserInfo(hash, token) {
+    console.log(token);
     try {
-        const res = await axios.get(`${config.get('network.api')}/auth/me`, {
+        const res = await axios.get(`${config.get('network.api')}/get/me`, {
             headers: {
                 Authorization: `Bearer ${token}`
             }
         });
         return res;
     } catch (error) {
-        console.error(`Error getting user info. User hash: ${hash}.`);
+        console.error(`Error getting user info. User hash: ${hash} | ${error}`);
         return null;
     }
 }
+
 
 /**
  * Creates a new donation
@@ -53,7 +54,7 @@ async function GetUserInfo(hash) {
  */
 async function CreateDonation(hash, data, image) {
     const token = await GetUserToken(hash);
-    let user = await GetUserInfo(hash);
+    let user = await GetUserInfo(hash, token);
     if (!user) {
         return null;
     }
@@ -86,7 +87,7 @@ async function CreateDonation(hash, data, image) {
 
             return res;
         } catch (error) {
-            console.error(`Error updating donation. User hash: ${hash}, DontaionId: ${data.id}.`);
+            console.log(error.message);
             return null;
         }
     }
@@ -101,7 +102,7 @@ async function CreateDonation(hash, data, image) {
             });
         return res;
     } catch (error) {
-        console.error(`Error creating donation. User hash: ${hash}, data: ${JSON.stringify(data)}.`);
+        console.error(`Error creating donation. User hash: ${hash} | ${error}`);
         return null;
     }
 }
@@ -156,7 +157,9 @@ async function UploadFile(hash, bytes) {
     const token = await GetUserToken(hash);
     try {
         const res = await axios.post(`${config.get('network.api')}/picture`,
-            { bytes: bytes },
+            {
+                file: bytes,
+            },
             {
                 headers: {
                     Authorization: `Bearer ${token}`
@@ -166,6 +169,7 @@ async function UploadFile(hash, bytes) {
         return res;
     } catch (error) {
         console.error("Error uploading file. User hash", hash)
+        console.error(error);
         return null;
     }
 }

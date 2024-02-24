@@ -4,11 +4,8 @@
         "secret": "949d1u22cbffbrarjh182eig55721odj"
     },
     "network": {
-        "webapp": "https://themixadev.github.io/test/",
-        "api": "https://hackaton.donorsearch.org/api"
-    },
-    "server": {
-        "port": 3333
+        "webapp": "https://alephdev.ru/",
+        "api": "https://alephdev.ru/api"
     },
     "redis": {
         "address": "127.1.0.0:6379",

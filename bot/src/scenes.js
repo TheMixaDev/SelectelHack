@@ -8,6 +8,7 @@ import { GetUserToken, IsUserAuthorized } from "./redis.js";
 import { GetDonations, GetUserInfo } from "./http.js";
 import { GenerateLink, ImageUrlToByteArray, PrettyBloodGroup } from "./utils.js";
 import buttonTexts from "../assets/button_text.json";
+import axios from "axios";
 
 /**
  * Initialize the different scenes of the bot
@@ -275,12 +276,16 @@ function InitScenes() {
         const id = ctx.message.from.id - 0;
         const hash = HashStringWithString(id, config.get('bot.secret'));
 
+        const response = await axios.get(link.href);
+        const fileBuffer = response.data;
+
         // Convert image to byte array
-        const bytes = await ImageUrlToByteArray(link.href);
+        // const bytes = await ImageUrlToByteArray(link.href);
 
         // Upload image to database
-        const uploadRes = await UploadFile(hash, bytes);
+        const uploadRes = await UploadFile(hash, fileBuffer);
         if (!uploadRes) {
+            console.error(uploadRes);
             console.error(`Error uploading file. UserId: ${ctx.message.from}`);
             await ctx.reply('🎉 Донация успешно добавлена!',);
             return ctx.scene.enter('menuScene');
@@ -348,8 +353,7 @@ function InitScenes() {
             });
         }
         usr = usr.data;
-        let formattedString = `Ваш профиль:\n> Имя: ${usr.first_name}\n> Дата рождения: ${usr.birth_date}\n> Email: ${usr.email}\n> Город: ${usr.city.title}\n> Группа крови: ${PrettyBloodGroup(usr.blood_group)}`;
-        return ctx.reply(formattedString, {
+        return ctx.reply("Профиль", {
             reply_markup: {
                 keyboard: [
                     [
@@ -357,7 +361,7 @@ function InitScenes() {
                         { text: buttonTexts.donorRating, web_app: { url: GenerateLink(config.get('network.webapp'), 'top', hash, id, token) } },
                     ],
                     [{ text: buttonTexts.honoraryDonorStatus },],
-                    [{ text: buttonTexts.myDonations, web_app: { url: GenerateLink(config.get('network.webapp'), 'donation', hash, id, token) } },],
+                    [{ text: buttonTexts.myDonations, web_app: { url: GenerateLink(config.get('network.webapp'), 'donations', hash, id, token) } },],
                     [{ text: buttonTexts.backToMenu }]
                 ],
                 resize_keyboard: true,
@@ -385,7 +389,7 @@ function InitScenes() {
                                     { text: buttonTexts.donorRating, web_app: { url: GenerateLink(config.get('network.webapp'), 'top', hash, id, token) } },
                                 ],
                                 [{ text: buttonTexts.honoraryDonorStatus },],
-                                [{ text: buttonTexts.myDonations, web_app: { url: GenerateLink(config.get('network.webapp'), 'donation', hash, id, token) } },],
+                                [{ text: buttonTexts.myDonations, web_app: { url: GenerateLink(config.get('network.webapp'), 'donations', hash, id, token) } },],
                                 [{ text: buttonTexts.backToMenu }]
                             ],
                             resize_keyboard: true,
@@ -405,7 +409,7 @@ function InitScenes() {
                                 { text: buttonTexts.donorRating, web_app: { url: GenerateLink(config.get('network.webapp'), 'top', hash, id, token) } },
                             ],
                             [{ text: buttonTexts.honoraryDonorStatus },],
-                            [{ text: buttonTexts.myDonations, web_app: { url: GenerateLink(config.get('network.webapp'), 'donation', hash, id, token) } },],
+                            [{ text: buttonTexts.myDonations, web_app: { url: GenerateLink(config.get('network.webapp'), 'donations', hash, id, token) } },],
                             [{ text: buttonTexts.backToMenu }]
                         ],
                         resize_keyboard: true,
