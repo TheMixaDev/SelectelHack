@@ -82,7 +82,7 @@ type DonorCard struct {
 }
 
 type Donation struct {
-	ID             int    `json:"id"`
+	ID             uint64 `json:"id"`
 	BloodStationID int    `json:"blood_station_id"`
 	ImageID        int    `json:"image_id"`
 	CityID         int    `json:"city_id"`

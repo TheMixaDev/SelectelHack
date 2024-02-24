@@ -11,7 +11,7 @@ import (
 )
 
 func donationsGetHandler(c *fiber.Ctx) error {
-	donations, err := database.GetDonations(auth.ExtractUserID(c))
+	donations, err := database.GetDonations(uint64(auth.ExtractUserID(c)))
 	if err != nil {
 		zap.S().Debugln("Error getting donation information", zap.Error(err))
 		return c.Status(fiber.StatusInternalServerError).JSON(&fiber.Map{
@@ -55,7 +55,7 @@ func donationsGetWithIdHandler(c *fiber.Ctx) error {
 
 	zap.S().Debugln("id", id)
 	intId, _ := strconv.Atoi(id)
-	donation, err := database.GetDonationById(uint(intId))
+	donation, err := database.GetDonationById(uint64(intId))
 	if err != nil {
 		zap.S().Debugln("Error getting donation information", zap.Error(err))
 		return c.Status(fiber.StatusInternalServerError).JSON(&fiber.Map{

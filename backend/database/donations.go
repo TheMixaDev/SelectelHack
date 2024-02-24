@@ -7,7 +7,7 @@ import (
 )
 
 type DonationWithCity struct {
-	ID             uint   `json:"id"`
+	ID             uint64 `json:"id"`
 	BloodStationID uint   `json:"blood_station_id"`
 	ImageID        uint   `json:"image_id"`
 	CityID         uint   `json:"city_id"`
@@ -19,7 +19,7 @@ type DonationWithCity struct {
 	CityTitle      string `json:"city_title"`
 }
 
-func GetDonations(id uint) ([]DonationWithCity, error) {
+func GetDonations(id uint64) ([]DonationWithCity, error) {
 	zap.S().Debug(id)
 	// Adjusted to join Donation table with City table
 	rows, err := database.Query(context.Background(), `
@@ -48,13 +48,13 @@ func GetDonations(id uint) ([]DonationWithCity, error) {
 
 	return donations, nil
 }
-func AddDonation(userId uint, donation Donation) (int, error) {
+func AddDonation(userId uint, donation Donation) (uint64, error) {
 	row := database.QueryRow(context.Background(), "INSERT INTO donation (user_id, blood_station_id, image_id, city_id, donate_at, blood_class, payment_type, with_image) VALUES ($1, $2, $3, $4, $5, $6, $7, $8) RETURNING id",
 		userId, donation.BloodStationID, donation.ImageID, donation.CityID, donation.DonateAt, donation.BloodClass, donation.PaymentType, donation.WithImage)
 	err := row.Scan(&donation.ID)
 	if err != nil {
 		zap.S().Warnln("ERROR while inserting donation", zap.Error(err))
-		return -1, err
+		return 0, err
 	}
 
 	zap.S().Debugln("Donation inserted successfully", zap.Any("id", donation.ID))
@@ -71,7 +71,7 @@ func UpdateDonation(update Donation) error {
 	return nil
 }
 
-func GetDonationById(id uint) (Donation, error) {
+func GetDonationById(id uint64) (Donation, error) {
 	row := database.QueryRow(context.Background(), "SELECT * FROM donation WHERE id = $1", id)
 	var donation Donation
 	err := row.Scan(&donation.ID, &donation.BloodStationID, &donation.ImageID, &donation.CityID,
