@@ -114,7 +114,7 @@ import { MainButton } from 'vue-tg';
                                         'Донация без справки не будет учитываться для пути почетного донора.'
                                     ]"/>
                             </div>
-                            <img v-else :src="image_id" class="w-full m-3 rounded-lg">
+                            <img v-else :src="image_id" class="w-full my-3 mx-auto rounded-lg">
                         </div>
                     </div>
                 </div>
