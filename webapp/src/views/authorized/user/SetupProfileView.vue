@@ -62,7 +62,7 @@ import UIButton from '@/components/ui/UIButton.vue';
                             </UILabeledInput>
                             {{ newPassword.length < 8 ? "Пароль не будет обновлен, т.к. меньше 8 символов" : "Пароль будет обновлен" }}
                         </div>
-                        <UIButton @click="auth" :disabled="loading || !isInputsSet || changePassword" classExtension="w-full px-5 py-2.5">
+                        <UIButton @click="save" :disabled="loading || !isInputsSet || changePassword" classExtension="w-full px-5 py-2.5">
                             Сохранить
                         </UIButton>
                     </div>
@@ -178,12 +178,13 @@ export default {
                 return acc;
             }, {});
             AccountService.getMe((data) => {
+                data = data.data;
                 this.profile = data;
-                this.last_name = data.last_name;
-                this.first_name = data.first_name;
-                this.middle_name = data.middle_name;
-                this.birth_date = new Date(data.birth_date);
-                this.city_id = data.city_id;
+                this.last_name = data.last_name ? data.last_name : "";
+                this.first_name = data.first_name ? data.first_name : "";
+                this.middle_name = data.middle_name ? data.middle_name : "";
+                this.birth_date = new Date(data.birth_date ? data.birth_date : "1970-01-01");
+                this.city_id = data.city_id ? data.city_id : 0;
                 this.blood_group = data.blood_group ? data.blood_group : 0;
             }, () => {
                 this.$notify({text: "Не удалось получить профиль", type: "error"});

@@ -54,7 +54,7 @@ export const NetworkService = {
                 method: method,
                 url: `${configuration.serverUrl}${url}`,
                 data: data,
-                headers: {'Authorization': `Basic ${cookies.get("token")}`}
+                headers: {'Authorization': `Bearer ${cookies.get("token")}`}
             }).catch(fail);
             if(response)
                 success(response);
