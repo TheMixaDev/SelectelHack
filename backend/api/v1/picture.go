@@ -1,6 +1,14 @@
 package v1
 
-import "github.com/gofiber/fiber/v2"
+import (
+	"bytes"
+	"fmt"
+	"io"
+	"net/http"
+
+	"github.com/gofiber/fiber/v2"
+	"go.uber.org/zap"
+)
 
 type requestBody struct {
 	Bytes string `json:"bytes"`
