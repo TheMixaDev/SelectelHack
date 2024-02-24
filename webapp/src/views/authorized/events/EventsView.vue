@@ -1,5 +1,6 @@
 <script setup>
 import EventComponent from '@/components/EventComponent.vue';
+import UITableEmpty from '@/components/ui/table/UITableEmpty.vue';
 </script>
 
 <template>
@@ -10,9 +11,10 @@ import EventComponent from '@/components/EventComponent.vue';
                     <h1 class="text-xl font-bold leading-tight tracking-tight text-gray-900 md:text-2xl dark:text-white text-center">
                         События
                     </h1>
-                    <div> 
+                    <div v-if="events.length > 0">
                         <EventComponent v-for="event in events" :json="event" :key="event.id" class="mb-2"/>
                     </div>
+                    <UITableEmpty v-else/>
                 </div>
             </div>
         </div>

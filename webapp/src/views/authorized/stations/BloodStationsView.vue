@@ -1,6 +1,7 @@
 <script setup>
 import UIDropdownWithSearch from '@/components/ui/UIDropdownWithSearch.vue';
 import BloodStationComponent from '@/components/BloodStationComponent.vue';
+import UITableEmpty from '@/components/ui/table/UITableEmpty.vue';
 </script>
 <template>
     <section class="bg-gray-50 dark:bg-gray-900">
@@ -16,9 +17,10 @@ import BloodStationComponent from '@/components/BloodStationComponent.vue';
                         <p class="mb-2">Группа крови</p>
                         <UIDropdownWithSearch :options="blood_groups" v-model="blood_group" @changed="loadStations"/>
                     </div>
-                    <div>
+                    <div v-if="stations.length > 0">
                         <BloodStationComponent v-for="station in stations" :json="station" :key="station.id" class="mb-2" @donate="planDonation"/>
                     </div>
+                    <UITableEmpty v-else/>
                 </div>
             </div>
         </div>

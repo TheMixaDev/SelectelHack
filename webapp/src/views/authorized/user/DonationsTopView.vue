@@ -1,5 +1,6 @@
 <script setup>
 import DonorComponent from '@/components/DonorComponent.vue';
+import UITableEmpty from '@/components/ui/table/UITableEmpty.vue';
 </script>
 
 <template>
@@ -10,9 +11,10 @@ import DonorComponent from '@/components/DonorComponent.vue';
                     <h1 class="text-xl font-bold leading-tight tracking-tight text-gray-900 md:text-2xl dark:text-white text-center">
                         Топ доноров
                     </h1>
-                    <div class="grid gap-8 mb-6 lg:mb-16 grid-cols-2">
+                    <div class="grid gap-8 mb-6 lg:mb-16 grid-cols-2" v-if="top.length > 0">
                         <DonorComponent v-for="(donor, index) in top" :json="donor" :key="donor.id" :position="index+1"/>
                     </div>
+                    <UITableEmpty v-else/>
                 </div>
             </div>
         </div>

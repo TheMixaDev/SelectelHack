@@ -1,5 +1,6 @@
 <script setup>
 import BonusComponent from '@/components/BonusComponent.vue';
+import UITableEmpty from '@/components/ui/table/UITableEmpty.vue';
 </script>
 
 <template>
@@ -10,9 +11,10 @@ import BonusComponent from '@/components/BonusComponent.vue';
                     <h1 class="text-xl font-bold leading-tight tracking-tight text-gray-900 md:text-2xl dark:text-white text-center">
                         Доступные бонусы
                     </h1>
-                    <div>
+                    <div v-if="bonuses.length > 0">
                         <BonusComponent v-for="bonus in bonuses" :json="bonus" :key="bonus.id" class="mb-2"/>
                     </div>
+                    <UITableEmpty v-else/>
                 </div>
             </div>
         </div>
