@@ -6,12 +6,13 @@ import (
 	jwtware "github.com/gofiber/contrib/jwt"
 	"github.com/gofiber/fiber/v2"
 	"github.com/golang-jwt/jwt/v5"
-	"github.com/invalidteam/selectel_hack/database"
 	"go.uber.org/zap"
+
+	"github.com/invalidteam/selectel_hack/database"
 )
 
 type AuthRequest struct {
-	FirstName    string `json:"firstName"`
+	FirstName    string `json:"first_name"`
 	Email        string `json:"email"`
 	Phone        string `json:"phone"`
 	HashPassword string `json:"hash_password"`
@@ -22,10 +23,10 @@ func SetupAuth(api *fiber.Router) {
 		zap.S().Panicf("Failed to generate or load RSA key pair: %v", err)
 	}
 	// Login route
-	(*api).Post("/login", loginRouter)
+	(*api).Post("/auth/login", loginRouter)
 	// Registration route
-	// TODO: Prohibit registration if phone/email is the db
-	(*api).Post("/registration", registrationRouter)
+	// +TODO: Prohibit register if phone/email is the db
+	(*api).Post("/auth/register", registrationRouter)
 
 	// JWT Middleware
 	(*api).Use(jwtware.New(jwtware.Config{
@@ -58,17 +59,19 @@ func loginRouter(c *fiber.Ctx) error {
 				"message": "Please provide either email or phone number!",
 			})
 		}
-		id, err = database.GetUserIdByEmail(form.Email)
+		id, err = database.CheckUserAuthByEmail(form.Email, form.HashPassword)
 		if err != nil {
 			zap.S().Debug("Invalid Email or password!", zap.String("email", form.Email))
+			zap.S().Debug(err)
 			return c.Status(fiber.StatusUnauthorized).JSON(&fiber.Map{
 				"message": "Invalid Email or password!",
 			})
 		}
 	} else {
-		id, err = database.GetUserIdByPhone(form.Phone)
+		id, err = database.CheckUserAuthByPhone(form.Phone, form.HashPassword)
 		if err != nil {
 			zap.S().Debug("Invalid Phone or password!", zap.String("phone", form.Phone))
+			zap.S().Debug(err)
 			return c.Status(fiber.StatusUnauthorized).JSON(&fiber.Map{
 				"message": "Invalid Phone or password!",
 			})
@@ -107,20 +110,39 @@ func registrationRouter(c *fiber.Ctx) error {
 		})
 	}
 
-	// todo: Add user to database
-	user := database.NewUser(form.Email, form.HashPassword, form.FirstName)
-
-	err := database.AddUser(user)
-	if err != nil {
-		zap.S().Debugf("Error while adding user to database: %v", err)
-		return c.Status(fiber.StatusInternalServerError).JSON(&fiber.Map{
-			"message": "Unable to register new user!",
+	// Validating password
+	if len(form.HashPassword) < 8 {
+		zap.S().Debug("Password too short!")
+		return c.Status(fiber.StatusBadRequest).JSON(&fiber.Map{
+			"message": "Password too short!",
 		})
 	}
+	// Choosing registration method
+	var (
+		id  uint
+		err error
+	)
+	if form.Email != "" {
+		id, err = database.CreateUserByEmail(form.Email, form.HashPassword, form.FirstName)
+		if err != nil {
+			zap.S().Debug("Unable to create user with such email!", zap.String("email", form.Email), zap.Any("err", err))
+			return c.Status(fiber.StatusBadRequest).JSON(&fiber.Map{
+				"message": "Unable to create user with such email!",
+			})
+		}
+	} else if form.Phone != "" {
+		id, err = database.CreateUserByPhone(form.Phone, form.HashPassword, form.FirstName)
+		if err != nil {
+			zap.S().Debug("Unable to create user with such phone!", zap.String("phone", form.Phone), zap.Any("err", err))
+			return c.Status(fiber.StatusBadRequest).JSON(&fiber.Map{
+				"message": "Unable to create user with such phone!",
+			})
+		}
+	}
 
-	zap.S().Debugln("User registered successfully!", zap.Any("user", user.Id))
+	zap.S().Debugln("User registered successfully!", zap.Any("user", id))
 	return c.Status(200).JSON(&fiber.Map{
 		"message": "User registered successfully!",
-		"user_id": user.Id,
+		"user_id": id,
 	})
 }

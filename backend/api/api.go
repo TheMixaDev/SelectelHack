@@ -4,9 +4,10 @@ import (
 	"github.com/ansrivas/fiberprometheus/v2"
 	"github.com/gofiber/fiber/v2"
 	"github.com/gofiber/fiber/v2/middleware/cors"
+	"go.uber.org/zap"
+
 	"github.com/invalidteam/selectel_hack/api/auth"
 	v1 "github.com/invalidteam/selectel_hack/api/v1"
-	"go.uber.org/zap"
 )
 
 type Api struct {
@@ -57,7 +58,7 @@ func (api *Api) ConfigureApp() *Api {
 	if err != nil {
 		zap.S().Panic(err)
 	}
-	// TODO: fix error Invalid or expired JWT for route /api/auth/registration/
+	// +TODO: fix error Invalid or expired JWT for route /api/auth/registration/
 	auth.SetupAuth(&apiGroup)
 
 	v1.SetupRoutesV1(&apiGroup)

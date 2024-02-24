@@ -2,6 +2,7 @@ package database
 
 import (
 	"context"
+	"fmt"
 	"time"
 
 	"github.com/invalidteam/selectel_hack/utils"
@@ -18,9 +19,67 @@ func NewUser(email, password, firstName string) *User {
 	return user
 }
 
+func CreateUserByEmail(email, password, firstName string) (uint, error) {
+	badid, _ := GetUserIdByEmail(email)
+	if badid != 0 {
+		return 0, fmt.Errorf("User with email %s already exists", email)
+	}
+
+	username := utils.GenerateRandomString(16)
+	rows := database.QueryRow(context.Background(), `INSERT INTO "User" (email, hash_password, first_name, username, date_joined) VALUES ($1, $2, $3, $4, $5) RETURNING id`,
+		email, password, firstName, username, time.Now())
+	var id uint
+	err := rows.Scan(&id)
+	if err != nil {
+		return 0, err
+	}
+
+	return id, nil
+}
+
+func CreateUserByPhone(phone, password, firstName string) (uint, error) {
+	badid, _ := GetUserIdByPhone(phone)
+	if badid != 0 {
+		return 0, fmt.Errorf("User with phone %s already exists", phone)
+	}
+
+	username := utils.GenerateRandomString(16)
+	rows := database.QueryRow(context.Background(), `INSERT INTO "User" (phone, hash_password, first_name, username, date_joined) VALUES ($1, $2, $3, $4, $5) RETURNING id`,
+		phone, password, firstName, username, time.Now())
+	var id uint
+	err := rows.Scan(&id)
+	if err != nil {
+		return 0, err
+	}
+
+	return id, nil
+}
+
+func CheckUserAuthByPhone(phone, password string) (uint, error) {
+	var userId uint
+	row := database.QueryRow(context.Background(), `SELECT id FROM "User" WHERE phone = $1 AND hash_password = $2`, phone, password)
+	err := row.Scan(&userId)
+	if err != nil {
+		return 0, err
+	}
+
+	return userId, nil
+}
+
+func CheckUserAuthByEmail(email, password string) (uint, error) {
+	var userId uint
+	row := database.QueryRow(context.Background(), `SELECT id FROM "User" WHERE email = $1 AND hash_password = $2`, email, password)
+	err := row.Scan(&userId)
+	if err != nil {
+		return 0, err
+	}
+
+	return userId, nil
+}
 func AddUser(user *User) error {
 	var userId uint
-	row := database.QueryRow(context.Background(), `INSERT INTO "User" (first_name, email, hash_password, username, date_joined) VALUES ($1, $2, $3, $4, $5) RETURNING id`, user.FirstName, user.Email, user.HashPassword, user.Username, user.DateJoined)
+	row := database.QueryRow(context.Background(), `INSERT INTO "User" (first_name, email, hash_password, username, date_joined, date_joined) VALUES ($1, $2, $3, $4, $5) RETURNING id`,
+		user.FirstName, user.Email, user.HashPassword, user.Username, user.DateJoined)
 	err := row.Scan(&userId)
 	if err != nil {
 		return err
