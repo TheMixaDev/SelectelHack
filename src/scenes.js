@@ -226,9 +226,10 @@ function InitScenes() {
 
             console.error(`Error updating donation. UserHash: ${hash}, Status: ${res.status}`);
             return ctx.reply("😢 Произошла ошибка при обновлении донации. Попробуйте еще раз.");
-
+        } else if (type == "plan_donation") {
+            return ctx.reply('🕒 Донация успешно запланирована!');
         }
-    }) 
+    })
 
     uploadFileScene.enter(async (ctx) => {
         return ctx.reply('Пожалуйста, загрузите изображение', {
@@ -273,9 +274,12 @@ function InitScenes() {
         // Upload image to database
         const uploadRes = await UploadFile(hash, bytes);
         if (!uploadRes) {
-            console.error(`Error uploading file. UserId: ${ctx.message.from}, Status: ${uploadRes.status}`);
-            return ctx.reply('Ошибка загрузки файла!');
+            console.error(`Error uploading file. UserId: ${ctx.message.from}`);
+            await ctx.reply('🎉 Донация успешно добавлена!',);
+            return ctx.scene.enter('menuScene');
+            // return ctx.reply('📛 Ошибка загрузки файла!');
         }
+
         // if success -> retrieve id from response and use it for creating donation
         if (uploadRes.status == 200) {
             const res = await CreateDonation(hash, ctx.session.data, { has: true, id: uploadRes.data.id });
@@ -285,7 +289,8 @@ function InitScenes() {
             }
 
             if (res.status == 200) {
-                return ctx.reply('🎉 Донация успешно добавлена!');
+                await ctx.reply('🎉 Донация успешно добавлена!',);
+                return ctx.scene.enter('menuScene');
             } else {
                 console.error(`Error creating donation. UserId: ${ctx.message.from.id}, Status: ${res.status}`);
                 return ctx.reply('☹️ Ошибка добавления донации. Попробуйте еще раз.');

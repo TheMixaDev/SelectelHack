@@ -62,19 +62,16 @@ async function CreateDonation(hash, data, image) {
     body.donate_at = data.date;
     body.blood_class = data.blood_type;
     body.payment_type = data.type - 0 == 0 ? 'free' : "payed";
-    body.payment_cost = data.type - 0 == 0 ? 0 : Math.round(Math.random() * 800 + 700);
     body.city_id = data.city_id;
     body.blood_station_id = data.center_id;
-    body.volume = 5; // !fix: idk wtf is this (gonnad be 5 liters of blood)
     body.with_image = image.has;
     if (image.has) {
         body.image_id = image.id;
     }
-    body.on_moderation_date = data.date;
-    body.created_using_ocr = false;
-    body.first_name = user.first_name;
-    body.last_name = user.last_name;
-    body.middle_name = user.middle_name;
+    body.user_id = user.id;
+    // body.first_name = user.first_name;
+    // body.last_name = user.last_name;
+    // body.middle_name = user.middle_name;
 
     if (data.id) {
         body.id = data.id;
