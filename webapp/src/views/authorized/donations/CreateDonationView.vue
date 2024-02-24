@@ -114,7 +114,7 @@ import { MainButton } from 'vue-tg';
                                         'Донация без справки не будет учитываться для пути почетного донора.'
                                     ]"/>
                             </div>
-                            <p v-else>Справка уже загружена в систему.</p>
+                            <img v-else :src="image_id" class="w-full p-3 rounded-lg">
                         </div>
                     </div>
                 </div>
@@ -154,6 +154,7 @@ export default {
             centers: {},
             city: 0,
             center: 0,
+            image_id: -1,
 
             id: -1
         }
@@ -215,6 +216,7 @@ export default {
             this.type = donation.payment_type == "free" ? 0 : 1;
             this.place = donation.blood_station_id != 0 ? 0 : 1;
             this.document = donation.with_image ? 0 : 1;
+            this.image_id = donation.image_id;
             if(donation.with_image) this.lock_image = true;
             this.city = donation.city_id;
             this.center = donation.blood_station_id;
