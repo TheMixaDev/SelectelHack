@@ -62,5 +62,5 @@ def main(sql_file_path):
         print(statement)
 
 # Assuming SQL file is named 'database.sql'
-sql_file_path = 'database.sql'
+sql_file_path = 'sql/schema.sql'
 main(sql_file_path)
