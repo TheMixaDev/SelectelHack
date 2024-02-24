@@ -1,0 +1,18 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: cockroachdb-loadbalancer
+  labels:
+    app: cockroachdb
+  namespace: cockroach-dev
+spec:
+  type: LoadBalancer
+  ports:
+  - name: grpc
+    port: 26257
+    targetPort: 26257
+  - name: http
+    port: 8080
+    targetPort: 8080
+  selector:
+    app: cockroachdb

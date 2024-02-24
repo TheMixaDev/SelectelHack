@@ -1,0 +1,97 @@
+# Deploys a new Namespace for the MinIO Pod
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: redis-dev # Change this value if you want a different namespace name
+  labels:
+    name: redis-dev # Change this value to match metadata.name
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: redis
+  labels:
+    app: redis
+  namespace: redis-dev
+spec:
+  type: LoadBalancer
+  selector:
+    app: redis
+  ports:
+    - port: 6379
+      targetPort: redis
+      protocol: TCP
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: redis
+  labels:
+    app: redis
+  namespace: redis-dev
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: redis
+  strategy:
+    type: Recreate
+  template:
+    metadata:
+      labels:
+        app: redis
+    spec:
+      containers:
+        - image: redis:latest
+          imagePullPolicy: IfNotPresent
+          name: redis
+          ports:
+            - containerPort: 6379
+              name: redis
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: redisinsight
+  labels:
+    app: redisinsight
+  namespace: redis-dev
+spec:
+  type: LoadBalancer
+  selector:
+    app: redisinsight
+  ports:
+    - port: 5540
+      targetPort: redisinsight
+      protocol: TCP
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: redisinsight
+  labels:
+    app: redisinsight
+  namespace: redis-dev
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: redisinsight # which pods is the deployment managing, as defined by the pod template
+  template:
+    metadata:
+      labels:
+        app: redisinsight
+    spec:
+      containers:
+      - name:  redisinsight #Container name (DNS_LABEL, unique)
+        image: redis/redisinsight:latest #repo/image
+        imagePullPolicy: IfNotPresent #Installs the latest RedisInsight version
+        volumeMounts:
+        - name: redisinsight #Pod volumes to mount into the container's filesystem. Cannot be updated.
+          mountPath: /data
+        ports:
+        - containerPort: 5540 #exposed container port and protocol
+          protocol: TCP
+      volumes:
+      - name: redisinsight
+        emptyDir: {}

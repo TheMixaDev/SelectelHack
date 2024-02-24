@@ -1,0 +1,426 @@
+############
+# SERVICES #
+############
+apiVersion: v1
+kind: Namespace
+metadata:
+  labels:
+    control-plane: cockroach-operator
+  name: cockroach-dev
+---
+# selectel
+apiVersion: v1
+kind: Service
+metadata:
+  name: selectel-1
+  labels:
+    app: cockroachdb
+  namespace: cockroach-dev
+spec:
+  type: NodePort
+  ports:
+    # SQL client port
+    - name: grpc
+      port: 26257
+      targetPort: 26257
+      nodePort: 31257
+    # Admin UI
+    - name: http
+      port: 8080
+      targetPort: 8080
+      nodePort: 31080
+  selector:
+    app: cockroachdb
+    region: selectel
+---
+
+apiVersion: v1
+kind: Service
+metadata:
+  name: selectel-2
+  labels:
+    app: cockroachdb
+  namespace: cockroach-dev
+spec:
+  type: NodePort
+  ports:
+    # SQL client port
+    - name: grpc
+      port: 26257
+      targetPort: 26257
+      nodePort: 31258
+    # Admin UI
+    - name: http
+      port: 8080
+      targetPort: 8080
+      nodePort: 31180
+  selector:
+    app: cockroachdb
+    region: selectel
+---
+
+apiVersion: v1
+kind: Service
+metadata:
+  name: selectel-3
+  labels:
+    app: cockroachdb
+  namespace: cockroach-dev
+spec:
+  type: NodePort
+  ports:
+    # SQL client port
+    - name: grpc
+      port: 26257
+      targetPort: 26257
+      nodePort: 31259
+    # Admin UI
+    - name: http
+      port: 8080
+      targetPort: 8080
+      nodePort: 31280
+  selector:
+    app: cockroachdb
+    region: selectel
+---
+
+# intra-node service
+apiVersion: v1
+kind: Service
+metadata:
+  name: cockroachdb
+  labels:
+    app: cockroachdb
+  namespace: cockroach-dev
+  annotations:
+    service.alpha.kubernetes.io/tolerate-unready-endpoints: "true"
+    prometheus.io/scrape: "true"
+    prometheus.io/path: "_status/vars"
+    prometheus.io/port: "8080"
+spec:
+  ports:
+    - port: 26257
+      targetPort: 26257
+      name: grpc
+    - port: 8080
+      targetPort: 8080
+      name: http
+  publishNotReadyAddresses: true
+  clusterIP: None
+  selector:
+    app: cockroachdb
+---
+
+##############
+# PODS + PVC #
+##############
+
+# roach-selectel-1
+apiVersion: v1
+kind: Pod
+metadata:
+  name: roach-selectel-1
+  labels:
+    app: cockroachdb
+    region: selectel
+  namespace: cockroach-dev
+spec:
+  hostname: roach-selectel-1
+  subdomain: cockroachdb
+  containers:
+    - name: roach-selectel-1
+      image: cockroachdb/cockroach:latest
+      imagePullPolicy: IfNotPresent
+      ports:
+        - containerPort: 26257
+          name: grpc
+        - containerPort: 8080
+          name: http
+      livenessProbe:
+        httpGet:
+          path: "/health"
+          port: http
+        initialDelaySeconds: 30
+        periodSeconds: 5
+      readinessProbe:
+        httpGet:
+          path: "/health?ready=1"
+          port: http
+        initialDelaySeconds: 10
+        periodSeconds: 5
+        failureThreshold: 2
+      volumeMounts:
+        - name: datadir
+          mountPath: /cockroach/cockroach-data
+      env:
+        - name: COCKROACH_CHANNEL
+          value: kubernetes-insecure
+        - name: GOMAXPROCS
+          valueFrom:
+            resourceFieldRef:
+              resource: limits.cpu
+              divisor: "1"
+        - name: MEMORY_LIMIT_MIB
+          valueFrom:
+            resourceFieldRef:
+              resource: limits.memory
+              divisor: "1Mi"
+      command:
+        - "/bin/bash"
+        - "-ecx"
+        - exec
+          /cockroach/cockroach
+          start
+          --logtostderr
+          --insecure
+          --advertise-host $(hostname -f)
+          --http-addr 0.0.0.0
+          --join roach-selectel-1.cockroachdb,roach-newyork-1.cockroachdb,roach-london-1.cockroachdb
+          --cache $(expr $MEMORY_LIMIT_MIB / 4)MiB
+          --max-sql-memory $(expr $MEMORY_LIMIT_MIB / 4)MiB
+          --locality=region=selectel,zone=a
+  terminationGracePeriodSeconds: 60
+  volumes:
+    - name: datadir
+      persistentVolumeClaim:
+        claimName: roach-selectel-1-data
+---
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: roach-selectel-1-data
+  labels:
+    app: cockroachdb
+  namespace: cockroach-dev
+spec:
+  accessModes:
+    - ReadWriteMany
+  volumeMode: Filesystem
+  storageClassName: standard
+  resources:
+    requests:
+      storage: 1Gi
+---
+
+# roach-selectel-2
+apiVersion: v1
+kind: Pod
+metadata:
+  name: roach-selectel-2
+  labels:
+    app: cockroachdb
+    region: selectel
+  namespace: cockroach-dev
+spec:
+  hostname: roach-selectel-2
+  subdomain: cockroachdb
+  containers:
+    - name: roach-selectel-2
+      image: cockroachdb/cockroach:latest
+      imagePullPolicy: IfNotPresent
+      ports:
+        - containerPort: 26257
+          name: grpc
+        - containerPort: 8080
+          name: http
+      livenessProbe:
+        httpGet:
+          path: "/health"
+          port: http
+        initialDelaySeconds: 30
+        periodSeconds: 5
+      readinessProbe:
+        httpGet:
+          path: "/health?ready=1"
+          port: http
+        initialDelaySeconds: 10
+        periodSeconds: 5
+        failureThreshold: 2
+      volumeMounts:
+        - name: datadir
+          mountPath: /cockroach/cockroach-data
+      env:
+        - name: COCKROACH_CHANNEL
+          value: kubernetes-insecure
+        - name: GOMAXPROCS
+          valueFrom:
+            resourceFieldRef:
+              resource: limits.cpu
+              divisor: "1"
+        - name: MEMORY_LIMIT_MIB
+          valueFrom:
+            resourceFieldRef:
+              resource: limits.memory
+              divisor: "1Mi"
+      command:
+        - "/bin/bash"
+        - "-ecx"
+        - exec
+          /cockroach/cockroach
+          start
+          --logtostderr
+          --insecure
+          --advertise-host $(hostname -f)
+          --http-addr 0.0.0.0
+          --join roach-selectel-2.cockroachdb,roach-newyork-1.cockroachdb,roach-london-1.cockroachdb
+          --cache $(expr $MEMORY_LIMIT_MIB / 4)MiB
+          --max-sql-memory $(expr $MEMORY_LIMIT_MIB / 4)MiB
+          --locality=region=selectel,zone=a
+  terminationGracePeriodSeconds: 60
+  volumes:
+    - name: datadir
+      persistentVolumeClaim:
+        claimName: roach-selectel-2-data
+---
+
+# roach-selectel-3
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: roach-selectel-3-data
+  labels:
+    app: cockroachdb
+  namespace: cockroach-dev
+spec:
+  accessModes:
+    - ReadWriteMany
+  volumeMode: Filesystem
+  storageClassName: standard
+  resources:
+    requests:
+      storage: 1Gi
+---
+apiVersion: v1
+kind: Pod
+metadata:
+  name: roach-selectel-3
+  labels:
+    app: cockroachdb
+    region: selectel
+  namespace: cockroach-dev
+spec:
+  hostname: roach-selectel-3
+  subdomain: cockroachdb
+  containers:
+    - name: roach-selectel-3
+      image: cockroachdb/cockroach:latest
+      imagePullPolicy: IfNotPresent
+      ports:
+        - containerPort: 26257
+          name: grpc
+        - containerPort: 8080
+          name: http
+      livenessProbe:
+        httpGet:
+          path: "/health"
+          port: http
+        initialDelaySeconds: 30
+        periodSeconds: 5
+      readinessProbe:
+        httpGet:
+          path: "/health?ready=1"
+          port: http
+        initialDelaySeconds: 10
+        periodSeconds: 5
+        failureThreshold: 2
+      volumeMounts:
+        - name: datadir
+          mountPath: /cockroach/cockroach-data
+      env:
+        - name: COCKROACH_CHANNEL
+          value: kubernetes-insecure
+        - name: GOMAXPROCS
+          valueFrom:
+            resourceFieldRef:
+              resource: limits.cpu
+              divisor: "1"
+        - name: MEMORY_LIMIT_MIB
+          valueFrom:
+            resourceFieldRef:
+              resource: limits.memory
+              divisor: "1Mi"
+      command:
+        - "/bin/bash"
+        - "-ecx"
+        - exec
+          /cockroach/cockroach
+          start
+          --logtostderr
+          --insecure
+          --advertise-host $(hostname -f)
+          --http-addr 0.0.0.0
+          --join roach-selectel-3.cockroachdb,roach-newyork-1.cockroachdb,roach-london-1.cockroachdb
+          --cache $(expr $MEMORY_LIMIT_MIB / 4)MiB
+          --max-sql-memory $(expr $MEMORY_LIMIT_MIB / 4)MiB
+          --locality=region=selectel,zone=a
+  terminationGracePeriodSeconds: 60
+  volumes:
+    - name: datadir
+      persistentVolumeClaim:
+        claimName: roach-selectel-3-data
+---
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: roach-selectel-3-data
+  labels:
+    app: cockroachdb
+  namespace: cockroach-dev
+spec:
+  accessModes:
+    - ReadWriteMany
+  volumeMode: Filesystem
+  storageClassName: standard
+  resources:
+    requests:
+      storage: 1Gi
+
+
+########################
+# INIT AND CONFIG JOBS #
+########################
+---
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: cluster-init
+  labels:
+    app: cockroachdb
+  namespace: cockroach-dev
+spec:
+  template:
+    spec:
+      containers:
+      - name: cluster-init
+        image: cockroachdb/cockroach:latest
+        imagePullPolicy: IfNotPresent
+        command:
+          - "/cockroach/cockroach"
+          - "init"
+          - "--insecure"
+          - "--host=roach-selectel-1.cockroachdb"
+      restartPolicy: OnFailure
+---
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: cluster-sql-init
+  labels:
+    app: cockroachdb
+  namespace: cockroach-dev
+spec:
+  template:
+    spec:
+      containers:
+      - name: cluster-sql-init
+        image: cockroachdb/cockroach:latest
+        imagePullPolicy: IfNotPresent
+        command: 
+          - "/cockroach/cockroach" 
+          - "sql" 
+          - "--insecure"
+          - "--url"
+          - "postgresql://roach-selectel-1.cockroachdb:26257/defaultdb?sslmode=disable"
+          - "-e"
+          - "UPSERT into system.locations VALUES ('region', 'us-east4', 37.478397, -76.453077), ('region', 'selectel', 43.804133, -120.554201), ('region', 'eu-west2', 51.5073509, -0.1277583);"
+      restartPolicy: OnFailure
