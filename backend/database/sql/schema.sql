@@ -1,13 +1,13 @@
 -- PhoneNumbers table remains unchanged as it does not directly reference other tables.
 CREATE TABLE IF NOT EXISTS PhoneNumbers (
-  id SERIAL PRIMARY KEY,
+  id SERIAL UNIQUE NOT NULL,
   phone TEXT NOT NULL,
   comment TEXT NOT NULL
 );
 
 -- City table remains unchanged.
 CREATE TABLE IF NOT EXISTS City (
-  id SERIAL PRIMARY KEY,
+  id SERIAL UNIQUE NOT NULL,
   title TEXT NOT NULL,
   region_id INT,
   region TEXT,
@@ -20,7 +20,7 @@ CREATE TABLE IF NOT EXISTS City (
 -- Additional join tables and modifications should be made based on the relationships that are not fully detailed in the provided schema.
 -- Assuming the existence of a Partners table for Bonus references
 CREATE TABLE IF NOT EXISTS Partners (
-  id SERIAL PRIMARY KEY,
+  id SERIAL UNIQUE NOT NULL,
   name TEXT NOT NULL,
   description TEXT,
   website TEXT
@@ -36,7 +36,7 @@ CREATE TABLE IF NOT EXISTS Reports (
 
 -- BloodStation table with a foreign key reference to City
 CREATE TABLE IF NOT EXISTS BloodStation (
-  id SERIAL PRIMARY KEY,
+  id SERIAL UNIQUE NOT NULL,
   city_id INT NOT NULL,
   schedule INT NOT NULL,
   lat FLOAT NOT NULL,
@@ -76,7 +76,7 @@ CREATE TABLE IF NOT EXISTS BloodStation (
 
 -- Bonus table with a foreign key reference to a Partners table (assumed, needs to be created)
 CREATE TABLE IF NOT EXISTS Bonus (
-  id SERIAL PRIMARY KEY,
+    id SERIAL UNIQUE NOT NULL,
   partner_image TEXT NOT NULL,
   is_taken BOOLEAN,
   partner_id INT NOT NULL,
@@ -186,7 +186,7 @@ CREATE TABLE IF NOT EXISTS EventReports (
 
 -- Donation and DonationPlan tables were defined but might need foreign key adjustments based on actual relationships.
 CREATE TABLE IF NOT EXISTS Donation (
-    id SERIAL PRIMARY KEY,
+    id SERIAL UNIQUE NOT NULL,
     blood_station_id INT,
     image_id INT,
     city_id INT NOT NULL,
