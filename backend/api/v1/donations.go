@@ -60,6 +60,7 @@ func donationsGetWithIdHandler(c *fiber.Ctx) error {
 		zap.S().Debugln("Error getting donation information", zap.Error(err))
 		return c.Status(fiber.StatusInternalServerError).JSON(&fiber.Map{
 			"message": "Error getting donation information",
+			"error":   err.Error(),
 		})
 	}
 
