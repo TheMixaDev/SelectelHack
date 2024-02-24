@@ -42,8 +42,8 @@ async function AuthUserWithTg(hash, userId) {
  * @param {string} hash - the unique hash of the user
  * @param {string} token - the user's access token
  */
-async function setUserToken(hash, token) {
-    redisClient.set(hash + ":token", token);
+async function SetUserToken(hash, token) {
+    redisClient.set(hash + ":token", token, {EX: 60 * 60 * 24 * 30});
 }
 
 /**
@@ -55,6 +55,11 @@ async function GetUserToken(hash) {
     return redisClient.get(hash + ":token");
 }
 
-export { redisClient, AuthUserWithTg, IsUserAuthorized, setUserToken, GetUserToken};
+async function UserLogOut(hash) {
+    redisClient.del(hash + ":token");
+    redisClient.del(hash + ":auth");
+}
+
+export { redisClient, AuthUserWithTg, IsUserAuthorized, SetUserToken, GetUserToken, UserLogOut};
 
 

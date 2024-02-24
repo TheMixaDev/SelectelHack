@@ -1,7 +1,7 @@
 import { authScene, donateScece, menuScene, profileScene, uploadFileScene } from "./bot.js";
 import { message } from 'telegraf/filters';
 import HashStringWithString from './hash.js';
-import { AuthUserWithTg, setUserToken } from './redis.js';
+import { AuthUserWithTg, SetUserToken, UserLogOut } from './redis.js';
 import { CreateDonation, UploadFile } from './http.js';
 import config from 'config';
 import { GetUserToken, IsUserAuthorized } from "./redis.js";
@@ -15,7 +15,7 @@ import buttonTexts from "../assets/button_text.json";
 function InitScenes() {
     authScene.enter(async (ctx) => {
         const id = ctx.message.from.id - 0;
-        let hash = HashStringWithString(id, config.get('bot.secret'));
+        const hash = HashStringWithString(id, config.get('bot.secret'));
         const res = await IsUserAuthorized(hash, id);
         if (res) {
             return ctx.scene.enter('menuScene');
@@ -58,7 +58,7 @@ function InitScenes() {
             return ctx.reply('Ошибка авторизации.');
         }
         AuthUserWithTg(hash, id);
-        setUserToken(hash, data.token);
+        SetUserToken(hash, data.token);
         await ctx.reply('Вы успешно авторизовались!');
         return ctx.scene.enter('menuScene');
     })
@@ -66,6 +66,12 @@ function InitScenes() {
 
 
     menuScene.enter(async (ctx) => {
+        const id = ctx.message.from.id - 0;
+        const hash = HashStringWithString(id, config.get('bot.secret'));
+        const token = await GetUserToken(hash);
+        if (!token) {
+            return ctx.scene.enter('authScene');
+        }
         return ctx.reply('Чем могу быть полезен?', {
             reply_markup: {
                 keyboard: [
@@ -73,9 +79,10 @@ function InitScenes() {
                         { text: buttonTexts.donateBlood },
                         { text: buttonTexts.events, web_app: { url: GenerateLink(config.get('network.webapp'), 'events', '', '', '') } },
                     ],
-                    [{ text: buttonTexts.profile }],
+                    [{ text: buttonTexts.profile }, { text: buttonTexts.updateProfile, web_app: { url: GenerateLink(config.get('network.webapp'), 'profile/setup', hash, id, token) } },],
                     [{ text: buttonTexts.guide, web_app: { url: GenerateLink(config.get('network.webapp'), 'static/howto', '', '', '') } },],
-                    [{ text: buttonTexts.donate }]
+                    [{ text: buttonTexts.donate }],
+                    [{ text: buttonTexts.exitAccount }]
                 ],
                 resize_keyboard: true,
                 one_time_keyboard: true,
@@ -85,8 +92,17 @@ function InitScenes() {
     });
 
     menuScene.on(message('text'), async (ctx) => {
+        const id = ctx.message.from.id - 0;
+        const hash = HashStringWithString(id, config.get('bot.secret'));
+        const token = await GetUserToken(hash);
+        if (!token) {
+            return ctx.scene.enter('authScene');
+        }
         switch (ctx.message.text) {
             case buttonTexts.donateBlood: return ctx.scene.enter('donateScene');
+            case buttonTexts.exitAccount:
+                await UserLogOut(hash);
+                return ctx.scene.enter('authScene');
             case buttonTexts.profile: return ctx.scene.enter('profileScene');
             case buttonTexts.donate: return ctx.reply('Какую сумму вы хотите пожертвовать нашему проекту?', {
                 reply_markup: {
@@ -102,7 +118,7 @@ function InitScenes() {
                             { text: buttonTexts.donateBlood },
                             { text: buttonTexts.events, web_app: { url: GenerateLink(config.get('network.webapp'), 'events', '', '', '') } },
                         ],
-                        [{ text: buttonTexts.profile }],
+                        [{ text: buttonTexts.profile }, { text: buttonTexts.updateProfile, web_app: { url: GenerateLink(config.get('network.webapp'), 'profile/setup', hash, id, token) } },],
                         [{ text: buttonTexts.guide, web_app: { url: GenerateLink(config.get('network.webapp'), 'static/howto', '', '', '') } },],
                         [{ text: buttonTexts.donate }]
                     ],
@@ -113,10 +129,24 @@ function InitScenes() {
         }
     });
 
+    menuScene.on(message('web_app_data'), async (ctx) => {
+        const { type, hash, id, token } = JSON.parse(ctx.message.web_app_data.data);
+        if (hash !== HashStringWithString(id - 0, config.get('bot.secret'))) {
+            return ctx.reply('Ошибка авторизации.');
+        }
+
+        if (type == "update") {
+            return ctx.reply('✅ Вы успешно обновили свой профиль!');
+        }
+    });
+
     donateScece.enter(async (ctx) => {
         const id = ctx.message.from.id - 0;
         const hash = HashStringWithString(id, config.get('bot.secret'));
         const token = await GetUserToken(hash);
+        if (!token) {
+            return ctx.scene.enter('authScene');
+        }
         return ctx.reply('Что именно вы хотите сделать?', {
             reply_markup: {
                 keyboard: [
@@ -149,7 +179,6 @@ function InitScenes() {
 
     donateScece.on(message('web_app_data'), async (ctx) => {
         const { type, data, hash, id } = JSON.parse(ctx.message.web_app_data.data);
-        console.log(id, hash, type)
         if (hash !== HashStringWithString(id - 0, config.get('bot.secret'))) {
             return ctx.reply('Ошибка авторизации.');
         }
@@ -256,6 +285,9 @@ function InitScenes() {
         const id = ctx.message.from.id - 0;
         const hash = HashStringWithString(id, config.get('bot.secret'));
         const token = await GetUserToken(hash);
+        if (!token) {
+            return ctx.scene.enter('authScene');
+        }
         let usr = await GetUserInfo(hash)
         if (!usr) {
             console.error(`Error to get user info. UserHash: ${hash}.`);
@@ -301,6 +333,9 @@ function InitScenes() {
                 var hash = HashStringWithString(id, config.get('bot.secret'));
                 var usr = await GetUserInfo(hash)
                 var token = await GetUserToken(hash);
+                if (!token) {
+                    return ctx.scene.enter('authScene');
+                }
                 if (!usr) {
                     return ctx.reply('😔 Не удалось получить информацию о вашем статусе.', {
                         reply_markup: {
