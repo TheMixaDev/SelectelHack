@@ -17,7 +17,7 @@
   },
   "redis": {
     "ttl" : 60,
-    "host": "localhost:6379",
+    "host": "redis:6379",
     "password": "",
     "poll": 5
   },
