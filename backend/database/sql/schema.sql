@@ -190,7 +190,7 @@ CREATE TABLE IF NOT EXISTS Donation (
     blood_station_id INT,
     image_id INT,
     city_id INT NOT NULL,
-    donate_at DATE,
+    donate_at TEXT,
     blood_class TEXT,
     payment_type TEXT,
     with_image BOOLEAN,

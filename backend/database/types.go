@@ -81,15 +81,14 @@ type DonorCard struct {
 	DonorStatus                int    `json:"donor_status,omitempty"`
 }
 
-
 type Donation struct {
-	ID             int       `json:"id"`
-	BloodStationID int       `json:"blood_station_id"`
-	ImageID        int       `json:"image_id"`
-	CityID         int       `json:"city_id"`
-	DonateAt       time.Time `json:"donate_at"`
-	BloodClass     string    `json:"blood_class"`
-	PaymentType    string    `json:"payment_type"`
-	WithImage      bool      `json:"with_image"`
-	UserID         int       `json:"user_id"`
+	ID             int    `json:"id"`
+	BloodStationID int    `json:"blood_station_id"`
+	ImageID        int    `json:"image_id"`
+	CityID         int    `json:"city_id"`
+	DonateAt       string `json:"donate_at"`
+	BloodClass     string `json:"blood_class"`
+	PaymentType    string `json:"payment_type"`
+	WithImage      bool   `json:"with_image"`
+	UserID         int    `json:"user_id"`
 }

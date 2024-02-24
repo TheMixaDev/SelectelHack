@@ -40,17 +40,7 @@ func AddDonation(donation Donation) (int, error) {
 	return donation.ID, nil
 }
 
-//	type Donation struct {
-//		ID             int       `json:"id"`
-//		BloodStationID int       `json:"blood_station_id"`
-//		ImageID        int       `json:"image_id"`
-//		CityID         int       `json:"city_id"`
-//		DonateAt       time.Time `json:"donate_at"`
-//		BloodClass     string    `json:"blood_class"`
-//		PaymentType    string    `json:"payment_type"`
-//		WithImage      bool      `json:"with_image"`
-//		UserID         int       `json:"user_id"`
-//	}
+
 func UpdateDonation(update Donation) error {
 	rows, err := database.Query(context.Background(), "UPDATE donation SET blood_station_id = $1, image_id = $2, city_id = $3, payment_type = $4, donate_at = $5, blood_class = $6, with_image = $7, user_id = $8 WHERE id = $9",
 		update.BloodStationID, update.ImageID, update.CityID, update.PaymentType, update.DonateAt, update.BloodClass, update.WithImage, update.UserID, update.ID)
