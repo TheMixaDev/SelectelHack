@@ -138,7 +138,7 @@ export default {
                 middle_name: this.profile.middle_name,
                 birth_date: this.profile.birth_date,
                 city_id: this.profile.city_id * 1,
-                blood_group: this.profile.blood_group
+                blood_group: this.profile.blood_group + ""
             }, () => {
                 this.$notify({text: "Профиль сохранен", type: "success"});
                 let type = sessionStorage.getItem("is_auth") ? "auth" : "update";
