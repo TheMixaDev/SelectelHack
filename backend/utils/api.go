@@ -43,3 +43,4 @@ func Redirect(c *fiber.Ctx) error {
 
 	return c.Status(resp.StatusCode).Send(body)
 }
+

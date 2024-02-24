@@ -8,6 +8,7 @@ import (
 
 	"github.com/invalidteam/selectel_hack/api/auth"
 	"github.com/invalidteam/selectel_hack/database"
+	"github.com/invalidteam/selectel_hack/scheduler"
 )
 
 func donationPlanGetHandler(c *fiber.Ctx) error {
@@ -35,6 +36,7 @@ func donationPlanPostHandler(c *fiber.Ctx) error {
 	}
 
 	// todo: create scheduler task here
+	scheduler.AddTask(auth.ExtractUserID(c), scheduler.NotificationSchedule, false, 15)
 	zap.S().Debugln("Donation plan added successfully", zap.Any("id", id))
 	return c.Status(fiber.StatusOK).JSON(&fiber.Map{
 		"id": id,
