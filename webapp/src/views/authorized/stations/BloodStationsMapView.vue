@@ -119,10 +119,10 @@ export default {
                 acc[cur.id] = cur.title;
                 return acc;
             }, {});
-            this.loadStations();
             AccountService.getMe((data) => {
                 data = data.data;
                 this.city_id = data.city_id;
+                this.loadStations();
             }, () => {
                 this.$notify({text: "Не удалось получить профиль", type: "error"});
             }, this.$cookies)
