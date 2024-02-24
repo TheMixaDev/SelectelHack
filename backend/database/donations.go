@@ -17,15 +17,13 @@ type DonationWithCity struct {
 	WithImage      bool   `json:"with_image"`
 	UserID         uint   `json:"user_id"`
 	CityTitle      string `json:"city_title"`
-	CityRegion     string `json:"city_region"`
-	CityCountry    string `json:"city_country"`
 }
 
 func GetDonations(id uint) ([]DonationWithCity, error) {
 	zap.S().Debug(id)
 	// Adjusted to join Donation table with City table
 	rows, err := database.Query(context.Background(), `
-        SELECT d.*, c.title, c.region, c.country
+        SELECT d.*, c.title
         FROM donation d
         JOIN city c ON d.city_id = c.id
         WHERE d.user_id = $1`, id)
@@ -39,7 +37,9 @@ func GetDonations(id uint) ([]DonationWithCity, error) {
 	for rows.Next() {
 		var donation DonationWithCity
 		// Adjusted to scan city information as well
-		err = rows.Scan(&donation.ID, &donation.BloodStationID, &donation.ImageID, &donation.CityID, &donation.DonateAt, &donation.BloodClass, &donation.PaymentType, &donation.WithImage, &donation.UserID, &donation.CityTitle, &donation.CityRegion, &donation.CityCountry)
+		err = rows.Scan(&donation.ID, &donation.BloodStationID, &donation.ImageID, &donation.CityID,
+			&donation.DonateAt, &donation.BloodClass, &donation.PaymentType, &donation.WithImage,
+			&donation.UserID, &donation.CityTitle)
 		if err != nil {
 			zap.S().Warnln("ERROR while scanning donation", zap.Error(err))
 		}
@@ -69,4 +69,18 @@ func UpdateDonation(update Donation) error {
 	}
 	defer rows.Close()
 	return nil
+}
+
+func GetDonationById(id uint) (Donation, error) {
+	row := database.QueryRow(context.Background(), "SELECT * FROM donation WHERE id = $1", id)
+	var donation Donation
+	err := row.Scan(&donation.ID, &donation.BloodStationID, &donation.ImageID, &donation.CityID,
+		&donation.DonateAt, &donation.BloodClass, &donation.PaymentType, &donation.WithImage,
+		&donation.UserID)
+	if err != nil {
+		zap.S().Warnln("ERROR while scanning donation", zap.Error(err))
+		return donation, err
+	}
+
+	return donation, nil
 }
