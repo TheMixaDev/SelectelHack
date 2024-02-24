@@ -114,7 +114,7 @@ import { MainButton } from 'vue-tg';
                                         'Донация без справки не будет учитываться для пути почетного донора.'
                                     ]"/>
                             </div>
-                            <img v-else :src="image_id" class="w-full my-3 mx-auto rounded-lg">
+                            <img v-else :src="image_id" class="w-full my-3 mx-auto rounded-lg no-select">
                         </div>
                     </div>
                 </div>
@@ -235,3 +235,23 @@ export default {
     }
 }
 </script>
+
+<style>
+.no-select {
+    user-select: none;
+    -moz-user-select: none;
+    -khtml-user-select: none;
+    -webkit-user-select: none;
+    touch-action: none;
+    -webkit-touch-callout: none;
+    -webkit-tap-highlight-color: transparent;
+    -webkit-user-drag: none;
+    -webkit-user-select: none;
+    -ms-user-select: none;
+    -moz-user-select: none;
+    -o-user-select: none;
+    user-select: none;
+    -moz-user-select: none;
+    -khtml-user-select: none;
+}
+</style>
