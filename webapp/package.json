@@ -22,7 +22,10 @@
     "vue-cookies": "^1.8.3",
     "vue-final-modal": "^4.5.0",
     "vue-router": "^4.2.5",
-    "vue-tg": "^0.4.0"
+    "vue-tg": "^0.4.0",
+    "leaflet": "^1.9.4",
+    "leaflet-ant-path": "^1.3.0",
+    "vue-map-ui": "^0.0.17"
   },
   "devDependencies": {
     "@rushstack/eslint-patch": "^1.3.3",

@@ -59,6 +59,11 @@ const router = createRouter({
       component: () => import('../views/authorized/stations/BloodStationsView.vue')
     },
     {
+      path: '/stations/map',
+      name: 'stationsMap',
+      component: () => import('../views/authorized/stations/BloodStationsMapView.vue')
+    },
+    {
       path: '/bonuses',
       name: 'bonuses',
       component: () => import('../views/authorized/bonuses/BonusesView.vue')
