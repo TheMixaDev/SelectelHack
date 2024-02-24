@@ -62,7 +62,7 @@ func loginRouter(c *fiber.Ctx) error {
 		unsignedToken := jwt.NewWithClaims(jwt.SigningMethodRS256, claims)
 
 		// Sign the token using the private key
-		token, err := unsignedToken.SignedString(keys.privateKey)
+		token, err := unsignedToken.SignedString(Keys.PrivateKey)
 		if err != nil {
 			zap.S().Debugf("Error while signing token: %v", err)
 			return c.Status(fiber.StatusInternalServerError).JSON(&fiber.Map{
@@ -70,7 +70,7 @@ func loginRouter(c *fiber.Ctx) error {
 			})
 		}
 
-		c.Response().Header.Add("Access-Control-Expose-Headers", "*")
+		c.Response().Header.Add("Access-Control-Expose-Headers", "")
 		c.Response().Header.Add("token", token)
 
 		return c.SendStatus(fiber.StatusOK)

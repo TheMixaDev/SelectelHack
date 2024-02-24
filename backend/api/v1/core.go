@@ -1,8 +1,10 @@
 package v1
 
 import (
+	jwtware "github.com/gofiber/contrib/jwt"
 	"github.com/gofiber/fiber/v2"
 
+	"github.com/invalidteam/selectel_hack/api/auth"
 	"github.com/invalidteam/selectel_hack/utils"
 )
 
@@ -10,8 +12,18 @@ func SetupRoutesV1(v1 *fiber.Router) {
 
 	authentication := (*v1).Group("/auth")
 	// account data managent
-	authentication.Get("/me", authGetMeHandler)
-	authentication.Patch("/me", authPatchMeHandler)
+	authentication.Get("/me", authGetMeHandler).Use(jwtware.New(jwtware.Config{
+		SigningKey: jwtware.SigningKey{
+			JWTAlg: jwtware.RS256,
+			Key:    auth.Keys.PublicKey,
+		},
+	}))
+	authentication.Patch("/me", authPatchMeHandler).Use(jwtware.New(jwtware.Config{
+		SigningKey: jwtware.SigningKey{
+			JWTAlg: jwtware.RS256,
+			Key:    auth.Keys.PublicKey,
+		},
+	}))
 	// authentication
 	authentication.Post("/login", authPostLoginHandler)
 

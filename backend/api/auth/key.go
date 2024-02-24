@@ -14,11 +14,11 @@ import (
 )
 
 type KeyPair struct {
-	privateKey *rsa.PrivateKey
-	publicKey  *rsa.PublicKey
+	PrivateKey *rsa.PrivateKey
+	PublicKey  *rsa.PublicKey
 }
 
-var keys KeyPair
+var Keys KeyPair
 
 // generateOrLoadRsaKeyPair checks for existing RSA key pair files and
 // loads them. If they do not exist, it generates a new RSA key pair.
@@ -38,9 +38,9 @@ func GenerateOrLoadRsaKeyPair() error {
 			return err
 		}
 
-		keys = KeyPair{
-			privateKey: privateKey,
-			publicKey:  publicKey,
+		Keys = KeyPair{
+			PrivateKey: privateKey,
+			PublicKey:  publicKey,
 		}
 
 		zap.S().Debugln("RSA key pair loaded successfully!")
@@ -49,10 +49,10 @@ func GenerateOrLoadRsaKeyPair() error {
 	} else {
 		keyPair, err := generateNewRsaKeyPair()
 		if err == nil {
-			keys = keyPair
+			Keys = keyPair
 			zap.S().Debugln("Generated new RSA key pair!")
-			savePEMKey("private.pem", keyPair.privateKey)
-			savePEMKey("public.pem", keyPair.publicKey)
+			savePEMKey("private.pem", keyPair.PrivateKey)
+			savePEMKey("public.pem", keyPair.PublicKey)
 		}
 		return err
 	}
@@ -136,7 +136,7 @@ func generateNewRsaKeyPair() (KeyPair, error) {
 	}
 
 	return KeyPair{
-		privateKey: privateKey,
-		publicKey:  &privateKey.PublicKey,
+		PrivateKey: privateKey,
+		PublicKey:  &privateKey.PublicKey,
 	}, nil
 }
