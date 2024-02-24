@@ -17,5 +17,6 @@ func picturePostHandler(c *fiber.Ctx) error {
 
 	return c.Status(200).JSON(&fiber.Map{
 		"message": "OK",
+		"id": 5675678567,
 	})
 }
