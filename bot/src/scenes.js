@@ -187,7 +187,7 @@ function InitScenes() {
             if (data.document == 1) {
                 const res = await CreateDonation(hash, data, { has: false, id: 0 });
                 if (!res) {
-                    console.log(`Error creating donation. UserHash: ${hash}, Status: ${res.status}`);
+                    console.log(`Error creating donation. UserHash: ${hash}`);
                     return ctx.reply('Ошибка добавления донации.');
                 }
                 if (res.status == 200) {
@@ -204,7 +204,7 @@ function InitScenes() {
             // Getting old donation
             const old = await GetDonationsById(hash, data.id);
             if (!old) {
-                console.error(`Error updating donation. UserHash: ${hash}, Status: ${old.status}`);
+                console.error(`Error updating donation. UserHash: ${hash}`);
                 return ctx.reply("😢 Произошла ошибка при обновлении донации. Попробуйте еще раз.");
             }
             // if old donation has no image and new donation has image -> ask user to upload new image
@@ -216,7 +216,7 @@ function InitScenes() {
             // else update donation
             const res = await CreateDonation(hash, data, { has: old.data.with_image, id: old.data.image_id });
             if (!res) {
-                console.log(`Error updating donation. UserHash: ${hash}, Status: ${res.status}`);
+                console.log(`Error updating donation. UserHash: ${hash}`);
                 return ctx.reply('Ошибка обновления донации.');
             }
 
@@ -229,7 +229,7 @@ function InitScenes() {
         } else if (type == "plan_donation") {
             const res = await CreatePlanDonation(hash, data);
             if (!res) {
-                console.log(`Error planning donation. UserHash: ${hash}, Status: ${res.status}`);
+                console.log(`Error planning donation. UserHash: ${hash}`);
                 return ctx.reply('Ошибка планирования донации.');
             }
             if(res.status == 200) {
@@ -291,7 +291,7 @@ function InitScenes() {
         if (uploadRes.status == 200) {
             const res = await CreateDonation(hash, ctx.session.data, { has: true, id: uploadRes.data.id });
             if (!res) {
-                console.error(`Error creating donation. UserId: ${ctx.message.from.id}, Status: ${res.status}`);
+                console.error(`Error creating donation. UserId: ${ctx.message.from.id}`);
                 return ctx.reply('☹️ Ошибка добавления донации. Попробуйте еще раз.');
             }
 
