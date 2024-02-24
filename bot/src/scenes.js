@@ -13,6 +13,10 @@ import buttonTexts from "../assets/button_text.json";
  * Initialize the different scenes of the bot
  */
 function InitScenes() {
+    /**
+     * Handles the user entering the authentication scene.
+     * @param {Context} ctx - The context object.
+     */
     authScene.enter(async (ctx) => {
         const id = ctx.message.from.id - 0;
         const hash = HashStringWithString(id, config.get('bot.secret'));
@@ -34,7 +38,10 @@ function InitScenes() {
         });
     });
 
-
+    /**
+     * Handles text messages in the authentication scene.
+     * @param {Context} ctx - The context object.
+     */
     authScene.on(message('text'), async (ctx) => {
         const id = ctx.message.from.id - 0;
         const hash = HashStringWithString(id, config.get('bot.secret'));
@@ -52,6 +59,10 @@ function InitScenes() {
         });
     });
 
+   /**
+     * Handles web app data messages in the authentication scene.
+     * @param {Context} ctx - The context object.
+     */
     authScene.on(message('web_app_data'), async (ctx) => {
         const { data, hash, id } = JSON.parse(ctx.message.web_app_data.data);
         if (hash !== HashStringWithString(id - 0, config.get('bot.secret'))) {
@@ -62,8 +73,10 @@ function InitScenes() {
         await ctx.reply('Вы успешно авторизовались!');
         return ctx.scene.enter('menuScene');
     })
-
-
+    /**
+     * Handles the user entering the menu scene.
+     * @param {Context} ctx - The context object.
+     */
 
     menuScene.enter(async (ctx) => {
         const id = ctx.message.from.id - 0;
@@ -90,6 +103,10 @@ function InitScenes() {
         });
 
     });
+    /**
+     * Handles text messages in the menu scene.
+     * @param {Context} ctx - The context object.
+     */
 
     menuScene.on(message('text'), async (ctx) => {
         const id = ctx.message.from.id - 0;
@@ -130,6 +147,10 @@ function InitScenes() {
         }
     });
 
+    /**
+     * Handles web app data messages in the menu scene.
+     * @param {Context} ctx - The context object.
+     */
     menuScene.on(message('web_app_data'), async (ctx) => {
         const { type, hash, id, token } = JSON.parse(ctx.message.web_app_data.data);
         if (hash !== HashStringWithString(id - 0, config.get('bot.secret'))) {
@@ -141,6 +162,10 @@ function InitScenes() {
         }
     });
 
+    /**
+     * Handles the user entering the donate scene.
+     * @param {Context} ctx - The context object.
+     */
     donateScene.enter(async (ctx) => {
         const id = ctx.message.from.id - 0;
         const hash = HashStringWithString(id, config.get('bot.secret'));
@@ -170,7 +195,10 @@ function InitScenes() {
         });
     });
 
-
+    /**
+     * Handles text messages in the donate scene.
+     * @param {Context} ctx - The context object.
+     */
     donateScene.on(message('text'), async (ctx) => {
         switch (ctx.message.text) {
             case buttonTexts.backToMenu: return ctx.scene.enter('menuScene');
@@ -178,6 +206,10 @@ function InitScenes() {
         }
     });
 
+    /**
+     * Handles web app data messages in the donate scene.
+     * @param {Context} ctx - The context object.
+     */
     donateScene.on(message('web_app_data'), async (ctx) => {
         const { type, data, hash, id } = JSON.parse(ctx.message.web_app_data.data);
         if (hash !== HashStringWithString(id - 0, config.get('bot.secret'))) {
@@ -238,6 +270,10 @@ function InitScenes() {
         }
     })
 
+    /**
+     * Handles the user entering the upload file scene.
+     * @param {Context} ctx - The context object.
+     */
     uploadFileScene.enter(async (ctx) => {
         return ctx.reply('Пожалуйста, загрузите изображение', {
             reply_markup: {
@@ -250,6 +286,10 @@ function InitScenes() {
         });
     });
 
+    /**
+     * Handles photo messages in the upload file scene.
+     * @param {Context} ctx - The context object.
+     */
     uploadFileScene.on(message('photo'), async (ctx) => {
         return ctx.reply('😵‍💫 Пожалуйста, загрузите изображение без сжатия (документ)', {
             reply_markup: {
@@ -262,6 +302,10 @@ function InitScenes() {
         });
     })
 
+    /**
+     * Handles document messages in the upload file scene.
+     * @param {Context} ctx - The context object.
+     */
     uploadFileScene.on(message('document'), async (ctx) => {
         const file = ctx.message.document;
 
@@ -305,6 +349,10 @@ function InitScenes() {
         };
     });
 
+    /**
+     * Handles text messages in the upload file scene.
+     * @param {Context} ctx - The context object.
+     */
     uploadFileScene.on(message('text'), async (ctx) => {
         switch (ctx.message.text) {
             case buttonTexts.backToMenu: return ctx.scene.enter('menuScene');
@@ -320,7 +368,10 @@ function InitScenes() {
         }
     });
 
-
+    /**
+     * Handles the user entering the profile scene.
+     * @param {Context} ctx - The context object.
+     */
     profileScene.enter(async (ctx) => {
         const id = ctx.message.from.id - 0;
         const hash = HashStringWithString(id, config.get('bot.secret'));
@@ -365,7 +416,10 @@ function InitScenes() {
             }
         });
     });
-
+    /**
+     * Handles text messages in the profile scene.
+     * @param {Context} ctx - The context object.
+     */
     profileScene.on(message('text'), async (ctx) => {
         const id = ctx.message.from.id - 0;
         switch (ctx.message.text) {

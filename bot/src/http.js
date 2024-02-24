@@ -170,6 +170,12 @@ async function UploadFile(hash, bytes) {
     }
 }
 
+/**
+ * Gets a donation by its id
+ * @param {string} hash - The user's hash
+ * @param {number} id - The donation id
+ * @returns {object} The donation data
+ */
 async function GetDonationsById(hash, id) {
     const token = await GetUserToken(hash);
     try {
@@ -184,5 +190,6 @@ async function GetDonationsById(hash, id) {
         return null;
     }
 }
+
 
 export { CreateDonation, GetUserInfo, GetDonations, UploadFile, GetDonationsById, CreatePlanDonation }

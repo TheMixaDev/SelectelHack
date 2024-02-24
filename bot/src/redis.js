@@ -1,6 +1,9 @@
 import Redis from "redis";
 import config from 'config';
 
+/**
+ * Creates a new Redis client and connects to the specified address and port
+ */
 const redisClient = Redis.createClient({
     host: config.get("redis.address").split(':')[0],
     port: config.get("redis.address").split(':')[1],
@@ -8,11 +11,18 @@ const redisClient = Redis.createClient({
     password: config.redis.password
 })
 
+/**
+ * Event handler for when the Redis client encounters an error
+ * @param {Error} err - the error that occurred
+ */
 redisClient.on('error', (err) => {
     console.error('Redis error:', err);
     process.exit(1);
 });
 
+/**
+ * Event handler for when the Redis client connects to the server
+ */
 redisClient.on('connect', () => {
     console.log('Redis connected to', config.get('redis.address'));
 });
@@ -56,10 +66,15 @@ async function GetUserToken(hash) {
     return redisClient.get(hash + ":token");
 }
 
+/**
+ * Logs out a user by deleting their access token and auth token from the database
+ * @param {string} hash - the unique hash of the user
+ */
 async function UserLogOut(hash) {
     redisClient.del(hash + ":token");
     redisClient.del(hash + ":auth");
 }
+
 
 export { redisClient, AuthUserWithTg, IsUserAuthorized, SetUserToken, GetUserToken, UserLogOut};
 
