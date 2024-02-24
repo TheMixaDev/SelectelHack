@@ -7,18 +7,18 @@ import (
 )
 
 type DonationWithCity struct {
-	ID             uint   // Donation ID
-	BloodStationID uint   // Blood station ID
-	ImageID        uint   // Image ID
-	CityID         uint   // City ID
-	DonateAt       string // Donation time
-	BloodClass     string // Blood class
-	PaymentType    string // Payment type
-	WithImage      bool   // Donation with image flag
-	UserID         uint   // User ID
-	CityTitle      string // NEW: City title
-	CityRegion     string // NEW: City region
-	CityCountry    string // NEW: City country
+	ID             uint   `json:"id"`
+	BloodStationID uint   `json:"blood_station_id"`
+	ImageID        uint   `json:"image_id"`
+	CityID         uint   `json:"city_id"`
+	DonateAt       string `json:"donate_at"`
+	BloodClass     string `json:"blood_class"`
+	PaymentType    string `json:"payment_type"`
+	WithImage      bool   `json:"with_image"`
+	UserID         uint   `json:"user_id"`
+	CityTitle      string `json:"city_title"`
+	CityRegion     string `json:"city_region"`
+	CityCountry    string `json:"city_country"`
 }
 
 func GetDonations(id uint) ([]DonationWithCity, error) {
