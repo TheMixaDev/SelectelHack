@@ -1,13 +1,13 @@
 
 # Selectel Hackathon documentation
 1. **DevOps documentation**
- 	1. **Prerequisites**: Listing the required tools and configurations needed before proceeding.
+	1. **Prerequisites**: Listing the required tools and configurations needed before proceeding.
 	2. **Configuration Files Overview**: A description of the provided `lb.yaml` and `config.yaml` files, their roles, and how they fit into the setup.
 	3. **Setup Instructions**: Step-by-step instructions on how to use the configurations with Minikube to expose services to localhost.
 	4. **Usage**: How to interact with the services once they are exposed.
 	5. **Example Service List**
 	6. **Troubleshooting**: Common issues and their solutions.
-3. **Telegram bot documentation**
+2. **Telegram bot documentation**
 
 ## Prerequisites
 - Kubernetes cluster managed by Minikube
@@ -43,6 +43,7 @@ Contains multiple configurations:
 ## Usage
 Once the services are exposed, you can access the CockroachDB cluster's Admin UI and SQL client via the localhost:
  - **Admin UI**: [http://localhost:8080](http://localhost:8080)
+ - **Redis Insight  UI** : [http://localhost:5540](http://localhost:5540)
  - **SQL Client**: Connect using any CockroachDB-compatible SQL client to `localhost:26257`.
 	 - example: `cockroach sql --insecure --url "postgresql://localhost:26257/defaultdb?sslmode=disable"` 
 - **Load Balancer**:  You can access pods through load balancer by running `minikube service list` and accessing given load balancer URL and port (grpc)
@@ -66,6 +67,8 @@ Once the services are exposed, you can access the CockroachDB cluster's Admin UI
 
 
 ## Troubleshooting
-- **Service Not Accessible**: Ensure Minikube's tunnel is running and check for any error messages in the service's events.
+- **Service Not Accessible**: Ensure Minikube's tunnel is running and check for any error messages in the service's events and all of the ports are correctly forwarded
 - **Port Conflicts**: If there are conflicts on ports `8080` or `26257`, verify that no other services are using those ports on your localhost.
+- **Connection refused**: when trying to connect to Redis Insight  UI via minikube tunnel
+	- **fix**: `kubectl port-forward -n redis-dev deployment/redisinsight 5540` and forward port
 
