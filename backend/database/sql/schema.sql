@@ -208,7 +208,7 @@ CREATE TABLE IF NOT EXISTS DonationPlan (
     blood_class TEXT,
     payment_type TEXT,
     user_id INT NOT NULL
-)
+);
 
 INSERT INTO City (id, title) VALUES (1, 'Москва') ON CONFLICT DO NOTHING;
 INSERT INTO City (id, title) VALUES (2, 'Санкт-Петербург') ON CONFLICT DO NOTHING;
