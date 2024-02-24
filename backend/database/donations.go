@@ -48,6 +48,7 @@ func GetDonations(id uint) ([]DonationWithCity, error) {
 
 	return donations, nil
 }
+
 func AddDonation(userId uint, donation Donation) (uint, error) {
 	row := database.QueryRow(context.Background(), "INSERT INTO donation (user_id, blood_station_id, image_id, city_id, donate_at, blood_class, payment_type, with_image) VALUES ($1, $2, $3, $4, $5, $6, $7, $8) RETURNING id",
 		userId, donation.BloodStationID, donation.ImageID, donation.CityID, donation.DonateAt, donation.BloodClass, donation.PaymentType, donation.WithImage)
