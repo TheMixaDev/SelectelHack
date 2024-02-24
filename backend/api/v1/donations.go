@@ -33,7 +33,7 @@ func donationsPostHandler(c *fiber.Ctx) error {
 	}
 
 	zap.S().Debugln("Donation added successfully", zap.Any("id", id))
-	return c.Status(fiber.StatusCreated).JSON(&fiber.Map{
+	return c.Status(fiber.StatusOK).JSON(&fiber.Map{
 		"id": id,
 	})
 }
@@ -61,7 +61,7 @@ func donationsPatchWithIdHandler(c *fiber.Ctx) error {
 	}
 
 	zap.S().Debugln("Donation updated successfully")
-	return c.SendStatus(fiber.StatusCreated)
+	return c.SendStatus(fiber.StatusOK)
 }
 
 func donationsDeleteWithIdHandler(c *fiber.Ctx) error {

@@ -62,7 +62,7 @@ func SetupRoutesV1(v1 *fiber.Router) {
 	donations.Get("/", donationsGetHandler)
 	donations.Post("/", donationsPostHandler)
 	donations.Get("/:id", donationsGetWithIdHandler)
-	// donations.Put("/:id", donationsPutWithIdHandler)
+	donations.Put("/:id", donationsPutWithIdHandler)
 	donations.Patch("/", donationsPatchWithIdHandler)
 	donations.Delete("/:id", donationsDeleteWithIdHandler)
 	donations.Get("/is-exists", donationsGetIsExistsHandler)
