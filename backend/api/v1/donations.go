@@ -1,6 +1,8 @@
 package v1
 
 import (
+	"strconv"
+
 	"github.com/gofiber/fiber/v2"
 	"go.uber.org/zap"
 
@@ -44,7 +46,27 @@ func donationsPostHandler(c *fiber.Ctx) error {
 }
 
 func donationsGetWithIdHandler(c *fiber.Ctx) error {
-	return c.SendStatus(fiber.StatusNotImplemented)
+	id := c.Params("id", "-1")
+	if id == "-1" {
+		return c.Status(400).JSON(&fiber.Map{
+			"message": "Bad request. Please provide correct id.",
+		})
+	}
+
+	zap.S().Debugln("id", id)
+	intId, _ := strconv.Atoi(id)
+	donation, err := database.GetDonationById(uint(intId))
+	if err != nil {
+		zap.S().Debugln("Error getting donation information", zap.Error(err))
+		return c.Status(fiber.StatusInternalServerError).JSON(&fiber.Map{
+			"message": "Error getting donation information",
+			"error":   err.Error(),
+		})
+	}
+
+	return c.Status(fiber.StatusOK).JSON(&fiber.Map{
+		"donation": donation,
+	})
 }
 
 func donationsPutWithIdHandler(c *fiber.Ctx) error {
