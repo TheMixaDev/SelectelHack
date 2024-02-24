@@ -121,6 +121,7 @@ export default {
             }, {});
             this.loadStations();
             AccountService.getMe((data) => {
+                data = data.data;
                 this.city_id = data.city_id;
             }, () => {
                 this.$notify({text: "Не удалось получить профиль", type: "error"});

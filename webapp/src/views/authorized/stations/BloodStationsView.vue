@@ -78,6 +78,7 @@ export default {
                 return acc;
             }, {});
             AccountService.getMe((data) => {
+                data = data.data;
                 this.profile = data;
                 this.last_name = data.last_name;
                 this.first_name = data.first_name;
