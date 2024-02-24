@@ -52,6 +52,8 @@ func donationsGetWithIdHandler(c *fiber.Ctx) error {
 			"message": "Bad request. Please provide correct id.",
 		})
 	}
+
+	zap.S().Debugln("id", id)
 	intId, _ := strconv.Atoi(id)
 	donation, err := database.GetDonationById(uint(intId))
 	if err != nil {
