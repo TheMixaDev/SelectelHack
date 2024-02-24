@@ -1,4 +1,4 @@
-import { authScene, donateScece, eventScene, menuScene, profileScene, uploadFileScene } from "./bot.js";
+import { authScene, donateScece, menuScene, profileScene, uploadFileScene } from "./bot.js";
 import { message } from 'telegraf/filters';
 import HashStringWithString from './hash.js';
 import { AuthUserWithTg, setUserToken } from './redis.js';
@@ -71,10 +71,10 @@ function InitScenes() {
                 keyboard: [
                     [
                         { text: buttonTexts.donateBlood },
-                        { text: buttonTexts.events },
+                        { text: buttonTexts.events, web_app: { url: GenerateLink(config.get('network.webapp'), 'events', '', '', '') } },
                     ],
                     [{ text: buttonTexts.profile }],
-                    [{ text: buttonTexts.guide, web_app: { url: `https://donorsearch.org/how/` } },],
+                    [{ text: buttonTexts.guide, web_app: { url: GenerateLink(config.get('network.webapp'), 'static/howto', '', '', '') } },],
                     [{ text: buttonTexts.donate }]
                 ],
                 resize_keyboard: true,
@@ -87,7 +87,6 @@ function InitScenes() {
     menuScene.on(message('text'), async (ctx) => {
         switch (ctx.message.text) {
             case buttonTexts.donateBlood: return ctx.scene.enter('donateScene');
-            case buttonTexts.events: return ctx.scene.enter('eventScene');
             case buttonTexts.profile: return ctx.scene.enter('profileScene');
             case buttonTexts.donate: return ctx.reply('Какую сумму вы хотите пожертвовать нашему проекту?', {
                 reply_markup: {
@@ -101,10 +100,10 @@ function InitScenes() {
                     keyboard: [
                         [
                             { text: buttonTexts.donateBlood },
-                            { text: buttonTexts.events },
+                            { text: buttonTexts.events, web_app: { url: GenerateLink(config.get('network.webapp'), 'events', '', '', '') } },
                         ],
                         [{ text: buttonTexts.profile }],
-                        [{ text: buttonTexts.guide, web_app: { url: `https://donorsearch.org/how/` } },],
+                        [{ text: buttonTexts.guide, web_app: { url: GenerateLink(config.get('network.webapp'), 'static/howto', '', '', '') } },],
                         [{ text: buttonTexts.donate }]
                     ],
                     resize_keyboard: true,
@@ -356,13 +355,6 @@ function InitScenes() {
             default: return ctx.reply('Воспользуйтесь одной из кнопок 👇');
         }
     });
-
-
-    eventScene.enter(async (ctx) => {
-        const id = ctx.message.from.id - 0;
-    });
-
-
 }
 
 export default InitScenes;
