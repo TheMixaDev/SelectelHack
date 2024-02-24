@@ -1,6 +1,7 @@
 <script setup>
 import { BonusService } from '@/services/BonusService';
 import UIButton from './ui/UIButton.vue';
+import StarsComponent from './StarsComponent.vue';
 </script>
 
 <template>
@@ -18,18 +19,31 @@ import UIButton from './ui/UIButton.vue';
                 classExtension="w-full px-5 py-2.5"
                 :disabled="loading"
             >Забрать бонус</UIButton>
+            <div class="text-center mt-2">
+                <span class="text-gray-500 dark:text-gray-400 text-lg">Оцените бонус</span><br>
+                <StarsComponent class="inline-flex" v-model="stars"/>
+                <UILabeledInput v-model="comment">Комментарий</UILabeledInput>
+                <UIButton
+                    @click="send"
+                    classExtension="w-full px-5 py-2.5 mt-2"
+                    :disabled="loading"
+                >Отправить отзыв</UIButton>
+            </div>
         </div>
     </div> 
 </template>
 
 <script>
 import { useWebAppPopup } from 'vue-tg'
+import UILabeledInput from './ui/UILabeledInput.vue';
 export default {
     name: 'BonusComponent',
     props: ['json'],
     data() {
         return {
-            loading: false
+            loading: false,
+            stars: 5,
+            comment: ""
         }
     },
     methods: {
@@ -42,6 +56,10 @@ export default {
                 this.loading = false;
                 this.$notify({text: "Не удалось забрать бонус", type: "error"});
             })
+        },
+        send() {
+            // TODO : send review
+            useWebAppPopup().showAlert(`Отзыв отправлен!`);
         }
     }
 }
