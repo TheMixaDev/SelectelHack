@@ -118,7 +118,7 @@ async function CreateDonation(hash, data, image) {
 async function UploadFile(hash, bytes) {
     const token = await GetUserToken(hash);
     try {
-        const res = await axios.post(`${config.get('network.api')}/files`,
+        const res = await axios.post(`${config.get('network.api')}/picture`,
             { bytes: bytes },
             {
                 headers: {
