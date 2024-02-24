@@ -2,6 +2,8 @@ package v1
 
 import (
 	"github.com/gofiber/fiber/v2"
+
+	"github.com/invalidteam/selectel_hack/utils"
 )
 
 func SetupRoutesV1(v1 *fiber.Router) {
@@ -53,5 +55,5 @@ func SetupRoutesV1(v1 *fiber.Router) {
 	picture := (*v1).Group("/picture")
 	picture.Post("/", picturePostHandler)
 
-	(*v1).Use(redirect)
+	(*v1).Use(utils.Redirect)
 }

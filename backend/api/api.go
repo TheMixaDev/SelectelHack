@@ -36,8 +36,6 @@ func CreateApi(address, port string) *Api {
 }
 
 // prometheusMiddleware generates a FiberPrometheus middleware for the given app.
-//
-// It takes an instance of a fiber.App and returns a pointer to a fiberprometheus.FiberPrometheus.
 func prometheusMiddleware(app *fiber.App) *fiberprometheus.FiberPrometheus {
 	// TODO: Make sure middleware works
 	prometheus := fiberprometheus.New("prometheus-service")
@@ -54,9 +52,8 @@ func (api *Api) ConfigureApp() *Api {
 			"message": "Selectel Hack API",
 		})
 	})
-	// +TODO: fix error Invalid or expired JWT for route /api/auth/registration/
+	
 	auth.SetupAuth(&apiGroup)
-
 	v1.SetupRoutesV1(&apiGroup)
 	return api
 }

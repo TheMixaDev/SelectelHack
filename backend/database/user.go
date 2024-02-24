@@ -3,22 +3,14 @@ package database
 import (
 	"context"
 	"fmt"
+	"strconv"
 	"time"
 
 	"github.com/invalidteam/selectel_hack/utils"
 )
 
-func NewUser(email, password, firstName string) *User {
-	user := &User{
-		Username:     utils.GenerateRandomString(16),
-		DateJoined:   time.Now(),
-		Email:        email,
-		HashPassword: password,
-		FirstName:    firstName,
-	}
-	return user
-}
-
+// CreateUserByEmail creates a new user in the database using the given email, password, and first name.
+// It returns the user ID and any error that occurred.
 func CreateUserByEmail(email, password, firstName string) (uint, error) {
 	badid, _ := GetUserIdByEmail(email)
 	if badid != 0 {
@@ -37,6 +29,8 @@ func CreateUserByEmail(email, password, firstName string) (uint, error) {
 	return id, nil
 }
 
+// CreateUserByPhone creates a new user in the database using the given phone number, password, and first name.
+// It returns the user ID and any error that occurred.
 func CreateUserByPhone(phone, password, firstName string) (uint, error) {
 	badid, _ := GetUserIdByPhone(phone)
 	if badid != 0 {
@@ -55,6 +49,7 @@ func CreateUserByPhone(phone, password, firstName string) (uint, error) {
 	return id, nil
 }
 
+// CheckUserAuthByPhone retrieves the user ID from the database based on the phone number
 func CheckUserAuthByPhone(phone, password string) (uint, error) {
 	var userId uint
 	row := database.QueryRow(context.Background(), `SELECT id FROM "User" WHERE phone = $1 AND hash_password = $2`, phone, password)
@@ -66,6 +61,7 @@ func CheckUserAuthByPhone(phone, password string) (uint, error) {
 	return userId, nil
 }
 
+// CheckUserAuthByEmail retrieves the user ID from the database based on the email address
 func CheckUserAuthByEmail(email, password string) (uint, error) {
 	var userId uint
 	row := database.QueryRow(context.Background(), `SELECT id FROM "User" WHERE email = $1 AND hash_password = $2`, email, password)
@@ -87,6 +83,7 @@ func AddUser(user *User) error {
 	return nil
 }
 
+// GetUserIdByEmail retrieves the user ID from the database based on the email address
 func GetUserIdByEmail(email string) (uint, error) {
 	var userId uint
 	row := database.QueryRow(context.Background(), `SELECT id FROM "User" WHERE email = $1`, email)
@@ -97,6 +94,7 @@ func GetUserIdByEmail(email string) (uint, error) {
 	return userId, nil
 }
 
+// GetUserIdByPhone retrieves the user ID from the database based on the phone number
 func GetUserIdByPhone(phone string) (uint, error) {
 	var userId uint
 	row := database.QueryRow(context.Background(), `SELECT id FROM "User" WHERE phone = $1`, phone)
@@ -143,52 +141,48 @@ type UserUpdate struct {
 	BloodGroup string `json:"blood_group"`
 }
 
+// UpdateUser updates the user with the given ID with the given update.
+// It returns an error if the update failed.
 func UpdateUser(id uint, update UserUpdate) error {
+	var fields []string
+	var values []interface{}
+
 	if update.LastName != "" {
-		_, err := database.Exec(context.Background(), `UPDATE "User" SET last_name = $1 WHERE id = $2`, update.LastName, id)
-		if err != nil {
-			return err
-		}
+		fields = append(fields, "last_name")
+		values = append(values, update.LastName)
 	}
-
 	if update.FirstName != "" {
-		_, err := database.Exec(context.Background(), `UPDATE "User" SET first_name = $1 WHERE id = $2`, update.FirstName, id)
-		if err != nil {
-			return err
-		}
+		fields = append(fields, "first_name")
+		values = append(values, update.FirstName)
 	}
-
 	if update.BirthDate != "" {
-		_, err := database.Exec(context.Background(), `UPDATE "User" SET birth_date = $1 WHERE id = $2`, update.BirthDate, id)
-		if err != nil {
-			return err
-		}
+		fields = append(fields, "birth_date")
+		values = append(values, update.BirthDate)
 	}
-
 	if update.CityID != "" {
-		_, err := database.Exec(context.Background(), `UPDATE "User" SET city_id = $1 WHERE id = $2`, update.CityID, id)
-		if err != nil {
-			return err
-		}
+		fields = append(fields, "city_id")
+		values = append(values, update.CityID)
 	}
-
 	if update.BloodGroup != "" {
-		_, err := database.Exec(context.Background(), `UPDATE "User" SET blood_group = $1 WHERE id = $2`, update.BloodGroup, id)
-		if err != nil {
-			return err
-		}
+		fields = append(fields, "blood_group")
+		values = append(values, update.BloodGroup)
 	}
 
-	return nil
+	if len(fields) == 0 {
+		return nil // No fields to update
+	}
+
+	// Construct the query string
+	query := `UPDATE "User" SET `
+	for i, field := range fields {
+		query += field + ` = $` + strconv.Itoa(i+1) + `, `
+	}
+	query = query[:len(query)-2] + ` WHERE id = $` + strconv.Itoa(len(fields)+1)
+
+	// Append the ID to the values slice
+	values = append(values, id)
+
+	// Execute the query
+	_, err := database.Exec(context.Background(), query, values...)
+	return err
 }
-
-// // TODO
-// func GetDonorCardByUserId(userID uint) (*DonorCard, error) {
-// 	var donorCard DonorCard
-// 	row := database.QueryRow(context.Background(), `SELECT * FROM "DonorCard" WHERE user_id = $1`, userID)
-// }
-
-// // TODO
-// func UpdateDonorCard(userID uint, donorCard *DonorCard) error {
-
-// }

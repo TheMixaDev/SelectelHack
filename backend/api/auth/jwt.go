@@ -22,10 +22,7 @@ func SetupAuth(api *fiber.Router) {
 	if err := GenerateOrLoadRsaKeyPair(); err != nil {
 		zap.S().Panicf("Failed to generate or load RSA key pair: %v", err)
 	}
-	// Login route
 	(*api).Post("/auth/login", loginRouter)
-	// Registration route
-	// +TODO: Prohibit register if phone/email is the db
 	(*api).Post("/auth/register", registrationRouter)
 
 	// JWT Middleware

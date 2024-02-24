@@ -2,9 +2,10 @@ package v1
 
 import (
 	"github.com/gofiber/fiber/v2"
+	"go.uber.org/zap"
+
 	"github.com/invalidteam/selectel_hack/api/auth"
 	"github.com/invalidteam/selectel_hack/database"
-	"go.uber.org/zap"
 )
 
 func authPostChangeEmailHandler(c *fiber.Ctx) error {
@@ -80,12 +81,6 @@ func authPostCheckSmsCodeHandler(c *fiber.Ctx) error {
 func authPostConfirmEmailRegHandler(c *fiber.Ctx) error {
 	return c.SendStatus(fiber.StatusNotImplemented)
 }
-
-// func authPostConfirmPhoneRegHandler(c *fiber.Ctx) error {
-// 	// Implement logic for POST /auth/confirm_phone_reg
-// 	zap.S().Debugln("Redirecting to https://hackaton.donorsearch.org/api/auth/confirm_phone_reg")
-// 	return proxy.Do(c, "https://hackaton.donorsearch.org/api/auth/confirm_phone_reg")
-// }
 
 func authPostLoginHandler(c *fiber.Ctx) error {
 	// Implement logic for POST /auth/login

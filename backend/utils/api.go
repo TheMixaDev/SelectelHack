@@ -1,4 +1,4 @@
-package v1
+package utils
 
 import (
 	"bytes"
@@ -10,8 +10,7 @@ import (
 	"go.uber.org/zap"
 )
 
-// TODO move outside
-func redirect(c *fiber.Ctx) error {
+func Redirect(c *fiber.Ctx) error {
 	url := "https://hackaton.donorsearch.org" + c.OriginalURL()
 	zap.S().Debugln(fmt.Sprintf("Redirecting to %s", url))
 
