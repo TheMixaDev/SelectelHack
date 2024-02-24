@@ -9,12 +9,12 @@ CREATE TABLE IF NOT EXISTS PhoneNumbers (
 CREATE TABLE IF NOT EXISTS City (
   id SERIAL PRIMARY KEY,
   title TEXT NOT NULL,
-  region_id INT NOT NULL, -- Assuming a Regions table exists or will be created
-  region TEXT NOT NULL,
-  country TEXT NOT NULL,
+  region_id INT,
+  region TEXT,
+  country TEXT,
   priority INT,
-  lat FLOAT NOT NULL,
-  lng FLOAT NOT NULL
+  lat FLOAT,
+  lng FLOAT
 );
 
 -- Additional join tables and modifications should be made based on the relationships that are not fully detailed in the provided schema.
