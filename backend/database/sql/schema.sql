@@ -132,40 +132,14 @@ CREATE TABLE IF NOT EXISTS EventTimeSlots (
 );
 
 CREATE TABLE IF NOT EXISTS "User" (
-  id SERIAL PRIMARY KEY,
+  id INT PRIMARY KEY,
   first_name TEXT NOT NULL,
   last_name TEXT,
   middle_name TEXT,
-  maiden_name TEXT,
   birth_date DATE,
-  gender TEXT,
-  email TEXT,
-  phone TEXT UNIQUE,
-  login_via_phone BOOLEAN,
-  about TEXT,
   city_id INT,
-  is_pin_20 BOOLEAN,
-  is_pin_100 BOOLEAN,
-  donation_agg_id INT, -- Assuming a DonationsAggregate table exists or will be created
-  socials JSON,
-  photo_id INT, -- Assuming a Photos table exists or will be created for storing user profile photos
-  next_donation_date DATE,
-  next_donation JSON, -- This could be a reference to a structured table or kept as JSON for flexibility
   blood_group TEXT,
-  hash_password TEXT NOT NULL,
-  is_email_verified BOOLEAN,
-  is_phone_verified BOOLEAN,
-  email_reconfirmed_at TIMESTAMP,
-  phone_reconfirmed_at TIMESTAMP,
-  start_donor_year DATE, -- Changed TIMESTAMP to DATE for clarity, assuming it refers to the year only
-  referral_code TEXT,
-  parent_user INT REFERENCES "User"(id), -- Self-referencing foreign key for referral system
-  invited_users JSON, -- This could be normalized into a separate table for better data management
-  donor_status_id INT, -- Assuming a DonorStatus table exists or will be created
-  managed_organizations TEXT, -- This could also be normalized into a separate table
-  joined_events INT, -- This should be replaced with a join table for many-to-many relationship with Events
-  joined_organizations INT, -- This should be replaced with a join table for many-to-many relationship with Organizations
-  donor_certificate BOOLEAN
+  hash_password TEXT
   --   CONSTRAINT fk_city FOREIGN KEY (city_id) REFERENCES City(id),
   --   CONSTRAINT fk_donation FOREIGN KEY (donation_agg_id) REFERENCES DonationsAggregate(id), -- Assuming a DonationsAggregate table exists
   --   CONSTRAINT fk_photo FOREIGN KEY (photo_id) REFERENCES Photos(id), -- Assuming a Photos table exists

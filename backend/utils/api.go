@@ -12,6 +12,9 @@ import (
 
 func Redirect(c *fiber.Ctx) error {
 	url := "https://hackaton.donorsearch.org" + c.OriginalURL()
+	if url[len(url)-1] != '/' {
+		url += "/"
+	}
 	zap.S().Debugln(fmt.Sprintf("Redirecting to %s", url))
 
 	client := &http.Client{}
@@ -31,7 +34,7 @@ func Redirect(c *fiber.Ctx) error {
 	defer resp.Body.Close()
 
 	zap.S().Debugln("Response status code:", resp.StatusCode)
-	zap.S().Debugln("Response headers:", resp.Header)
+	// zap.S().Debugln("Response headers:", resp.Header)
 
 	body, err := io.ReadAll(resp.Body)
 	if err != nil {

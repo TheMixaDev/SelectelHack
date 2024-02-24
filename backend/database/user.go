@@ -74,8 +74,8 @@ func CheckUserAuthByEmail(email, password string) (uint, error) {
 }
 func AddUser(user *User) error {
 	var userId uint
-	row := database.QueryRow(context.Background(), `INSERT INTO "User" (first_name, email, hash_password, username, date_joined, date_joined) VALUES ($1, $2, $3, $4, $5) RETURNING id`,
-		user.FirstName, user.Email, user.HashPassword, user.Username, user.DateJoined)
+	row := database.QueryRow(context.Background(), `INSERT INTO "User" (id, last_name, first_name, middle_name, birth_date, city_id, blood_group) VALUES ($1, $2, $3, $4, $5, $6, $7) RETURNING id`,
+		user.Id, user.LastName, user.FirstName, user.MiddleName, time.Now(), user.CityId, user.BloodGroup)
 	err := row.Scan(&userId)
 	if err != nil {
 		return err
@@ -108,24 +108,16 @@ func GetUserIdByPhone(phone string) (uint, error) {
 // GetUserById retrieves a user from the database by user ID
 func GetUserById(id uint) (*User, error) {
 	var user User
-	row := database.QueryRow(context.Background(), `SELECT  username,  first_name,  last_name,  middle_name,  maiden_name,  birth_date,  gender,  login_via_phone,  about,  city_id,  is_pin_20,  is_pin_100,  photo_id,  email_reconfirmed_at,  phone_reconfirmed_at,  donor_certificate, FROM "User" WHERE id = $1`, id)
+	row := database.QueryRow(context.Background(), `SELECT  id, last_name, first_name, middle_name, birth_date, city_id, blood_group FROM "User" WHERE id = $1`, id)
 	err := row.Scan(
-		&user.Username,
-		&user.FirstName,
+		&user.Id,
 		&user.LastName,
+		&user.FirstName,
 		&user.MiddleName,
-		&user.MaidenName,
 		&user.BirthDate,
-		&user.Gender,
-		&user.LoginViaPhone,
-		&user.About,
 		&user.CityId,
-		&user.IsPin20,
-		&user.IsPin100,
-		&user.PhotoId,
-		&user.EmailReconfirmedAt,
-		&user.PhoneReconfirmedAt,
-		&user.DonorCertificate)
+		&user.BloodGroup,
+	)
 	if err != nil {
 		return nil, err // Return nil user and the error
 	}
