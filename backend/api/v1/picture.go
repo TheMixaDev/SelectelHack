@@ -29,7 +29,7 @@ func picturePostHandler(c *fiber.Ctx) error {
 }
 
 func pictureGetHandler(c *fiber.Ctx) error {
-	img := c.Params("id", "0")
+	img := c.Query("id", "0")
 	img_url := "https://api.telegram.org/file/bot6983241538:AAHNmAHQb2xphCyQzy9YE1AVZiKfttNKkNg/" + img
 	fmt.Printf("Redirecting to %s", img_url)
 
