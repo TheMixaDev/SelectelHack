@@ -5,10 +5,9 @@ import { AuthUserWithTg, SetUserToken, UserLogOut } from './redis.js';
 import { CreateDonation, GetDonationsById, UploadFile, CreatePlanDonation } from './http.js';
 import config from 'config';
 import { GetUserToken, IsUserAuthorized } from "./redis.js";
-import { GetDonations, GetUserInfo } from "./http.js";
-import { GenerateLink, ImageUrlToByteArray, PrettyBloodGroup } from "./utils.js";
+import { GetUserInfo } from "./http.js";
+import { GenerateLink } from "./utils.js";
 import buttonTexts from "../assets/button_text.json";
-import axios from "axios";
 
 /**
  * Initialize the different scenes of the bot
@@ -60,10 +59,10 @@ function InitScenes() {
         });
     });
 
-   /**
-     * Handles web app data messages in the authentication scene.
-     * @param {Context} ctx - The context object.
-     */
+    /**
+      * Handles web app data messages in the authentication scene.
+      * @param {Context} ctx - The context object.
+      */
     authScene.on(message('web_app_data'), async (ctx) => {
         const { data, hash, id } = JSON.parse(ctx.message.web_app_data.data);
         if (hash !== HashStringWithString(id - 0, config.get('bot.secret'))) {
@@ -216,6 +215,7 @@ function InitScenes() {
         if (hash !== HashStringWithString(id - 0, config.get('bot.secret'))) {
             return ctx.reply('Ошибка авторизации.');
         }
+
         if (type == 'add_donation') {
             if (data.document == 1) {
                 const res = await CreateDonation(hash, data, { has: false, id: 0 });
@@ -233,42 +233,20 @@ function InitScenes() {
                 ctx.session = { data: data }
                 return ctx.scene.enter('uploadFileScene');
             }
-        } else if (type == 'update_donation') {
-            // Getting old donation
-            const old = await GetDonationsById(hash, data.id);
-            if (!old) {
-                console.error(`Error updating donation. UserHash: ${hash}`);
-                return ctx.reply("😢 Произошла ошибка при обновлении донации. Попробуйте еще раз.");
-            }
-            // if old donation has no image and new donation has image -> ask user to upload new image
-            if (!old.data.with_image && data.document == 0) {
-                ctx.session = { data: data }
-                return ctx.scene.enter('uploadFileScene');
-            }
-
-            // else update donation
-            const res = await CreateDonation(hash, data, { has: old.data.with_image, id: old.data.image_id });
-            if (!res) {
-                console.log(`Error updating donation. UserHash: ${hash}`);
-                return ctx.reply('Ошибка обновления донации.');
-            }
-
-            if (res.status == 200) {
-                return ctx.reply('🎉 Донация успешно обновлена!');
-            };
-
-            console.error(`Error updating donation. UserHash: ${hash}, Status: ${res.status}`);
-            return ctx.reply("😢 Произошла ошибка при обновлении донации. Попробуйте еще раз.");
         } else if (type == "plan_donation") {
             const res = await CreatePlanDonation(hash, data);
             if (!res) {
                 console.log(`Error planning donation. UserHash: ${hash}`);
                 return ctx.reply('Ошибка планирования донации.');
             }
-            if(res.status == 200) {
-                return ctx.reply('🕒 Донация успешно запланирована!');
+            if (res.status == 200) {
+                return ctx.reply('🕒 Донация успешно запланирована! Я пришлю вам напоминание в день запланированной донации.');
             }
         }
+    })
+
+    donateScene.action('cancel_callback', async (ctx) => {
+        console.log(ctx.callbackQuery.data)
     })
 
     /**
@@ -319,15 +297,11 @@ function InitScenes() {
 
         const id = ctx.message.from.id - 0;
         const hash = HashStringWithString(id, config.get('bot.secret'));
-
-        const response = await axios.get(link.href);
-        const fileBuffer = response.data;
-
         // Convert image to byte array
         // const bytes = await ImageUrlToByteArray(link.href);
 
         // Upload image to database
-        const uploadRes = await UploadFile(hash, fileBuffer);
+        const uploadRes = await UploadFile(hash, link);
         if (!uploadRes) {
             console.error(uploadRes);
             console.error(`Error uploading file. UserId: ${ctx.message.from}`);
@@ -338,7 +312,7 @@ function InitScenes() {
 
         // if success -> retrieve id from response and use it for creating donation
         if (uploadRes.status == 200) {
-            const res = await CreateDonation(hash, ctx.session.data, { has: true, id: uploadRes.data.id });
+            const res = await CreateDonation(hash, ctx.session.data, { has: true, id: link });
             if (!res) {
                 console.error(`Error creating donation. UserId: ${ctx.message.from.id}`);
                 return ctx.reply('☹️ Ошибка добавления донации. Попробуйте еще раз.');
@@ -470,24 +444,46 @@ function InitScenes() {
                         one_time_keyboard: true
                     }
                 });
-            case buttonTexts.myDonations:
-                var hash = HashStringWithString(id, config.get('bot.secret'));
-                var res = await GetDonations(hash, 1, 99)
-                if (!res) {
-                    return ctx.reply("😿 Произошла ошибка при получении донации. Попробуйте еще раз.");
-                }
-                if (res.status == 200) {
-                    // todo: parse donations
-                    if (res.data?.results?.length == 0) {
-                        return ctx.reply('👀 Здесь пока что пусто...');
-                    }
-                    return ctx.reply(`Ваши донации:\n${JSON.stringify(res.data.results)}`);
-                }
-                return ctx.reply("😢 Произошла ошибка при получении донации. Попробуйте еще раз.");
             case buttonTexts.backToMenu: return ctx.scene.enter('menuScene');
             default: return ctx.reply('Воспользуйтесь одной из кнопок 👇');
         }
     });
+
+    profileScene.on(message('web_app_data'), async (ctx) => {
+        const { type, data, hash, id } = JSON.parse(ctx.message.web_app_data.data);
+        if (hash !== HashStringWithString(id - 0, config.get('bot.secret'))) {
+            return ctx.reply('Ошибка авторизации.');
+        }
+
+        if (type == 'update_donation') {
+            // Getting old donation
+            var old = await GetDonationsById(hash, data.id);
+            if (!old) {
+                console.error(`Error updating donation. UserHash: ${hash}`);
+                return ctx.reply("😢 Произошла ошибка при обновлении донации. Попробуйте еще раз.");
+            }
+            old = old.data.donation;
+            // if old donation has no image and new donation has image -> ask user to upload new image
+            if (!old.with_image && data.document == 0) {
+                ctx.session = { data: data }
+                return ctx.scene.enter('uploadFileScene');
+            }
+
+            // else update donation
+            const res = await CreateDonation(hash, data, { has: old.with_image, id: old.image_id });
+            if (!res) {
+                console.log(`Error updating donation. UserHash: ${hash}`);
+                return ctx.reply('Ошибка обновления донации.');
+            }
+
+            if (res.status == 200) {
+                return ctx.reply('🎉 Донация успешно обновлена!');
+            };
+
+            console.error(`Error updating donation. UserHash: ${hash}, Status: ${res.status}`);
+            return ctx.reply("😢 Произошла ошибка при обновлении донации. Попробуйте еще раз.");
+        }
+    })
 }
 
 export default InitScenes;

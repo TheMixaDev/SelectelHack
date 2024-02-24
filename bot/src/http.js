@@ -30,7 +30,6 @@ async function GetDonations(hash, page, page_size) {
  * @returns {object} The user info
  */
 async function GetUserInfo(hash, token) {
-    console.log(token);
     try {
         const res = await axios.get(`${config.get('network.api')}/get/me`, {
             headers: {
@@ -54,25 +53,17 @@ async function GetUserInfo(hash, token) {
  */
 async function CreateDonation(hash, data, image) {
     const token = await GetUserToken(hash);
-    let user = await GetUserInfo(hash, token);
-    if (!user) {
-        return null;
-    }
-    user = user.data;
+    console.log('Input', data)
     const body = {}
     body.donate_at = data.date;
     body.blood_class = data.blood_type;
     body.payment_type = data.type - 0 == 0 ? 'free' : "payed";
-    body.city_id = data.city_id;
-    body.blood_station_id = data.center_id;
+    body.city_id = data.city_id - 0;
+    body.blood_station_id = data.center_id - 0;
     body.with_image = image.has;
     if (image.has) {
         body.image_id = image.id;
     }
-    body.user_id = user.id;
-    // body.first_name = user.first_name;
-    // body.last_name = user.last_name;
-    // body.middle_name = user.middle_name;
 
     if (data.id > 0) {
         body.id = data.id;
@@ -103,6 +94,7 @@ async function CreateDonation(hash, data, image) {
         return res;
     } catch (error) {
         console.error(`Error creating donation. User hash: ${hash} | ${error}`);
+        console.log(error);
         return null;
     }
 }
@@ -116,23 +108,14 @@ async function CreateDonation(hash, data, image) {
  */
 async function CreatePlanDonation(hash, data) {
     const token = await GetUserToken(hash);
-    let user = await GetUserInfo(hash);
-    if (!user) {
-        return null;
-    }
-    user = user.data;
     const body = {}
     body.donate_at = data.date;
     body.blood_class = data.blood_type;
     body.payment_type = data.type - 0 == 0 ? 'free' : "payed";
-    body.city_id = data.city_id;
-    body.blood_station_id = data.center_id;
-    body.user_id = user.id;
-    // body.first_name = user.first_name;
-    // body.last_name = user.last_name;
-    // body.middle_name = user.middle_name;
+    body.city_id = data.city_id - 0;
+    body.blood_station_id = data.center_id - 0;
     try {
-        const res = await axios.post(`${config.get('network.api')}/donation_plan`,
+        const res = await axios.post(`${config.get('network.api')}/donation_plan/`,
             body,
             {
                 headers: {
@@ -142,7 +125,7 @@ async function CreatePlanDonation(hash, data) {
             });
         return res;
     } catch (error) {
-        console.error(`Error creating donation. User hash: ${hash}, data: ${JSON.stringify(data)}.`);
+        console.error(`Error creating donation. User hash: ${hash}, data: ${JSON.stringify(body)}.`);
         return null;
     }
 }
