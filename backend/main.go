@@ -56,7 +56,7 @@ func main() {
 	scheduler.UploadConfig(&scheduler.RedisConfig{
 		Host:         viper.GetString("redis.host"),
 		DbID:         0,
-		PollInterval: 10,
+		PollInterval: 6,
 	})
 	scheduler.RunScheduler()
 

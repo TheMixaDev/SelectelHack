@@ -9,8 +9,6 @@ import (
 
 	"github.com/redis/go-redis/v9"
 	"go.uber.org/zap"
-
-	"github.com/invalidteam/selectel_hack/utils"
 )
 
 var (
@@ -90,7 +88,7 @@ func processDueTasks() {
 		}
 
 		// Check if the task is due
-		if task.NextExecution.After(time.Now()) {
+		if task.NextExecution.After(time.Now().Local()) {
 			continue
 		}
 
@@ -108,19 +106,7 @@ func processDueTasks() {
 			}
 
 		}
-
-		if task.Repeating {
-			curTime := time.Now().Local()
-			task.BeginTime = curTime
-			task.NextExecution = curTime.Add(time.Duration(task.Interval) * time.Millisecond)
-
-			_, err := scheduleTask(&task)
-			if err != nil {
-				zap.S().Errorf("Error rescheduling repeating task %s: %v\n", task.Name, err)
-			}
-		} else {
-			CancelTaskByName(task.Name)
-		}
+		CancelTaskByName(task.Name)
 	}
 }
 
@@ -129,7 +115,7 @@ func processDueTasks() {
 // It processes due tasks and sleeps for the specified poll interval.
 func RunScheduler() {
 	go func() {
-		ticker := time.NewTicker(time.Duration(redisConfig.PollInterval) * time.Second)
+		ticker := time.NewTicker(time.Duration(redisConfig.PollInterval) * time.Hour)
 		defer ticker.Stop()
 
 		for range ticker.C {
@@ -178,15 +164,14 @@ func CancelTaskByName(taskName string) error {
 // - interval: the interval at which the task should repeat, in milliseconds.
 //
 // It returns a string and an error.
-func AddTask(payload any, taskType TaskType, repeating bool, interval uint64) (string, error) {
-	beginTime, endTime := utils.CalculateInterval(uint(interval), 0)
+func AddTask(payload any, taskType TaskType, repeating bool, end time.Time) (string, error) {
 	task := Task{
-		BeginTime:     beginTime,
+		BeginTime:     time.Now().Local(),
 		Payload:       payload,
 		Type:          taskType,
-		Repeating:     repeating,
-		Interval:      interval,
-		NextExecution: endTime,
+		Repeating:     false,
+		Interval:      0,
+		NextExecution: end,
 	}
 
 	return scheduleTask(&task)
