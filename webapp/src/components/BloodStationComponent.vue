@@ -13,7 +13,7 @@ import UIButton from './ui/UIButton.vue';
                 Телефон: <a v-for="number in json.phone_numbers" :key="number.id">{{ number.phone }} &nbsp;</a><br>
             </p>
 
-            <ul class="flex space-x-7 sm:mt-0">
+            <ul class="flex space-x-4 sm:mt-0">
                 <li v-for="(value, key) in blood_groups" :key="key">
                     <a href="#" :class="json[value] == 'need' ? 'red' : 'green'">
                         {{ key }}

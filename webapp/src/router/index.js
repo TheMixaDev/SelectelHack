@@ -24,6 +24,16 @@ const router = createRouter({
       component: () => import('../views/RegisterView.vue')
     },
     {
+      path: '/static/howto',
+      name: 'howto',
+      component: () => import('../views/static/HowToView.vue')
+    },
+    {
+      path: '/static/precautions',
+      name: 'precautions',
+      component: () => import('../views/static/PrecautionsView.vue')
+    },
+    {
       path: '/donation/create',
       name: 'createDonation',
       component: () => import('../views/authorized/donations/CreateDonationView.vue')

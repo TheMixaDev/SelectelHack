@@ -19,7 +19,7 @@ import StarsComponent from './StarsComponent.vue';
                 classExtension="w-full px-5 py-2.5"
                 :disabled="loading"
             >Забрать бонус</UIButton>
-            <div class="text-center mt-2">
+            <div class="text-center mt-2" v-if="canBeRated">
                 <span class="text-gray-500 dark:text-gray-400 text-lg">Оцените бонус</span><br>
                 <StarsComponent class="inline-flex" v-model="stars"/>
                 <UILabeledInput v-model="comment">Комментарий</UILabeledInput>
@@ -42,6 +42,7 @@ export default {
     data() {
         return {
             loading: false,
+            canBeRated: false,
             stars: 5,
             comment: ""
         }
@@ -51,6 +52,7 @@ export default {
             this.loading = true;
             BonusService.getBonus(this.json.id, (data) => {
                 this.loading = false;
+                this.canBeRated = true;
                 useWebAppPopup().showAlert(`Промокод: ${data.promocode}`);
             }, () => {
                 this.loading = false;
