@@ -91,7 +91,7 @@ import { MainButton } from 'vue-tg';
                             </UIDropdownWithSearch>
                         </div>
                         <div>
-                            <b>Справка</b>
+                            <b class="block pb-2">Справка</b>
                             <div class="grid gap-2 mb-6 grid-cols-2" v-if="!lock_image">
                                 <UISelectorButton
                                     name="Загрузить сейчас"
@@ -114,7 +114,7 @@ import { MainButton } from 'vue-tg';
                                         'Донация без справки не будет учитываться для пути почетного донора.'
                                     ]"/>
                             </div>
-                            <img v-else :src="image_id" class="w-full p-3 rounded-lg">
+                            <img v-else :src="image_id" class="w-full m-3 rounded-lg">
                         </div>
                     </div>
                 </div>
@@ -228,6 +228,7 @@ export default {
                 acc[cur.id] = cur.title;
                 return acc;
             }, {});
+            this.updateCenters();
         }, () => {
             this.$notify({text: "Не удалось получить доступные города", type: "error"});
         })
