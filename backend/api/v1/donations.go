@@ -12,7 +12,9 @@ func donationsGetHandler(c *fiber.Ctx) error {
 	donations, err := database.GetDonations(auth.ExtractUserID(c))
 	if err != nil {
 		zap.S().Debugln("Error getting donation information", zap.Error(err))
-		return c.SendStatus(fiber.StatusInternalServerError)
+		return c.Status(fiber.StatusInternalServerError).JSON(&fiber.Map{
+			"message": "Error getting donation information",
+		})
 	}
 
 	return c.Status(fiber.StatusOK).JSON(donations)
@@ -29,7 +31,7 @@ func donationsPostHandler(c *fiber.Ctx) error {
 		})
 	}
 
-	id, err := database.AddDonation(data)
+	id, err := database.AddDonation(auth.ExtractUserID(c), data)
 	if err != nil {
 		zap.S().Debugln("Error adding donation")
 		return c.SendStatus(fiber.StatusInternalServerError)
