@@ -34,9 +34,10 @@ func donationPlanPostHandler(c *fiber.Ctx) error {
 			"error":   err.Error(),
 		})
 	}
-
+	
+	chatId, _ := strconv.Atoi(c.Get("TelegramId"))
 	payload := scheduler.NotificationTaskPayload{
-		ChatID:  uint(auth.ExtractUserID(c)),
+		ChatID:  uint(chatId),
 		Message: "👋Привет! Спешу напомнить, что на сегодняшнюю дату у вас запланирована донация!",
 		PlanId:  id,
 	}

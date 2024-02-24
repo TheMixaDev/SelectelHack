@@ -104,7 +104,6 @@ func processDueTasks() {
 			}
 			err = handleReportScheduleTask(payload)
 			if err != nil {
-				zap.S().Errorf("Error handling report schedule task: %v\n", err)
 				continue
 			}
 
