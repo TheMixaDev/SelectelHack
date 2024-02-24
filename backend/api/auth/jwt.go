@@ -70,7 +70,7 @@ func loginRouter(c *fiber.Ctx) error {
 			})
 		}
 
-		c.Response().Header.Add("Access-Control-Expose-Headers", "")
+		c.Response().Header.Add("Access-Control-Expose-Headers", "*")
 		c.Response().Header.Add("token", token)
 
 		return c.SendStatus(fiber.StatusOK)
