@@ -23,6 +23,7 @@ func donationsPostHandler(c *fiber.Ctx) error {
 
 	if err := c.BodyParser(&data); err != nil {
 		zap.S().Debugln("Error parsing body")
+		zap.S().Debugln(err)
 		return c.SendStatus(fiber.StatusBadRequest)
 	}
 
