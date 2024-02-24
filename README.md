@@ -1,13 +1,13 @@
 
 # Selectel Hackathon documentation
 1. **DevOps documentation**
-	1.1. **Prerequisites**: Listing the required tools and configurations needed before proceeding.
-	1.2. **Configuration Files Overview**: A description of the provided `lb.yaml` and `config.yaml` files, their roles, and how they fit into the setup.
-	1.3. **Setup Instructions**: Step-by-step instructions on how to use the configurations with Minikube to expose services to localhost.
-	1.4. **Usage**: How to interact with the services once they are exposed.
-	1.5. **Example Service List**
-	1.6. **Troubleshooting**: Common issues and their solutions.
-2. **Telegram bot documentation**
+ 	1. **Prerequisites**: Listing the required tools and configurations needed before proceeding.
+	2. **Configuration Files Overview**: A description of the provided `lb.yaml` and `config.yaml` files, their roles, and how they fit into the setup.
+	3. **Setup Instructions**: Step-by-step instructions on how to use the configurations with Minikube to expose services to localhost.
+	4. **Usage**: How to interact with the services once they are exposed.
+	5. **Example Service List**
+	6. **Troubleshooting**: Common issues and their solutions.
+3. **Telegram bot documentation**
 
 ## Prerequisites
 - Kubernetes cluster managed by Minikube
