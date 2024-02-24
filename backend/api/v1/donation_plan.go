@@ -28,7 +28,10 @@ func donationPlanPostHandler(c *fiber.Ctx) error {
 	id, err := database.AddDonationPlan(auth.ExtractUserID(c), data)
 	if err != nil {
 		zap.S().Debugln("Error adding donation plan")
-		return c.SendStatus(fiber.StatusInternalServerError)
+		return c.Status(fiber.StatusInternalServerError).JSON(&fiber.Map{
+			"message": "Error adding donation plan",
+			"error":   err.Error(),
+		})
 	}
 
 	// todo: create scheduler task here

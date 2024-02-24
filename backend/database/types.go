@@ -75,14 +75,12 @@ type Donation struct {
 	UserID         int    `json:"user_id"`
 }
 
-
 type DonationPlan struct {
-    ID             uint    `json:"id"`
-    BloodStationID int    `json:"blood_station_id"`
-    CityID         int    `json:"city_id"`
-    DonateAt       string `json:"donate_at"`
-    BloodClass     string `json:"blood_class"`
-    PaymentType    string `json:"payment_type"`
-    UserID         int    `json:"user_id"`
+	ID             uint   `json:"id"`
+	BloodStationID int    `json:"blood_station_id"`
+	CityID         int    `json:"city_id"`
+	DonateAt       string `json:"donate_at"`
+	BloodClass     string `json:"blood_class"`
+	PaymentType    string `json:"payment_type"`
+	UserID         int    `json:"user_id"`
 }
-
