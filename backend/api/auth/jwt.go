@@ -85,6 +85,7 @@ func registrationRouter(c *fiber.Ctx) error {
 		zap.S().Debugf("Invalid request: %v", err)
 		return c.Status(fiber.StatusBadRequest).JSON(&fiber.Map{
 			"message": "Invalid request. Please provide valid username and password.",
+			"error": err.Error(),
 		})
 	}
 

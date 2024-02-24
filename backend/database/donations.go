@@ -27,9 +27,9 @@ func GetDonations(id uint) ([]Donation, error) {
 	return donations, nil
 }
 
-func AddDonation(donation Donation) (int, error) {
+func AddDonation(userId uint, donation Donation) (int, error) {
 	row := database.QueryRow(context.Background(), "INSERT INTO donation (user_id, blood_station_id, image_id, city_id, donate_at, blood_class, payment_type, with_image) VALUES ($1, $2, $3, $4, $5, $6, $7, $8) RETURNING id",
-		donation.UserID, donation.BloodStationID, donation.ImageID, donation.CityID, donation.DonateAt, donation.BloodClass, donation.PaymentType, donation.WithImage)
+		userId, donation.BloodStationID, donation.ImageID, donation.CityID, donation.DonateAt, donation.BloodClass, donation.PaymentType, donation.WithImage)
 	err := row.Scan(&donation.ID)
 	if err != nil {
 		zap.S().Warnln("ERROR while inserting donation", zap.Error(err))
@@ -39,7 +39,6 @@ func AddDonation(donation Donation) (int, error) {
 	zap.S().Debugln("Donation inserted successfully", zap.Any("id", donation.ID))
 	return donation.ID, nil
 }
-
 
 func UpdateDonation(update Donation) error {
 	rows, err := database.Query(context.Background(), "UPDATE donation SET blood_station_id = $1, image_id = $2, city_id = $3, payment_type = $4, donate_at = $5, blood_class = $6, with_image = $7, user_id = $8 WHERE id = $9",

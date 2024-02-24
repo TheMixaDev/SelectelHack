@@ -10,7 +10,9 @@ func picturePostHandler(c *fiber.Ctx) error {
 	// Implement logic for POST /picture
 	var reqBody requestBody
 	if err := c.BodyParser(&reqBody); err != nil {
-		return err
+		return c.Status(fiber.StatusBadRequest).JSON(&fiber.Map{
+			"error": err.Error(),
+		})
 	}
 	// TODO: Save bytes to database + return image id
 	return c.Status(200).JSON(&fiber.Map{

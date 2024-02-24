@@ -12,7 +12,9 @@ func donationsGetHandler(c *fiber.Ctx) error {
 	donations, err := database.GetDonations(auth.ExtractUserID(c))
 	if err != nil {
 		zap.S().Debugln("Error getting donation information", zap.Error(err))
-		return c.SendStatus(fiber.StatusInternalServerError)
+		return c.Status(fiber.StatusInternalServerError).JSON(&fiber.Map{
+			"message": "Error getting donation information",
+		})
 	}
 
 	return c.Status(fiber.StatusOK).JSON(donations)
@@ -24,10 +26,12 @@ func donationsPostHandler(c *fiber.Ctx) error {
 	if err := c.BodyParser(&data); err != nil {
 		zap.S().Debugln("Error parsing body")
 		zap.S().Debugln(err)
-		return c.SendStatus(fiber.StatusBadRequest)
+		return c.Status(fiber.StatusBadRequest).JSON(&fiber.Map{
+			"message": err.Error(),
+		})
 	}
 
-	id, err := database.AddDonation(data)
+	id, err := database.AddDonation(auth.ExtractUserID(c), data)
 	if err != nil {
 		zap.S().Debugln("Error adding donation")
 		return c.SendStatus(fiber.StatusInternalServerError)
@@ -52,7 +56,9 @@ func donationsPatchWithIdHandler(c *fiber.Ctx) error {
 
 	if err := c.BodyParser(&data); err != nil {
 		zap.S().Debugln("Error parsing body")
-		return c.SendStatus(fiber.StatusBadRequest)
+		return c.Status(fiber.StatusBadRequest).JSON(&fiber.Map{
+			"message": err.Error(),
+		})
 	}
 
 	err := database.UpdateDonation(data)

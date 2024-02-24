@@ -31,7 +31,9 @@ func authGetDonorCardHandler(c *fiber.Ctx) error {
 func authPatchDonorCardHandler(c *fiber.Ctx) error {
 	var donorCard database.DonorCard
 	if err := c.BodyParser(&donorCard); err != nil {
-		return err
+		return c.Status(fiber.StatusBadRequest).JSON(&fiber.Map{
+			"message": err.Error(),
+		})
 	}
 
 	// err := database.UpdateDonorCard(auth.ExtractUserID(c), &donorCard)
