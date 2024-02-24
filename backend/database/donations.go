@@ -63,8 +63,8 @@ func AddDonation(userId uint, donation Donation) (uint, error) {
 }
 
 func UpdateDonation(update Donation) error {
-	rows, err := database.Query(context.Background(), "UPDATE donation SET blood_station_id = $1, image_id = $2, city_id = $3, payment_type = $4, donate_at = $5, blood_class = $6, with_image = $7, user_id = $8 WHERE id = $9",
-		update.BloodStationID, update.ImageID, update.CityID, update.PaymentType, update.DonateAt, update.BloodClass, update.WithImage, update.UserID, update.ID)
+	rows, err := database.Query(context.Background(), "UPDATE donation SET blood_station_id = $1, image_id = $2, city_id = $3, payment_type = $4, donate_at = $5, blood_class = $6, with_image = $7 WHERE id = $8",
+		update.BloodStationID, update.ImageID, update.CityID, update.PaymentType, update.DonateAt, update.BloodClass, update.WithImage, update.ID)
 	if err != nil {
 		return err
 	}
