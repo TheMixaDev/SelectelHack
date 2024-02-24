@@ -137,7 +137,7 @@ export default {
                 first_name: this.profile.first_name,
                 middle_name: this.profile.middle_name,
                 birth_date: this.profile.birth_date,
-                city_id: this.profile.city_id,
+                city_id: this.profile.city_id * 1,
                 blood_group: this.profile.blood_group
             }, () => {
                 this.$notify({text: "Профиль сохранен", type: "success"});
