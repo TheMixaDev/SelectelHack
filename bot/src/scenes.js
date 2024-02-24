@@ -384,7 +384,7 @@ function InitScenes() {
         if (!token) {
             return ctx.scene.enter('authScene');
         }
-        let usr = await GetUserInfo(hash)
+        let usr = await GetUserInfo(hash, token)
         if (!usr) {
             console.error(`Error to get user info. UserHash: ${hash}.`);
             return ctx.reply('Профиль', {
@@ -429,11 +429,11 @@ function InitScenes() {
         switch (ctx.message.text) {
             case buttonTexts.honoraryDonorStatus:
                 var hash = HashStringWithString(id, config.get('bot.secret'));
-                var usr = await GetUserInfo(hash)
                 var token = await GetUserToken(hash);
                 if (!token) {
                     return ctx.scene.enter('authScene');
                 }
+                var usr = await GetUserInfo(hash, token)
                 if (!usr) {
                     return ctx.reply('😔 Не удалось получить информацию о вашем статусе.', {
                         reply_markup: {
