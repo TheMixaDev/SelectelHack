@@ -10,20 +10,15 @@ import (
 
 func SetupRoutesV1(v1 *fiber.Router) {
 
-	authentication := (*v1).Group("/auth")
+	authentication := (*v1).Group("/auth").Use(jwtware.New(jwtware.Config{
+		SigningKey: jwtware.SigningKey{
+			JWTAlg: jwtware.RS256,
+			Key:    auth.Keys.PublicKey,
+		},
+	}))
 	// account data managent
-	authentication.Get("/me", authGetMeHandler).Use(jwtware.New(jwtware.Config{
-		SigningKey: jwtware.SigningKey{
-			JWTAlg: jwtware.RS256,
-			Key:    auth.Keys.PublicKey,
-		},
-	}))
-	authentication.Patch("/me", authPatchMeHandler).Use(jwtware.New(jwtware.Config{
-		SigningKey: jwtware.SigningKey{
-			JWTAlg: jwtware.RS256,
-			Key:    auth.Keys.PublicKey,
-		},
-	}))
+	authentication.Get("/me", authGetMeHandler)
+	authentication.Patch("/me", authPatchMeHandler)
 	// authentication
 	authentication.Post("/login", authPostLoginHandler)
 
