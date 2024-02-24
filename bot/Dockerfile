@@ -1,4 +1,4 @@
 FROM oven/bun
 COPY . .
 RUN bun install
-CMD ["bun", ""src/index.js"]
+CMD ["bun", "src/index.js"]
