@@ -120,7 +120,7 @@ export default {
             if(this.type == "email") {
                 AuthService.confirmEmail(code, this.userId, this.login, () => {
                     this.$notify({text:"Успешная регистрация", type: "success"});
-                    this.$router.push({name: "auth"});
+                    this.$router.push({path: "/auth"});
                 }, () => {
                     this.$notify({text:"Неверный код", type: "error"});
                 })
@@ -128,7 +128,7 @@ export default {
             if(this.type == "phone") {
                 AuthService.confirmEmail(code, this.userId, this.login, () => {
                     this.$notify({text:"Успешная регистрация", type: "success"});
-                    this.$router.push({name: "auth"});
+                    this.$router.push({path: "/auth"});
                 }, () => {
                     this.$notify({text:"Неверный код", type: "error"});
                 })
