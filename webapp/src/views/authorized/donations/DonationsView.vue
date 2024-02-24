@@ -23,7 +23,6 @@ import UITableEmpty from '@/components/ui/table/UITableEmpty.vue';
 
 <script>
 import { DonationService } from '@/services/DonationService'
-import { useWebAppPopup } from 'vue-tg';
 export default {
     name: 'DonationsView',
     data() {
@@ -38,7 +37,7 @@ export default {
         }
     },
     mounted() {
-        useWebAppPopup().showAlert(this.$cookies.get("token"));
+        alert(this.$cookies.get("token"));
         DonationService.getDonations((data) => {
             this.donations = data;
         }, () => {
