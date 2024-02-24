@@ -1,9 +1,18 @@
 package scheduler
 
 import (
+	"github.com/invalidteam/selectel_hack/database"
 	"github.com/invalidteam/selectel_hack/utils"
 )
 
 func handleReportScheduleTask(payload NotificationTaskPayload) error {
-	return utils.SendMessage(int64(payload.ChatID), "👋Привет! Спешу напомнить, что на сегодняшнюю дату у вас запланирована донация!")
+	err := database.DeleteDonationPlan(payload.PlanId)
+	if err != nil {
+		return err
+	}
+	err = utils.SendMessage(int64(payload.ChatID), payload.Message)
+	if err != nil {
+		return err
+	}
+	return nil
 }

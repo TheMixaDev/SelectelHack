@@ -35,8 +35,12 @@ func donationPlanPostHandler(c *fiber.Ctx) error {
 		})
 	}
 
-	// todo: create scheduler task here
-	scheduler.AddTask(auth.ExtractUserID(c), scheduler.NotificationSchedule, false, 15)
+	payload := scheduler.NotificationTaskPayload{
+		ChatID:  uint(auth.ExtractUserID(c)),
+		Message: "👋Привет! Спешу напомнить, что на сегодняшнюю дату у вас запланирована донация!",
+		PlanId:  id,
+	}
+	scheduler.AddTask(payload, scheduler.NotificationSchedule, false, 15000) // 15 seconds
 	zap.S().Debugln("Donation plan added successfully", zap.Any("id", id))
 	return c.Status(fiber.StatusOK).JSON(&fiber.Map{
 		"id": id,

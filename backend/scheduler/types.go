@@ -27,7 +27,7 @@ const (
 )
 
 type NotificationTaskPayload struct {
-	ChatID     uint `json:"chat_id"`
-	ScheduleID uint `json:"schedule_id"`
-	Interval   uint `json:"interval"`
+	ChatID  uint   `json:"chat_id"`
+	Message string `json:"message"`
+	PlanId  uint   `json:"plan_id"`
 }
