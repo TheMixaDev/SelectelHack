@@ -1,14 +1,15 @@
 package auth
 
 import (
+	"encoding/json"
 	"time"
 
-	jwtware "github.com/gofiber/contrib/jwt"
 	"github.com/gofiber/fiber/v2"
 	"github.com/golang-jwt/jwt/v5"
 	"go.uber.org/zap"
 
 	"github.com/invalidteam/selectel_hack/database"
+	"github.com/invalidteam/selectel_hack/utils"
 )
 
 type AuthRequest struct {
@@ -26,75 +27,54 @@ func SetupAuth(api *fiber.Router) {
 	(*api).Post("/auth/register", registrationRouter)
 
 	// JWT Middleware
-	(*api).Use(jwtware.New(jwtware.Config{
-		SigningKey: jwtware.SigningKey{
-			JWTAlg: jwtware.RS256,
-			Key:    keys.publicKey,
-		},
-	}))
+	// (*api).Use(jwtware.New(jwtware.Config{
+	// 	SigningKey: jwtware.SigningKey{
+	// 		JWTAlg: jwtware.RS256,
+	// 		Key:    keys.publicKey,
+	// 	},
+	// }))
 	zap.S().Debugln("JWT auth enabled successfully!")
 }
 
 func loginRouter(c *fiber.Ctx) error {
-	var form AuthRequest
+	utils.Redirect(c)
 
-	if err := c.BodyParser(&form); err != nil {
-		zap.S().Debugf("Invalid request: %v", err)
-		return c.Status(fiber.StatusBadRequest).JSON(&fiber.Map{
-			"message": "Invalid request. Please provide valid username and password.",
-		})
-	}
+	if c.Response().StatusCode() == 200 {
+		var user database.User
 
-	var (
-		id  uint
-		err error
-	)
-	if form.Phone == "" {
-		if form.Email == "" {
-			zap.S().Debug("No email or phone number provided!")
-			return c.Status(fiber.StatusBadRequest).JSON(&fiber.Map{
-				"message": "Please provide either email or phone number!",
-			})
-		}
-		id, err = database.CheckUserAuthByEmail(form.Email, form.HashPassword)
+		json.Unmarshal(c.Response().Body(), &user)
+
+		_, err := database.GetUserById(user.Id)
 		if err != nil {
-			zap.S().Debug("Invalid Email or password!", zap.String("email", form.Email))
-			zap.S().Debug(err)
-			return c.Status(fiber.StatusUnauthorized).JSON(&fiber.Map{
-				"message": "Invalid Email or password!",
-			})
+			err := database.AddUser(&user)
+			if err != nil {
+				zap.S().Errorf("Failed to add user: %v", err)
+				return c.Status(fiber.StatusInternalServerError).JSON(&fiber.Map{
+					"message": "Failed to add user",
+				})
+			}
 		}
-	} else {
-		id, err = database.CheckUserAuthByPhone(form.Phone, form.HashPassword)
+		claims := jwt.MapClaims{
+			"user_id": user.Id,
+			"exp":     time.Now().Add(time.Hour * 24 * 30).Unix(),
+		}
+		unsignedToken := jwt.NewWithClaims(jwt.SigningMethodRS256, claims)
+
+		// Sign the token using the private key
+		token, err := unsignedToken.SignedString(keys.privateKey)
 		if err != nil {
-			zap.S().Debug("Invalid Phone or password!", zap.String("phone", form.Phone))
-			zap.S().Debug(err)
-			return c.Status(fiber.StatusUnauthorized).JSON(&fiber.Map{
-				"message": "Invalid Phone or password!",
+			zap.S().Debugf("Error while signing token: %v", err)
+			return c.Status(fiber.StatusInternalServerError).JSON(&fiber.Map{
+				"message": "Unable to sign new token!",
 			})
 		}
+
+		c.Response().Header.Add("token", token)
+
+		return c.SendStatus(fiber.StatusOK)
 	}
 
-	// Create a JWT token with the user ID and expiration time
-	claims := jwt.MapClaims{
-		"user_id": id,
-		"exp":     time.Now().Add(time.Hour * 24 * 30).Unix(),
-	}
-	unsignedToken := jwt.NewWithClaims(jwt.SigningMethodRS256, claims)
-
-	// Sign the token using the private key
-	token, err := unsignedToken.SignedString(keys.privateKey)
-	if err != nil {
-		zap.S().Debugf("Error while signing token: %v", err)
-		return c.Status(fiber.StatusInternalServerError).JSON(&fiber.Map{
-			"message": "Unable to sign new token!",
-		})
-	}
-
-	zap.S().Debugln("User logged in successfully!", zap.Any("id", id))
-	return c.Status(fiber.StatusOK).JSON(&fiber.Map{
-		"token": token,
-	})
+	return c.SendStatus(c.Response().StatusCode())
 }
 
 func registrationRouter(c *fiber.Ctx) error {
