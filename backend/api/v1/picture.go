@@ -2,11 +2,12 @@ package v1
 
 import (
 	"bytes"
-	"io"
 	"fmt"
+	"io"
 	"net/http"
 
 	"github.com/gofiber/fiber/v2"
+	"github.com/spf13/viper"
 	"go.uber.org/zap"
 )
 
@@ -24,14 +25,14 @@ func picturePostHandler(c *fiber.Ctx) error {
 
 	return c.Status(200).JSON(&fiber.Map{
 		"message": "OK",
-		"id": 5675678567,
+		"id":      5675678567,
 	})
 }
 
 func pictureGetHandler(c *fiber.Ctx) error {
 	img := c.Query("id", "0")
-	img_url := "https://api.telegram.org/file/bot6983241538:AAHNmAHQb2xphCyQzy9YE1AVZiKfttNKkNg/" + img
-	fmt.Printf("Redirecting to %s", img_url)
+	img_url := fmt.Sprintf("https://api.telegram.org/file/%s:%s/", viper.GetString("bot.bot_id"), viper.GetString("bot.api_key")) + img
+	zap.S().Debugf("Redirecting to %s\n", img_url)
 
 	client := &http.Client{}
 
