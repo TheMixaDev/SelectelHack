@@ -19,7 +19,7 @@ type DonationWithCity struct {
 	CityTitle      string `json:"city_title"`
 }
 
-func GetDonations(id uint64) ([]DonationWithCity, error) {
+func GetDonations(id uint) ([]DonationWithCity, error) {
 	zap.S().Debug(id)
 	// Adjusted to join Donation table with City table
 	rows, err := database.Query(context.Background(), `
@@ -48,7 +48,7 @@ func GetDonations(id uint64) ([]DonationWithCity, error) {
 
 	return donations, nil
 }
-func AddDonation(userId uint, donation Donation) (uint64, error) {
+func AddDonation(userId uint, donation Donation) (uint, error) {
 	row := database.QueryRow(context.Background(), "INSERT INTO donation (user_id, blood_station_id, image_id, city_id, donate_at, blood_class, payment_type, with_image) VALUES ($1, $2, $3, $4, $5, $6, $7, $8) RETURNING id",
 		userId, donation.BloodStationID, donation.ImageID, donation.CityID, donation.DonateAt, donation.BloodClass, donation.PaymentType, donation.WithImage)
 	err := row.Scan(&donation.ID)
@@ -71,7 +71,7 @@ func UpdateDonation(update Donation) error {
 	return nil
 }
 
-func GetDonationById(id uint64) (Donation, error) {
+func GetDonationById(id uint) (Donation, error) {
 	row := database.QueryRow(context.Background(), "SELECT * FROM donation WHERE id = $1", id)
 	var donation Donation
 	err := row.Scan(&donation.ID, &donation.BloodStationID, &donation.ImageID, &donation.CityID,
