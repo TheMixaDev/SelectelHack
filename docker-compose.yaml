@@ -12,7 +12,8 @@ services:
         # condition: service_healthy
     restart: on-failure:5
     depends_on:
-      - crdb
+      crdb:
+        condition: service_healthy
 
   # It could instead, use volume-mounts.
   prometheus:
@@ -35,6 +36,12 @@ services:
      - "26257:26257"
      - "8080:8080"
    command: start-single-node --insecure
+   healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8080/health?ready=1"]
+      interval: 3s
+      timeout: 3s
+      retries: 5
+
    volumes:
      - "./persistence/cockroach/:/cockroach/cockroach-data"
   redis:
@@ -83,5 +90,8 @@ services:
   nginx:
     container_name: nginx
     build: ./webapp
+    restart: on-failure:5
     ports:
-      - '80:80'
+      - '443:443'
+    depends_on:
+      - backend-api
