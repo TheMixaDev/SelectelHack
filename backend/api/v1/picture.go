@@ -31,7 +31,7 @@ func picturePostHandler(c *fiber.Ctx) error {
 
 func pictureGetHandler(c *fiber.Ctx) error {
 	img := c.Query("id", "0")
-	img_url := fmt.Sprint("https://api.telegram.org/file/%s:%s/", viper.GetString("bot.bot_id"), viper.GetString("bot.api_key")) + img
+	img_url := fmt.Sprintf("https://api.telegram.org/file/%s:%s/", viper.GetString("bot.bot_id"), viper.GetString("bot.api_key")) + img
 	fmt.Printf("Redirecting to %s", img_url)
 
 	client := &http.Client{}
