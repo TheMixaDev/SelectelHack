@@ -5,7 +5,7 @@
   "dev": true,
   "db": {
     "user": "root",
-    "host": "localhost",
+    "host": "crdb",
     "port": "26257",
     "password": "",
     "dbname": "defaultdb",
@@ -13,6 +13,6 @@
     "sslrootcert": "database/cert/ca.crt",
     "sslcert": "database/cert/client.root.crt",
     "sslkey": "database/cert/client.root.key",
-    "schema": "database/sql/schema.sql"
+    "schema": "schema.sql"
   }
 }

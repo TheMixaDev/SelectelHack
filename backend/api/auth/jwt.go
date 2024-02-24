@@ -46,6 +46,7 @@ func loginRouter(c *fiber.Ctx) error {
 
 		_, err := database.GetUserById(user.Id)
 		if err != nil {
+			zap.S().Errorf("Failed to get user: %v", err)
 			err := database.AddUser(&user)
 			if err != nil {
 				zap.S().Errorf("Failed to add user: %v", err)
