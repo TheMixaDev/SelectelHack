@@ -15,7 +15,7 @@ func Redirect(c *fiber.Ctx) error {
 	if url[len(url)-1] != '/' {
 		url += "/"
 	}
-	zap.S().Debugln(fmt.Sprintf("Redirecting to %s", url))
+	fmt.Printf("Redirecting to %s", url)
 
 	client := &http.Client{}
 
