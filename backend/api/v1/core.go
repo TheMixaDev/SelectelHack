@@ -10,7 +10,7 @@ import (
 
 func SetupRoutesV1(v1 *fiber.Router) {
 
-	authentication := (*v1).Group("/auth").Use(jwtware.New(jwtware.Config{
+	authentication := (*v1).Group("/get").Use(jwtware.New(jwtware.Config{
 		SigningKey: jwtware.SigningKey{
 			JWTAlg: jwtware.RS256,
 			Key:    auth.Keys.PublicKey,
