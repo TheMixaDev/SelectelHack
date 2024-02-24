@@ -197,6 +197,19 @@ CREATE TABLE IF NOT EXISTS Donation (
     user_id INT NOT NULL
 );
 
+
+CREATE SEQUENCE IF NOT EXISTS donation_plan_sequence;
+
+CREATE TABLE IF NOT EXISTS DonationPlan (
+  id INT4 PRIMARY KEY DEFAULT nextval('donation_plan_sequence'),
+    blood_station_id INT,
+    city_id INT NOT NULL,
+    donate_at TEXT,
+    blood_class TEXT,
+    payment_type TEXT,
+    user_id INT NOT NULL
+)
+
 INSERT INTO City (id, title) VALUES (1, 'Москва') ON CONFLICT DO NOTHING;
 INSERT INTO City (id, title) VALUES (2, 'Санкт-Петербург') ON CONFLICT DO NOTHING;
 INSERT INTO City (id, title) VALUES (89, 'Новосибирск') ON CONFLICT DO NOTHING;

@@ -43,24 +43,6 @@ type DonationDetail struct {
 	User                   string    `json:"user"`
 }
 
-type DonationPlan struct {
-	ID           uint      `json:"id"`
-	Event        string    `json:"event"`
-	BloodStation string    `json:"blood_station"`
-	City         string    `json:"city"`
-	CreatedAt    time.Time `json:"created_at"`
-	UpdatedAt    time.Time `json:"updated_at"`
-	ObjectID     int       `json:"object_id,omitempty"`
-	BloodClass   string    `json:"blood_class,omitempty"`
-	PlanDate     string    `json:"plan_date"`
-	PaymentType  string    `json:"payment_type,omitempty"`
-	Status       string    `json:"status,omitempty"`
-	IsOut        bool      `json:"is_out"`
-	User         int       `json:"user"`
-	ContentType  int       `json:"content_type,omitempty"`
-	Donation     int       `json:"donation,omitempty"`
-}
-
 type DonorCard struct {
 	BloodGroup                 string `json:"blood_group,omitempty"`
 	Kell                       string `json:"kell,omitempty"`
@@ -92,3 +74,15 @@ type Donation struct {
 	WithImage      bool   `json:"with_image"`
 	UserID         int    `json:"user_id"`
 }
+
+
+type DonationPlan struct {
+    ID             uint    `json:"id"`
+    BloodStationID int    `json:"blood_station_id"`
+    CityID         int    `json:"city_id"`
+    DonateAt       string `json:"donate_at"`
+    BloodClass     string `json:"blood_class"`
+    PaymentType    string `json:"payment_type"`
+    UserID         int    `json:"user_id"`
+}
+
