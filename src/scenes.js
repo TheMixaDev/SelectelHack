@@ -120,7 +120,8 @@ function InitScenes() {
                         ],
                         [{ text: buttonTexts.profile }, { text: buttonTexts.updateProfile, web_app: { url: GenerateLink(config.get('network.webapp'), 'profile/setup', hash, id, token) } },],
                         [{ text: buttonTexts.guide, web_app: { url: GenerateLink(config.get('network.webapp'), 'static/howto', '', '', '') } },],
-                        [{ text: buttonTexts.donate }]
+                        [{ text: buttonTexts.donate }],
+                        [{ text: buttonTexts.exitAccount }]
                     ],
                     resize_keyboard: true,
                     one_time_keyboard: true,
