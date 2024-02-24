@@ -50,6 +50,7 @@ import UIButton from '@/components/ui/UIButton.vue';
 </template>
 
 <script>
+import { useWebApp } from 'vue-tg';
 export default {
     name: 'AuthView',
     data() {
@@ -79,7 +80,18 @@ export default {
                 let token = data.headers.token;
                 this.$cookies.set('token', token, "30d");
                 sessionStorage.setItem("is_auth", true);
-                this.$router.push({name: "setupProfile"});
+                useWebApp().sendData(JSON.stringify(
+                        {
+                            type: "auth",
+                            data: {
+                                token: this.$cookies.get("token")
+                            },
+                            hash: this.$cookies.get("hash"),
+                            id: this.$cookies.get("id")
+                        }
+                    ));
+                return;
+                //this.$router.push({name: "setupProfile"});
             }, (error) => {
                 Object.values(error.response.data).flat().forEach(message => {
                     this.$notify({text: message, type: "error"});
