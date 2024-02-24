@@ -10,7 +10,7 @@ export const AccountService = {
      * @return {void} 
      */
     getMe(success, fail, cookies) {
-        NetworkService.AuthRequest("GET", "auth/me/", {}, cookies, (response) => {
+        NetworkService.AuthRequest("GET", "get/me/", {}, cookies, (response) => {
             if(response.status === 200)
                 success(response.data);
             else fail(response.data);
@@ -26,7 +26,7 @@ export const AccountService = {
      * @return {type} undefined
      */
     patchMe(data, success, fail, cookies) {
-        NetworkService.AuthRequest("PATCH", "auth/me/", data, cookies, (response) => {
+        NetworkService.AuthRequest("PATCH", "get/me/", data, cookies, (response) => {
             if(response.status === 200)
                 success(response.data);
             else fail(response.data);
