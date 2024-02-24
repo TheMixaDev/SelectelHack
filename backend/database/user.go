@@ -74,9 +74,13 @@ func CheckUserAuthByEmail(email, password string) (uint, error) {
 }
 func AddUser(user *User) error {
 	var userId uint
+	_, err := GetUserById(user.Id)
+	if err == nil {
+		return nil
+	}
 	row := database.QueryRow(context.Background(), `INSERT INTO "User" (id, last_name, first_name, middle_name, birth_date, city_id, blood_group) VALUES ($1, $2, $3, $4, $5, $6, $7) RETURNING id`,
 		user.Id, user.LastName, user.FirstName, user.MiddleName, time.Now(), user.CityId, user.BloodGroup)
-	err := row.Scan(&userId)
+	err = row.Scan(&userId)
 	if err != nil {
 		return err
 	}

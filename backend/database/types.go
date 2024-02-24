@@ -3,16 +3,16 @@ package database
 import "time"
 
 type User struct {
-	Id           uint   `json:"id"`
-	Username     string `json:"username"`
-	FirstName    string `json:"first_name"`
-	LastName     string `json:"last_name"`
-	MiddleName   string `json:"middle_name"`
-	MaidenName   string `json:"maiden_name"`
-	BirthDate    string `json:"birth_date"`
-	CityId       uint   `json:"city_id"`
-	BloodGroup   string `json:"blood_group"`
-	HashPassword string `json:"hash_password"`
+	Id           uint      `json:"id"`
+	Username     string    `json:"username"`
+	FirstName    string    `json:"first_name"`
+	LastName     string    `json:"last_name"`
+	MiddleName   string    `json:"middle_name"`
+	MaidenName   string    `json:"maiden_name"`
+	BirthDate    time.Time `json:"birth_date"`
+	CityId       uint      `json:"city_id"`
+	BloodGroup   string    `json:"blood_group"`
+	HashPassword string    `json:"hash_password"`
 }
 type DonationCreate struct {
 	ID               uint `json:"id"`
