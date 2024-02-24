@@ -1,4 +1,5 @@
 <script setup>
+import { BonusService } from '@/services/BonusService';
 import UIButton from './ui/UIButton.vue';
 </script>
 
@@ -12,22 +13,36 @@ import UIButton from './ui/UIButton.vue';
                 <a href="#">{{ json.bonus_name }}</a>
             </h3>
             <span class="text-gray-500 dark:text-gray-400" v-if="json.city">От: {{json.partner_name}}</span>
-            <p class="mt-3 mb-4 font-light text-gray-500 dark:text-gray-400">
-                Получен: {{ json.is_taken ? 'Да' : 'Нет' }}
-            </p>
             <UIButton
-                @click="$emit('claim', json)"
+                @click="claim"
                 classExtension="w-full px-5 py-2.5"
-                :disabled="true"
+                :disabled="loading"
             >Забрать бонус</UIButton>
         </div>
     </div> 
 </template>
 
 <script>
+import { useWebAppPopup } from 'vue-tg'
 export default {
     name: 'BonusComponent',
     props: ['json'],
-    emits: ['claim']
+    data() {
+        return {
+            loading: false
+        }
+    },
+    methods: {
+        claim() {
+            this.loading = true;
+            BonusService.getBonus(this.json.id, (data) => {
+                this.loading = false;
+                useWebAppPopup().showAlert(`Промокод: ${data.promocode}`);
+            }, () => {
+                this.loading = false;
+                this.$notify({text: "Не удалось забрать бонус", type: "error"});
+            })
+        }
+    }
 }
 </script>
