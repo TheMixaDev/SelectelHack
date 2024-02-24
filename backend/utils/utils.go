@@ -50,3 +50,16 @@ func CalculateInterval(templatePeriod uint, timestamp int64) (time.Time, time.Ti
 
 	return intervalStart, intervalEnd
 }
+
+func SameDay(t1, t2 time.Time) bool {
+	return t1.Year() == t2.Year() && t1.YearDay() == t2.YearDay()
+}
+
+func GetDate(dateString string) (time.Time, error) {
+	layout := "2006-01-02"
+	desiredDate, err := time.Parse(layout, dateString)
+	if err != nil {
+		return time.Time{}, err
+	}
+	return desiredDate, nil
+}

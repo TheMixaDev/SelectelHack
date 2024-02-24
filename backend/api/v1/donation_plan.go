@@ -9,6 +9,7 @@ import (
 	"github.com/invalidteam/selectel_hack/api/auth"
 	"github.com/invalidteam/selectel_hack/database"
 	"github.com/invalidteam/selectel_hack/scheduler"
+	"github.com/invalidteam/selectel_hack/utils"
 )
 
 func donationPlanGetHandler(c *fiber.Ctx) error {
@@ -34,14 +35,15 @@ func donationPlanPostHandler(c *fiber.Ctx) error {
 			"error":   err.Error(),
 		})
 	}
-	
+
 	chatId, _ := strconv.Atoi(c.Get("TelegramId"))
 	payload := scheduler.NotificationTaskPayload{
 		ChatID:  uint(chatId),
 		Message: "👋Привет! Спешу напомнить, что на сегодняшнюю дату у вас запланирована донация!",
 		PlanId:  id,
 	}
-	scheduler.AddTask(payload, scheduler.NotificationSchedule, false, 15000) // 15 seconds
+	date, _ := utils.GetDate(data.DonateAt)
+	scheduler.AddTask(payload, scheduler.NotificationSchedule, false, date) // 15 seconds
 	zap.S().Debugln("Donation plan added successfully", zap.Any("id", id))
 	return c.Status(fiber.StatusOK).JSON(&fiber.Map{
 		"id": id,
