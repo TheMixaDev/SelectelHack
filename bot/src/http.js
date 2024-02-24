@@ -185,4 +185,4 @@ async function GetDonationsById(hash, id) {
     }
 }
 
-export { CreateDonation, GetUserInfo, GetDonations, UploadFile, GetDonationsById }
+export { CreateDonation, GetUserInfo, GetDonations, UploadFile, GetDonationsById, CreatePlanDonation }
