@@ -34,7 +34,7 @@ services:
      - "8080:8080"
    command: start-single-node --insecure
    volumes:
-     - "${PWD}/persistence/cockroach/:/cockroach/cockroach-data"
+     - "./persistence/cockroach/:/cockroach/cockroach-data"
   redis:
     container_name: redis
     image: redis:latest
@@ -45,7 +45,7 @@ services:
       - REDIS_PORT=6379
       - REDIS_DATABASES=16
     volumes:
-      - ${PWD}/persistence/redis/:/data
+      - ./persistence/redis/:/data
     restart: on-failure:3
     healthcheck:
       test: [ "CMD", "redis-cli", "ping" ]
@@ -60,7 +60,7 @@ services:
       - "9000:9000" # GUI
       - "9001:9001" # CLI
     volumes:
-      - ${PWD}/persistence/minio/:/data
+      - ./persistence/minio/:/data
     environment:
       MINIO_ROOT_USER: mnusr
       MINIO_ROOT_PASSWORD: Strong#Pass#2024
