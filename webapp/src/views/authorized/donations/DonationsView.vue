@@ -38,7 +38,7 @@ export default {
     },
     mounted() {
         DonationService.getDonations((data) => {
-            this.donations = data.results;
+            this.donations = data;
         }, () => {
             this.$notify({ text: "Не удалось получить донации", type: "error" });
         }, this.$cookies);
