@@ -32,6 +32,11 @@ import UIButton from '@/components/ui/UIButton.vue';
                             Войти
                         </UIButton>
                         <p class="text-sm font-light text-gray-500 dark:text-gray-400">
+                            <RouterLink to="/restore" :disabled="loading" class="font-medium text-primary-600 hover:underline dark:text-primary-500">
+                                Забыли пароль?
+                            </RouterLink>
+                        </p>
+                        <p class="text-sm font-light text-gray-500 dark:text-gray-400">
                             Нет аккаунта?
                             <RouterLink to="/register" :disabled="loading" class="font-medium text-primary-600 hover:underline dark:text-primary-500">
                                 Зарегестрироваться

@@ -28,5 +28,12 @@ export const AccountService = {
                 success(response.data);
             else fail(response.data);
         }, fail)
+    },
+    recover(username, success, fail) {
+        NetworkService.ClassicRequest("POST", "auth/recover/", { username }, (response) => {
+            if(response.status === 200)
+                success(response.data);
+            else fail(response.data);
+        }, fail)
     }
 }
