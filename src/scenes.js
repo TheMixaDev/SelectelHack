@@ -2,7 +2,7 @@ import { authScene, donateScece, menuScene, profileScene, uploadFileScene } from
 import { message } from 'telegraf/filters';
 import HashStringWithString from './hash.js';
 import { AuthUserWithTg, SetUserToken, UserLogOut } from './redis.js';
-import { CreateDonation, UploadFile } from './http.js';
+import { CreateDonation, GetDonationsById, UploadFile } from './http.js';
 import config from 'config';
 import { GetUserToken, IsUserAuthorized } from "./redis.js";
 import { GetDonations, GetUserInfo } from "./http.js";
@@ -200,8 +200,35 @@ function InitScenes() {
                 ctx.session = { data: data }
                 return ctx.scene.enter('uploadFileScene');
             }
+        } else if (type == 'update_donation') {
+            // Getting old donation
+            const old = await GetDonationsById(hash, data.id);
+            if (!old) {
+                console.error(`Error updating donation. UserHash: ${hash}, Status: ${old.status}`);
+                return ctx.reply("😢 Произошла ошибка при обновлении донации. Попробуйте еще раз.");
+            }
+            // if old donation has no image and new donation has image -> ask user to upload new image
+            if (!old.data.with_image && data.document == 0) {
+                ctx.session = { data: data }
+                return ctx.scene.enter('uploadFileScene');
+            }
+
+            // else update donation
+            const res = await CreateDonation(hash, data, { has: old.data.with_image, id: old.data.image_id });
+            if (!res) {
+                console.log(`Error updating donation. UserHash: ${hash}, Status: ${res.status}`);
+                return ctx.reply('Ошибка обновления донации.');
+            }
+
+            if (res.status == 200) {
+                return ctx.reply('🎉 Донация успешно обновлена!');
+            };
+
+            console.error(`Error updating donation. UserHash: ${hash}, Status: ${res.status}`);
+            return ctx.reply("😢 Произошла ошибка при обновлении донации. Попробуйте еще раз.");
+
         }
-    })
+    }) 
 
     uploadFileScene.enter(async (ctx) => {
         return ctx.reply('Пожалуйста, загрузите изображение', {
@@ -251,7 +278,7 @@ function InitScenes() {
         }
         // if success -> retrieve id from response and use it for creating donation
         if (uploadRes.status == 200) {
-            const res = await CreateDonation(hash, bytes, { has: true, id: uploadRes.data.id });
+            const res = await CreateDonation(hash, ctx.session.data, { has: true, id: uploadRes.data.id });
             if (!res) {
                 console.error(`Error creating donation. UserId: ${ctx.message.from.id}, Status: ${res.status}`);
                 return ctx.reply('☹️ Ошибка добавления донации. Попробуйте еще раз.');
@@ -300,7 +327,7 @@ function InitScenes() {
                             { text: buttonTexts.donorRating, web_app: { url: GenerateLink(config.get('network.webapp'), 'top', hash, id, token) } },
                         ],
                         [{ text: buttonTexts.honoraryDonorStatus },],
-                        [{ text: buttonTexts.myDonations }],
+                        [{ text: buttonTexts.myDonations, web_app: { url: GenerateLink(config.get('network.webapp'), 'donations', hash, id, token) } },],
                         [{ text: buttonTexts.backToMenu }]
                     ],
                     resize_keyboard: true,
@@ -318,7 +345,7 @@ function InitScenes() {
                         { text: buttonTexts.donorRating, web_app: { url: GenerateLink(config.get('network.webapp'), 'top', hash, id, token) } },
                     ],
                     [{ text: buttonTexts.honoraryDonorStatus },],
-                    [{ text: buttonTexts.myDonations }],
+                    [{ text: buttonTexts.myDonations, web_app: { url: GenerateLink(config.get('network.webapp'), 'donation', hash, id, token) } },],
                     [{ text: buttonTexts.backToMenu }]
                 ],
                 resize_keyboard: true,
@@ -346,7 +373,7 @@ function InitScenes() {
                                     { text: buttonTexts.donorRating, web_app: { url: GenerateLink(config.get('network.webapp'), 'top', hash, id, token) } },
                                 ],
                                 [{ text: buttonTexts.honoraryDonorStatus },],
-                                [{ text: buttonTexts.myDonations }],
+                                [{ text: buttonTexts.myDonations, web_app: { url: GenerateLink(config.get('network.webapp'), 'donation', hash, id, token) } },],
                                 [{ text: buttonTexts.backToMenu }]
                             ],
                             resize_keyboard: true,
@@ -366,7 +393,7 @@ function InitScenes() {
                                 { text: buttonTexts.donorRating, web_app: { url: GenerateLink(config.get('network.webapp'), 'top', hash, id, token) } },
                             ],
                             [{ text: buttonTexts.honoraryDonorStatus },],
-                            [{ text: buttonTexts.myDonations }],
+                            [{ text: buttonTexts.myDonations, web_app: { url: GenerateLink(config.get('network.webapp'), 'donation', hash, id, token) } },],
                             [{ text: buttonTexts.backToMenu }]
                         ],
                         resize_keyboard: true,

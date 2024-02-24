@@ -76,6 +76,23 @@ async function CreateDonation(hash, data, image) {
     body.last_name = user.last_name;
     body.middle_name = user.middle_name;
 
+    if (data.id) {
+        body.id = data.id;
+        try {
+            const res = await axios.patch(`${config.get('network.api')}/donations`,
+                body,
+                {
+                    headers: {
+                        Authorization: `Basic c2FyZWdvaDgzNkByaWNvcml0LmNvbTpzYXJlZ29oODM2QHJpY29yaXQuY29t`
+                    },
+                });
+
+            return res;
+        } catch (error) {
+            console.error(`Error updating donation. User hash: ${hash}, DontaionId: ${data.id}.`);
+            return null;
+        }
+    }
     try {
         const res = await axios.post(`${config.get('network.api')}/donations`,
             body,
@@ -116,4 +133,19 @@ async function UploadFile(hash, bytes) {
     }
 }
 
-export { CreateDonation, GetUserInfo, GetDonations, UploadFile }
+async function GetDonationsById(hash, id) {
+    const token = await GetUserToken(hash);
+    try {
+        const res = await axios.get(`${config.get('network.api')}/donations/${id}`, {
+            headers: {
+                Authorization: `Basic c2FyZWdvaDgzNkByaWNvcml0LmNvbTpzYXJlZ29oODM2QHJpY29yaXQuY29t`
+            }
+        });
+        return res;
+    } catch (error) {
+        console.error(`Error getting donation info. User hash: ${hash}`);
+        return null;
+    }
+}
+
+export { CreateDonation, GetUserInfo, GetDonations, UploadFile, GetDonationsById }
