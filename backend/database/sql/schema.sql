@@ -183,4 +183,16 @@ CREATE TABLE IF NOT EXISTS EventReports (
   --   CONSTRAINT fk_report FOREIGN KEY (report_id) REFERENCES Reports(id)
 );
 
+
 -- Donation and DonationPlan tables were defined but might need foreign key adjustments based on actual relationships.
+CREATE TABLE IF NOT EXISTS Donation (
+    id SERIAL PRIMARY KEY,
+    blood_station_id INT,
+    image_id INT,
+    city_id INT NOT NULL,
+    donate_at DATE,
+    blood_class TEXT,
+    payment_type TEXT,
+    with_image BOOLEAN,
+    user_id INT NOT NULL
+);
