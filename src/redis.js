@@ -23,8 +23,7 @@ redisClient.on('connect', () => {
  * @param {string} userId - the user id of the user
  * @returns {boolean} true if the user is authorized, false otherwise
  */
-async function isUserAuthorized(telegramId, userID) {
-    // redisClient.set(telegramId + ":auth", userID);
+async function IsUserAuthorized(telegramId, userID) {
     const id = await redisClient.get(telegramId + ":auth");
     return id == userID;
 }
@@ -34,18 +33,28 @@ async function isUserAuthorized(telegramId, userID) {
  * @param {string} telegramId - the telegram id of the user
  * @param {string} userId - the user id of the user
  */
-async function setTgIdForUser(hash, userId) {
+async function AuthUserWithTg(hash, userId) {
     redisClient.set(hash + ":auth", userId);
 }
 
+/**
+ * Sets the user's access token in the database
+ * @param {string} hash - the unique hash of the user
+ * @param {string} token - the user's access token
+ */
 async function setUserToken(hash, token) {
     redisClient.set(hash + ":token", token);
 }
 
-async function getUserToken(hash) {
+/**
+ * Returns the user's access token from the database
+ * @param {string} hash - the unique hash of the user
+ * @returns {string} the user's access token
+ */
+async function GetUserToken(hash) {
     return redisClient.get(hash + ":token");
 }
 
-export { redisClient, setTgIdForUser, isUserAuthorized, setUserToken, getUserToken};
+export { redisClient, AuthUserWithTg, IsUserAuthorized, setUserToken, GetUserToken};
 
 

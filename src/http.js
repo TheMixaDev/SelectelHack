@@ -1,30 +1,63 @@
 import axios from "axios";
 import config from "config";
-import { getUserToken } from "./redis.js";
+import { GetUserToken } from "./redis.js";
 
+/**
+ * Get the donations of a user
+ * @param {string} hash - The user's hash
+ * @param {number} page - The page number
+ * @param {number} page_size - The page size
+ * @returns {object} The response data
+ */
 async function GetDonations(hash, page, page_size) {
-    const token = await getUserToken(hash);
-    const res = await axios.get(`${config.get('network.api')}/donations?page_size=${page_size}&page=${page}`, {
-        headers: {
-            Authorization: `Basic c2FyZWdvaDgzNkByaWNvcml0LmNvbTpzYXJlZ29oODM2QHJpY29yaXQuY29t`
-        }
-    });
-    return res;
+    const token = await GetUserToken(hash);
+    try {
+        const res = await axios.get(`${config.get('network.api')}/donations?page_size=${page_size}&page=${page}`, {
+            headers: {
+                Authorization: `Basic c2FyZWdvaDgzNkByaWNvcml0LmNvbTpzYXJlZ29oODM2QHJpY29yaXQuY29t`
+            }
+        });
+        return res;
+    } catch (error) {
+        console.error(`Error getting donation info. User hash: ${hash}`);
+        return null;
+    }
 }
 
+/**
+ * Get the user info based on the user's hash
+ * @param {string} hash - The user's hash
+ * @returns {object} The user info
+ */
 async function GetUserInfo(hash) {
-    const token = await getUserToken(hash);
-    const res = await axios.get(`${config.get('network.api')}/auth/me`, {
-        headers: {
-            Authorization: `Basic c2FyZWdvaDgzNkByaWNvcml0LmNvbTpzYXJlZ29oODM2QHJpY29yaXQuY29t`
-        }
-    });
-    return res.data;
+    const token = await GetUserToken(hash);
+    try {
+        const res = await axios.get(`${config.get('network.api')}/auth/me`, {
+            headers: {
+                Authorization: `Basic c2FyZWdvaDgzNkByaWNvcml0LmNvbTpzYXJlZ29oODM2QHJpY29yaXQuY29t`
+            }
+        });
+        return res;
+    } catch (error) {
+        console.error(`Error getting user info. User hash: ${hash}.`);
+        return null;
+    }
 }
 
+/**
+ * Creates a new donation
+ * @param {string} hash - The user's hash
+ * @param {object} data - The donation data
+ * @param {object} image - The image data (has: bool, image_id: number)
+ * @returns {object} The response data
+ */
 async function CreateDonation(hash, data, image) {
-    const token = await getUserToken(hash);
-    const user = await GetUserInfo(hash);
+    const token = await GetUserToken(hash);
+    let user = await GetUserInfo(hash);
+    if (!user) {
+        return null;
+    }
+    user = user.data;
     const body = {}
     body.donate_at = data.date;
     body.blood_class = data.blood_type;
@@ -43,15 +76,44 @@ async function CreateDonation(hash, data, image) {
     body.last_name = user.last_name;
     body.middle_name = user.middle_name;
 
-    const res = await axios.post(`${config.get('network.api')}/donations`,
-        body,
-        {
-            headers: {
-                Authorization: `Basic c2FyZWdvaDgzNkByaWNvcml0LmNvbTpzYXJlZ29oODM2QHJpY29yaXQuY29t`
-            },
+    try {
+        const res = await axios.post(`${config.get('network.api')}/donations`,
+            body,
+            {
+                headers: {
+                    Authorization: `Basic c2FyZWdvaDgzNkByaWNvcml0LmNvbTpzYXJlZ29oODM2QHJpY29yaXQuY29t`
+                },
 
-        });
-    return res;
+            });
+        return res;
+    } catch (error) {
+        console.error(`Error creating donation. User hash: ${hash}, data: ${JSON.stringify(data)}.`);
+        return null;
+    }
 }
 
-export { CreateDonation, GetUserInfo, GetDonations }
+/**
+ * Uploads a file to the server
+ * @param {string} hash - The user's hash
+ * @param {Uint8Array} bytes - The file data
+ * @returns {object} The response data (image id or error)
+ */
+async function UploadFile(hash, bytes) {
+    const token = await GetUserToken(hash);
+    try {
+        const res = await axios.post(`${config.get('network.api')}/files`,
+            { bytes: bytes },
+            {
+                headers: {
+                    Authorization: `Basic c2FyZWdvaDgzNkByaWNvcml0LmNvbTpzYXJlZ29oODM2QHJpY29yaXQuY29t`
+                },
+
+            });
+        return res;
+    } catch (error) {
+        console.error("Error uploading file. User hash", hash)
+        return null;
+    }
+}
+
+export { CreateDonation, GetUserInfo, GetDonations, UploadFile }
