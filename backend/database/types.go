@@ -10,7 +10,7 @@ type User struct {
 	MiddleName   string    `json:"middle_name"`
 	MaidenName   string    `json:"maiden_name"`
 	BirthDate    time.Time `json:"birth_date"`
-	CityId       uint      `json:"city_id"`
+	CityId       int       `json:"city_id"`
 	BloodGroup   string    `json:"blood_group"`
 	HashPassword string    `json:"hash_password"`
 }

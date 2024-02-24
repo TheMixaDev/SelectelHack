@@ -39,7 +39,12 @@ func SetupRoutesV1(v1 *fiber.Router) {
 
 	// TODO ????
 	// donation plan management
-	donationPlan := (*v1).Group("/donation_plan")
+	donationPlan := (*v1).Group("/donation_plan").Use(jwtware.New(jwtware.Config{
+		SigningKey: jwtware.SigningKey{
+			JWTAlg: jwtware.RS256,
+			Key:    auth.Keys.PublicKey,
+		},
+	}))
 	donationPlan.Get("/", donationPlanGetHandler)
 	donationPlan.Post("/", donationPlanPostHandler)
 	donationPlan.Get("/:id", donationPlanGetWithIdHandler)
@@ -49,7 +54,12 @@ func SetupRoutesV1(v1 *fiber.Router) {
 	donationPlan.Get("/latest", donationPlanGetLatestHandler)
 
 	// Donation management
-	donations := (*v1).Group("/donations")
+	donations := (*v1).Group("/donations").Use(jwtware.New(jwtware.Config{
+		SigningKey: jwtware.SigningKey{
+			JWTAlg: jwtware.RS256,
+			Key:    auth.Keys.PublicKey,
+		},
+	}))
 	donations.Get("/", donationsGetHandler)
 	donations.Post("/", donationsPostHandler)
 	donations.Get("/:id", donationsGetWithIdHandler)

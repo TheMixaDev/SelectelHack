@@ -132,7 +132,7 @@ type UserUpdate struct {
 	LastName   string `json:"last_name"`
 	FirstName  string `json:"first_name"`
 	MiddleName string `json:"middle_name"`
-	CityID     string `json:"city_id"`
+	CityID     int    `json:"city_id"`
 	BirthDate  string `json:"birth_date"`
 	BloodGroup string `json:"blood_group"`
 }
@@ -155,7 +155,7 @@ func UpdateUser(id uint, update UserUpdate) error {
 		fields = append(fields, "birth_date")
 		values = append(values, update.BirthDate)
 	}
-	if update.CityID != "" {
+	if update.CityID != 0 {
 		fields = append(fields, "city_id")
 		values = append(values, update.CityID)
 	}
