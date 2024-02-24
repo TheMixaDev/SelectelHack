@@ -54,10 +54,6 @@ func (api *Api) ConfigureApp() *Api {
 			"message": "Selectel Hack API",
 		})
 	})
-	err := auth.GenerateOrLoadRsaKeyPair()
-	if err != nil {
-		zap.S().Panic(err)
-	}
 	// +TODO: fix error Invalid or expired JWT for route /api/auth/registration/
 	auth.SetupAuth(&apiGroup)
 
