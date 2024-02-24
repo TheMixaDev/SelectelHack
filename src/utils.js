@@ -38,4 +38,19 @@ async function ImageUrlToByteArray(imageUrl) {
         return null;
     }
 }
-export { GenerateLink, ImageUrlToByteArray };
+
+function PrettyBloodGroup(bloodGroup) {
+    switch (bloodGroup) {
+    case "o_plus": return "O(I) Rh+";
+    case "o_minus": return "O(I) Rh-";
+    case "a_plus": return "A(II) Rh+";
+    case "a_minus": return "A(II) Rh-";
+    case "b_plus": return "B(III) Rh+";
+    case "b_minus": return "B(III) Rh-";
+    case "ab_plus": return "AB(IV) Rh+";
+    case "ab_minus": return "AB(IV) Rh-";
+    default: return "Не знаю";
+
+    }
+}
+export { GenerateLink, ImageUrlToByteArray, PrettyBloodGroup };

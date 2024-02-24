@@ -6,7 +6,7 @@ import { CreateDonation, UploadFile } from './http.js';
 import config from 'config';
 import { GetUserToken, IsUserAuthorized } from "./redis.js";
 import { GetDonations, GetUserInfo } from "./http.js";
-import { GenerateLink, ImageUrlToByteArray } from "./utils.js";
+import { GenerateLink, ImageUrlToByteArray, PrettyBloodGroup } from "./utils.js";
 import buttonTexts from "../assets/button_text.json";
 
 /**
@@ -276,7 +276,7 @@ function InitScenes() {
             });
         }
         usr = usr.data;
-        let formattedString = `Ваш профиль:\n- Имя: ${usr.first_name}\n- Дата рождения: ${usr.birth_date}\n- Email: ${usr.email}\n- Город: ${usr.city.title}\n- Группа крови: ${usr.blood_group}`;
+        let formattedString = `Ваш профиль:\n> Имя: ${usr.first_name}\n> Дата рождения: ${usr.birth_date}\n> Email: ${usr.email}\n> Город: ${usr.city.title}\n> Группа крови: ${PrettyBloodGroup(usr.blood_group)}`;
         return ctx.reply(formattedString, {
             reply_markup: {
                 keyboard: [
