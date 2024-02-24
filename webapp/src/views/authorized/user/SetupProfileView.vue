@@ -2,38 +2,61 @@
 import Datepicker from '@vuepic/vue-datepicker';
 import '@vuepic/vue-datepicker/dist/main.css';
 
-//import UIInlineInput from '@/components/ui/UIInlineInput.vue';
-import UISmallButton from '@/components/ui/UISmallButton.vue';
 import UIDropdownWithSearch from '@/components/ui/UIDropdownWithSearch.vue';
+import UILabeledInput from '@/components/ui/UILabeledInput.vue';
+import UIButton from '@/components/ui/UIButton.vue';
 </script>
 
 <template>
-    <div class="loginBlock">
-        <div class="loginInputBlock">
-            <div class="loginSmall">
-                Настройка профиля
+    <section class="bg-gray-50 dark:bg-gray-900">
+        <div class="flex flex-col items-center justify-center px-6 py-8 mx-auto md:h-screen lg:py-0">
+            <div class="w-full bg-white rounded-lg shadow dark:border md:mt-0 sm:max-w-md xl:p-0 dark:bg-gray-800 dark:border-gray-700">
+                <div class="p-6 space-y-4 md:space-y-6 sm:p-8">
+                    <h1 class="text-xl font-bold leading-tight tracking-tight text-gray-900 md:text-2xl dark:text-white text-center">
+                        Настройка профиля
+                    </h1>
+                    <div class="space-y-4 md:space-y-6" action="#">
+                        <UILabeledInput
+                            v-model="last_name"
+                            type="text"
+                            property="last_name"
+                            placeholder="">
+                            Фамилия
+                        </UILabeledInput>
+                        <UILabeledInput
+                            v-model="first_name"
+                            type="text"
+                            property="first_name"
+                            placeholder="">
+                            Имя
+                        </UILabeledInput>
+                        <UILabeledInput
+                            v-model="middle_name"
+                            type="text"
+                            property="middle_name"
+                            placeholder="">
+                            Отчество
+                        </UILabeledInput>
+                        <p>Дата рождения</p>
+                        <Datepicker v-model="birth_date"
+                            locale="ru-RU"
+                            :enable-time-picker="false"
+                            :max-date="new Date()"
+                            format="dd.MM.yyyy"/>
+                        <p class="mb-2">Город</p>
+                        <UIDropdownWithSearch :options="cities" v-model="city_id">
+                            Выберите город
+                        </UIDropdownWithSearch>
+                        <p class="mb-2">Группа крови</p>
+                        <UIDropdownWithSearch :options="blood_groups" v-model="blood_group"/>
+                        <UIButton @click="auth" :disabled="loading || !isInputsSet" classExtension="w-full px-5 py-2.5">
+                            Сохранить
+                        </UIButton>
+                    </div>
+                </div>
             </div>
-            <form class="" id="new_user" novalidate="">
-                <!--UIInlineInput v-model="last_name" placeholder="Фамилия*" type="text" property="last_name"/>
-                <UIInlineInput v-model="first_name" placeholder="Имя*" type="text" property="first_name"/>
-                <UIInlineInput v-model="middle_name" placeholder="Отчество" type="text" property="middle_name"/-->
-                <p>Дата рождения</p>
-                <Datepicker v-model="birth_date"
-                    locale="ru-RU"
-                    :enable-time-picker="false"
-                    class="p-3"
-                    :max-date="new Date()"
-                    format="dd.MM.yyyy"/>
-                <p class="mb-2">Город</p>
-                <UIDropdownWithSearch :options="cities" v-model="city_id">
-                    Выберите город
-                </UIDropdownWithSearch>
-                <p class="mb-2">Группа крови</p>
-                <UIDropdownWithSearch :options="blood_groups" v-model="blood_group"/>
-                <UISmallButton @click="save" type="button">Сохранить</UISmallButton>
-            </form>
         </div>
-    </div>
+    </section>
 </template>
 
 <script>
@@ -68,38 +91,46 @@ export default {
     },
     methods: {
         save() {
-            /*if(this.last_name.length < 1) {
+            if(this.last_name.length < 1) {
                 this.$notify({text: "Введите фамилию", type: "error"});
                 return;
             }
             if(this.first_name.length < 1) {
                 this.$notify({text: "Введите имя", type: "error"});
                 return;
-            }*/
+            }
             if(this.city_id < 1) {
                 this.$notify({text: "Выберите город", type: "error"});
                 return;
             }
-            /*this.profile.last_name = this.last_name;
+            this.profile.last_name = this.last_name;
             this.profile.first_name = this.first_name;
-            this.profile.middle_name = this.middle_name;*/
+            this.profile.middle_name = this.middle_name;
 
             this.profile.birth_date = this.birth_date.toISOString().substring(0, 10);
             this.profile.city_id = this.city_id;
             this.profile.blood_group = this.blood_group;
             AccountService.patchMe({
+                last_name: this.profile.last_name,
+                first_name: this.profile.first_name,
+                middle_name: this.profile.middle_name,
                 birth_date: this.profile.birth_date,
-                city_id: this.profile.city_id
+                city_id: this.profile.city_id,
+                blood_group: this.profile.blood_group
             }, () => {
-                AccountService.patchCard({
-                    blood_group: this.profile.blood_group
-                }, () => {
-                    this.$notify({text: "Профиль сохранен", type: "success"});
-                    // send data to webapp
-                    useWebApp().close();
-                }, () => {
-                    this.$notify({text: "Не удалось сохранить профиль", type: "error"});
-                }, this.$cookies);
+                this.$notify({text: "Профиль сохранен", type: "success"});
+                let type = sessionStorage.getItem("is_auth") ? "auth" : "update";
+                sessionStorage.removeItem("is_auth");
+                useWebApp().sendData(JSON.stringify(
+                        {
+                            type: type,
+                            data: {
+                                token: this.$cookies.get("token")
+                            },
+                            hash: this.$cookies.get("hash"),
+                            id: this.$cookies.get("id")
+                        }
+                    ));
             }, () => {
                 this.$notify({text: "Не удалось сохранить профиль", type: "error"});
             }, this.$cookies);

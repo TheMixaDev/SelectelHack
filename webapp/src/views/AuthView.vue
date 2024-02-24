@@ -79,20 +79,17 @@ export default {
             AuthService.login(this.login, this.password, (data) => {
                 let token = data.headers.token;
                 this.$cookies.set('token', token, "30d");
-                try {
-                    useWebApp().sendData(JSON.stringify(
-                        {
-                            type: "auth",
-                            data: {
-                                token: token
-                            },
-                            hash: this.$cookies.get("hash"),
-                            id: this.$cookies.get("id")
-                        }
-                    ));
-                } catch(e) {
-                    console.log(e);
-                }
+                useWebApp().sendData(JSON.stringify( //temp
+                    {
+                        type: "auth",
+                        data: {
+                            token: token
+                        },
+                        hash: this.$cookies.get("hash"),
+                        id: this.$cookies.get("id")
+                    }
+                ));
+                sessionStorage.setItem("is_auth", true);
                 this.$router.push({name: "setupProfile"});
             }, (error) => {
                 Object.values(error.response.data).flat().forEach(message => {
