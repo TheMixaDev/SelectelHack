@@ -12,7 +12,7 @@ import (
 
 func main() {
 	if err := viperSetup(); err != nil {
-		zap.L().Sugar().Panic(err)
+		zap.S().Panic(err)
 	}
 
 	// Setting up logger
@@ -36,17 +36,17 @@ func main() {
 	}
 	err := database.PostgresInit(&config)
 	if err != nil {
-		zap.L().Sugar().Panic(err)
+		zap.S().Panic(err)
 	}
 
 	file, err := os.ReadFile(viper.GetString("db.schema"))
 	if err != nil {
-		zap.L().Sugar().Panic(err)
+		zap.S().Panic(err)
 	}
-	
+
 	err = database.CreateSchema(string(file))
 	if err != nil {
-		zap.L().Sugar().Panic(err)
+		zap.S().Panic(err)
 	}
 	zap.L().Info("Schema created")
 

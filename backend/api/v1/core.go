@@ -2,40 +2,37 @@ package v1
 
 import (
 	"github.com/gofiber/fiber/v2"
-	"github.com/invalidteam/selectel_hack/api/auth"
 )
 
-func SetupRoutesV1(root *fiber.Router) {
-	v1 := (*root).Group("/api")
-	auth.SetupAuth(&v1)
+func SetupRoutesV1(v1 *fiber.Router) {
 
-	addressNeeds := v1.Group("/address_needs")
+	addressNeeds := (*v1).Group("/address_needs")
 	addressNeeds.Get("/", addressNeedsGetHandler)
 	addressNeeds.Post("/", addressNeedsPostHandler)
 	addressNeeds.Get("/:id", addressNeedsGetWithIdHandler)
 
-	authentication := v1.Group("/auth")
+	authentication := (*v1).Group("/auth")
 	// account data managent
 	authentication.Post("/change_email", authPostChangeEmailHandler)
 	authentication.Post("/change_password", authPostChangePasswordHandler)
 	authentication.Post("/change_phone", authPostChangePhoneHandler)
-	authentication.Post("/confirm_email", authPostConfirmPhoneHandler)
+	authentication.Post("/confirm_email", authPostConfirmEmailHandler)
 	authentication.Get("/donor_card", authGetDonorCardHandler)
-	authentication.Post("/donor_card", authPostDonorCardHandler)
+	authentication.Patch("/donor_card", authPatchDonorCardHandler)
 	authentication.Get("/me", authGetMeHandler)
-	authentication.Patch("/me", authPostMeHandler)
+	authentication.Patch("/me", authPatchMeHandler)
 
 	// account recovery
-	authentication.Post("/check_sms_code", authPostCheckSmsCodeHandler)
-	authentication.Post("/recover", authPostRecoverHandler)
-	authentication.Post("/resend_code", authPostResendCodeHandler)
-	authentication.Post("/resend_email_code", authPostResendEmailCodeHandler)
+	authentication.Post("/check_sms_code", redirect) // unused
+	authentication.Post("/recover", redirect)
+	authentication.Post("/resend_code", redirect)
+	authentication.Post("/resend_email_code", redirect)
 	authentication.Post("/set_password", authPostSetPasswordHandler)
 
 	// account creation and confirmation
-	authentication.Post("/confirm_email_reg", authPostConfirmEmailRegHandler)
-	authentication.Post("/confirm_phone_reg", authPostConfirmPhoneRegHandler)
-	authentication.Post("/registration", authPostRegistrationHandler)
+	authentication.Post("/confirm_email_reg", redirect)
+	authentication.Post("/confirm_phone_reg", redirect)
+	authentication.Post("/registration", redirect)
 
 	// authentication
 	authentication.Post("/login", authPostLoginHandler)
@@ -45,7 +42,7 @@ func SetupRoutesV1(root *fiber.Router) {
 	authentication.Post("/set_two_factor_auth", authPostSetTwoFactorAuthHandler)
 
 	// blood station information
-	bloodStations := v1.Group("/blood_stations")
+	bloodStations := (*v1).Group("/blood_stations")
 	bloodStations.Get("/", bloodStationsGetHandler)
 	bloodStations.Get("/:id", bloodStationsGetWithIdHandler)
 	bloodStations.Get("/:id/planned", bloodStationsGetPlannedWithIdHandler)
@@ -55,35 +52,35 @@ func SetupRoutesV1(root *fiber.Router) {
 	bloodStations.Get("/map", bloodStationsGetMapHandler)
 	bloodStations.Get("/search", bloodStationsGetSearchHandler)
 	bloodStations.Get("/selected", bloodStationsGetSelectedHandler)
-	needs := v1.Group("/needs")
+	needs := (*v1).Group("/needs")
 	needs.Get("/", needsGetHandler)
 	needs.Get("/:id", needsGetWithIdHandler)
 	needs.Get("/available", needsGetAvailableHandler)
 
 	// bonuses information
-	bonuses := v1.Group("/bonuses")
+	bonuses := (*v1).Group("/bonuses")
 	bonuses.Get("/", bonusesGetHandler)
 	bonuses.Get("/:id", bonusesGetWithIdHandler)
-	bonuses.Post("/:id/feedback", bonusesPostFeedbackHandler)
+	bonuses.Post("/:id/feedback", bonusesPostFeedbackHandler) // TODO переделать для публикации оценки и получения оценки
 
 	// bonuses
 	bonuses.Get("/:id/feedback", bonusesGetFeedbackWithIdHandler)
-	bonuses.Patch("/:id/feedback", bonusesPatchFeedbackHandler)
+	bonuses.Patch("/:id/feedback", bonusesPatchFeedbackHandler) // TODO переделать для публикации оценки и получения оценки
 
 	// regions
-	cities := v1.Group("/cities")
+	cities := (*v1).Group("/cities")
 	cities.Get("/", citiesGetHandler)
 	cities.Get("/:id", citiesGetWithIdHandler)
 	cities.Get("/by_location", citiesGetByLocationHandler)
-	countries := v1.Group("/countries")
+	countries := (*v1).Group("/countries")
 	countries.Get("/", countriesGetHandler)
 	countries.Get("/:id", countriesGetWithIdHandler)
-	regions := v1.Group("/regions")
+	regions := (*v1).Group("/regions")
 	regions.Get("/", regionsGetHandler)
 	regions.Get("/:id", regionsGetWithIdHandler)
 
 	// donation plan management
-	donationPlan := v1.Group("/donation_plan")
+	donationPlan := (*v1).Group("/donation_plan")
 	donationPlan.Get("/", donationPlanGetHandler)
 	donationPlan.Post("/", donationPlanPostHandler)
 	donationPlan.Get("/:id", donationPlanGetWithIdHandler)
@@ -93,7 +90,7 @@ func SetupRoutesV1(root *fiber.Router) {
 	donationPlan.Get("/latest", donationPlanGetLatestHandler)
 
 	// Donation management
-	donations := v1.Group("/donations")
+	donations := (*v1).Group("/donations")
 	donations.Get("/", donationsGetHandler)
 	donations.Post("/", donationsPostHandler)
 	donations.Get("/:id", donationsGetWithIdHandler)
@@ -103,16 +100,17 @@ func SetupRoutesV1(root *fiber.Router) {
 	donations.Get("/is-exists", donationsGetIsExistsHandler)
 
 	// Events
-	events := v1.Group("/events")
-	events.Get("/", eventsGetHandler)
+	events := (*v1).Group("/events")
+	events.Get("/", redirect)
 	events.Get("/:id", eventsGetWithIdHandler)
 
 	// picture
-	picture := v1.Group("/picture")
+	picture := (*v1).Group("/picture")
 	picture.Post("/", picturePostHandler)
 
 	// user information
-	usersTop := v1.Group("/users_top")
-	usersTop.Get("/", usersTopGetHandler)
+	usersTop := (*v1).Group("/users_top")
+	usersTop.Get("/", redirect)
 
+	// (*v1).Use(redirect)
 }

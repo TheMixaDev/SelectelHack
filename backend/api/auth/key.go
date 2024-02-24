@@ -43,14 +43,14 @@ func GenerateOrLoadRsaKeyPair() error {
 			publicKey:  publicKey,
 		}
 
-		zap.L().Sugar().Debugln("RSA key pair loaded successfully!")
+		zap.S().Debugln("RSA key pair loaded successfully!")
 
 		return nil
 	} else {
 		keyPair, err := generateNewRsaKeyPair()
 		if err == nil {
 			keys = keyPair
-			zap.L().Sugar().Debugln("Generated new RSA key pair!")
+			zap.S().Debugln("Generated new RSA key pair!")
 			savePEMKey("private.pem", keyPair.privateKey)
 			savePEMKey("public.pem", keyPair.publicKey)
 		}
