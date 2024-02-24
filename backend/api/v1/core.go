@@ -70,6 +70,7 @@ func SetupRoutesV1(v1 *fiber.Router) {
 	// picture
 	picture := (*v1).Group("/picture")
 	picture.Post("/", picturePostHandler)
+	picture.Get("/", pictureGetHandler)
 
 	(*v1).Use(utils.Redirect)
 }
