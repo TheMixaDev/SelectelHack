@@ -8,7 +8,13 @@
 	5. **Example Service List**
 	6. **Troubleshooting**: Common issues and their solutions.
 2. **Telegram bot documentation**
-
+	1. **Introduction**
+	2. **Features**
+	3. **Installation**
+	4. **Configuration**
+	5. **API Interactions**
+	6. **Usage**
+# DevOps documentation
 ## Prerequisites
 - Kubernetes cluster managed by Minikube
 - kubectl configured to interact with your cluster
@@ -71,4 +77,52 @@ Once the services are exposed, you can access the CockroachDB cluster's Admin UI
 - **Port Conflicts**: If there are conflicts on ports `8080` or `26257`, verify that no other services are using those ports on your localhost.
 - **Connection refused**: when trying to connect to Redis Insight  UI via minikube tunnel
 	- **fix**: `kubectl port-forward -n redis-dev deployment/redisinsight 5540` and forward port
+
+# Telegram bot documentation
+
+## Introduction
+
+DonorSearchBot is a Telegram bot designed to assist users in managing their blood donations, finding events, and accessing various related services directly from the Telegram app. It provides a convenient interface for users to register, log in, plan blood donations, and much more.
+
+## Features
+
+-   **Authentication:** New users can register, and existing users can log in using a secure authentication process.
+-   **Main Menu Navigation:** Users can navigate through various options including scheduling blood donations, accessing their profile, and viewing upcoming events.
+-   **Blood Donation:** Users can schedule donations, find where their blood type is needed, and view their donation history.
+-   **User Profile:** Access and update personal profile information including bonus points and donor rating.
+-   **Support the Project:** Options for users to donate to the project and support its operations.
+-   **Event Information:** Users can view upcoming events related to blood donation.
+-   **Image Upload:** Facility to upload documents or images as part of the donation process.
+
+## Installation
+
+1.  Clone the repository to your local machine.
+2.  Install the required dependencies as listed in the `package.json` file.
+3.  Set up your Telegram bot via BotFather and obtain the bot token.
+4.  Configure your environment variables including the bot token and any other required API keys.
+5. 
+## Configuration
+
+The bot's configuration is defined in a JSON object, specifying various settings critical for its operation. These include:
+
+-   **Bot Token and Secret:** Essential for authenticating the bot with the Telegram API.
+-   **Network Settings:** Defines URLs for the web app and API endpoints, facilitating interactions with external services.
+-   **Server Configuration:** Specifies the port on which the bot's server should listen.
+-   **Redis Configuration:** Details for connecting to a Redis database, including address, database number, and password.
+
+##  API Interactions
+
+The bot interacts with a backend API to perform a range of operations, as highlighted in the `http.js` file:
+
+-   **Fetching User Donations:** Retrieves a user's donation history.
+-   **User Information Retrieval:** Obtains user-specific information based on their unique hash.
+-   **Donation Creation and Update:** Supports creating new donations or updating existing ones, including handling images associated with donations.
+-   **File Upload:** Enables users to upload files (e.g., images) as part of the donation process.
+
+## Usage
+
+-   Start the bot by executing the main script.
+-   Users will be greeted with a welcome message prompting them to register or log in.
+-   Once authenticated, users can navigate through the bot's menu to access different functionalities.
+-   The bot uses inline keyboards for ease of navigation and interaction.
 
