@@ -6,18 +6,40 @@ import (
 	"go.uber.org/zap"
 )
 
-func GetDonations(id uint) ([]Donation, error) {
+type DonationWithCity struct {
+	ID             uint   // Donation ID
+	BloodStationID uint   // Blood station ID
+	ImageID        uint   // Image ID
+	CityID         uint   // City ID
+	DonateAt       string // Donation time
+	BloodClass     string // Blood class
+	PaymentType    string // Payment type
+	WithImage      bool   // Donation with image flag
+	UserID         uint   // User ID
+	CityTitle      string // NEW: City title
+	CityRegion     string // NEW: City region
+	CityCountry    string // NEW: City country
+}
+
+func GetDonations(id uint) ([]DonationWithCity, error) {
 	zap.S().Debug(id)
-	rows, err := database.Query(context.Background(), "SELECT * FROM donation WHERE user_id = $1", id)
+	// Adjusted to join Donation table with City table
+	rows, err := database.Query(context.Background(), `
+        SELECT d.*, c.title, c.region, c.country
+        FROM donation d
+        JOIN city c ON d.city_id = c.id
+        WHERE d.user_id = $1`, id)
 	if err != nil {
 		return nil, err
 	}
 	defer rows.Close()
-	var donations []Donation = make([]Donation, 0)
+
+	var donations []DonationWithCity = make([]DonationWithCity, 0)
 
 	for rows.Next() {
-		var donation Donation
-		err = rows.Scan(&donation.ID, &donation.BloodStationID, &donation.ImageID, &donation.CityID, &donation.DonateAt, &donation.BloodClass, &donation.PaymentType, &donation.WithImage, &donation.UserID)
+		var donation DonationWithCity
+		// Adjusted to scan city information as well
+		err = rows.Scan(&donation.ID, &donation.BloodStationID, &donation.ImageID, &donation.CityID, &donation.DonateAt, &donation.BloodClass, &donation.PaymentType, &donation.WithImage, &donation.UserID, &donation.CityTitle, &donation.CityRegion, &donation.CityCountry)
 		if err != nil {
 			zap.S().Warnln("ERROR while scanning donation", zap.Error(err))
 		}
@@ -26,7 +48,6 @@ func GetDonations(id uint) ([]Donation, error) {
 
 	return donations, nil
 }
-
 func AddDonation(userId uint, donation Donation) (int, error) {
 	row := database.QueryRow(context.Background(), "INSERT INTO donation (user_id, blood_station_id, image_id, city_id, donate_at, blood_class, payment_type, with_image) VALUES ($1, $2, $3, $4, $5, $6, $7, $8) RETURNING id",
 		userId, donation.BloodStationID, donation.ImageID, donation.CityID, donation.DonateAt, donation.BloodClass, donation.PaymentType, donation.WithImage)
