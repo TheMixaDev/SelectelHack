@@ -9,7 +9,7 @@ export const EventService = {
      * @return {void} 
      */
     getEvents(success, fail) {
-        NetworkService.ClassicRequest("GET", `events/?page_size=999&page=4`, {}, (response) => { // TODO remove hardcode
+        NetworkService.ClassicRequest("GET", `events/?page_size=999`, {}, (response) => { // TODO remove hardcode
             if(response.status === 200)
                 success(response.data);
             else fail(response.data);
