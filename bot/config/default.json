@@ -1,0 +1,18 @@
+{
+    "bot": {
+        "token": "6983241538:AAHNmAHQb2xphCyQzy9YE1AVZiKfttNKkNg",
+        "secret": "949d1u22cbffbrarjh182eig55721odj"
+    },
+    "network": {
+        "webapp": "https://themixadev.github.io/test/",
+        "api": "https://hackaton.donorsearch.org/api"
+    },
+    "server": {
+        "port": 3333
+    },
+    "redis": {
+        "address": "127.1.0.0:6379",
+        "db": 0,
+        "password": ""
+    }
+}
