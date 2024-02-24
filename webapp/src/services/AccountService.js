@@ -28,5 +28,12 @@ export const AccountService = {
                 success(response.data);
             else fail(response.data);
         }, fail)
+    },
+    updatePassword(password, success, fail, cookies) {
+        NetworkService.AuthRequest("PATCH", "auth/password/", { password }, cookies, (response) => {
+            if(response.status === 200)
+                success(response.data);
+            else fail(response.data);
+        }, fail)
     }
 }

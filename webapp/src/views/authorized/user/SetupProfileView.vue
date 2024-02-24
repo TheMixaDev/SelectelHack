@@ -49,7 +49,20 @@ import UIButton from '@/components/ui/UIButton.vue';
                         </UIDropdownWithSearch>
                         <p class="mb-2">Группа крови</p>
                         <UIDropdownWithSearch :options="blood_groups" v-model="blood_group"/>
-                        <UIButton @click="auth" :disabled="loading || !isInputsSet" classExtension="w-full px-5 py-2.5">
+                        <UIButton v-if="!isAuth" @click="togglePassword" classExtension="w-full px-5 py-2.5">
+                            {{ changePassword ? 'Сохранить пароль' : 'Изменить пароль'}}
+                        </UIButton>
+                        <div v-if="changePassword">
+                            <UILabeledInput
+                                v-model="newPassword"
+                                type="password"
+                                property="newPassword"
+                                placeholder="">
+                                Новый пароль
+                            </UILabeledInput>
+                            {{ newPassword.length < 8 ? "Пароль не будет обновлен, т.к. меньше 8 символов" : "Пароль будет обновлен" }}
+                        </div>
+                        <UIButton @click="auth" :disabled="loading || !isInputsSet || changePassword" classExtension="w-full px-5 py-2.5">
                             Сохранить
                         </UIButton>
                     </div>
@@ -70,9 +83,13 @@ export default {
             last_name: '',
             first_name: '',
             middle_name: '',
+            isAuth: true,
             birth_date: new Date(),
             city_id: 0,
             blood_group: 0,
+
+            newPassword: '',
+            changePassword: false,
 
             cities: {},
             blood_groups: {
@@ -87,6 +104,11 @@ export default {
                 "ab_minus": "Четвертая отрицательная - AB(IV) Rh-",
             },
             profile: {},
+        }
+    },
+    computed: {
+        isInputsSet() {
+            return this.last_name.length > 0 && this.first_name.length > 0 && this.city_id > 0;
         }
     },
     methods: {
@@ -134,12 +156,25 @@ export default {
             }, () => {
                 this.$notify({text: "Не удалось сохранить профиль", type: "error"});
             }, this.$cookies);
+        },
+        togglePassword() {
+            this.changePassword = !this.changePassword;
+            if(!this.changePassword) {
+                if(this.newPassword.length < 8)
+                    return;
+                AccountService.updatePassword(this.newPassword, () => {
+                    this.$notify({text: "Пароль обновлен", type: "success"});
+                }, () => {
+                    this.$notify({text: "Не удалось обновить пароль", type: "error"});
+                })
+            }
         }
     },
     mounted() {
+        this.isAuth = sessionStorage.getItem("is_auth") ? true : false;
         RegionService.getCities((data) => {
             this.cities = data.results.reduce((acc, cur) => {
-                acc[cur.city_id] = cur.title;
+                acc[cur.id] = cur.title;
                 return acc;
             }, {});
             AccountService.getMe((data) => {
