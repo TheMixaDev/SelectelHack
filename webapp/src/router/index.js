@@ -34,6 +34,11 @@ const router = createRouter({
       component: () => import('../views/static/PrecautionsView.vue')
     },
     {
+      path: '/donation',
+      name: 'donations',
+      component: () => import('../views/authorized/donations/DonationsView.vue')
+    },
+    {
       path: '/donation/create',
       name: 'createDonation',
       component: () => import('../views/authorized/donations/CreateDonationView.vue')
