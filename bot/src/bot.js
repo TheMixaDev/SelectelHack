@@ -10,7 +10,7 @@ const bot = new Telegraf(config.get('bot.token'), { telegram: { testEnv: false }
 const stage = new Scenes.Stage();
 const authScene = new Scenes.BaseScene('authScene');
 const menuScene = new Scenes.BaseScene('menuScene');
-const donateScece = new Scenes.BaseScene('donateScene');
+const donateScene = new Scenes.BaseScene('donateScene');
 const profileScene = new Scenes.BaseScene('profileScene');
 const uploadFileScene = new Scenes.BaseScene('uploadFileScene');
 
@@ -18,7 +18,7 @@ const uploadFileScene = new Scenes.BaseScene('uploadFileScene');
 bot.use(session());
 bot.use(stage.middleware());
 
-stage.register(authScene, menuScene, profileScene, donateScece, uploadFileScene);
+stage.register(authScene, menuScene, profileScene, donateScene, uploadFileScene);
 
 InitScenes();
 
@@ -27,4 +27,4 @@ bot.command('start', (ctx) => ctx.scene.enter('authScene'));
 
 bot.on(message('text'), async (ctx) => ctx.scene.enter('authScene'));
 
-export { bot, stage, authScene, menuScene, profileScene, donateScece, uploadFileScene, };
+export { bot, stage, authScene, menuScene, profileScene, donateScene, uploadFileScene, };

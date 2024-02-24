@@ -1,8 +1,8 @@
-import { authScene, donateScece, menuScene, profileScene, uploadFileScene } from "./bot.js";
+import { authScene, donateScene, menuScene, profileScene, uploadFileScene } from "./bot.js";
 import { message } from 'telegraf/filters';
 import HashStringWithString from './hash.js';
 import { AuthUserWithTg, SetUserToken, UserLogOut } from './redis.js';
-import { CreateDonation, GetDonationsById, UploadFile } from './http.js';
+import { CreateDonation, GetDonationsById, UploadFile, CreatePlanDonation } from './http.js';
 import config from 'config';
 import { GetUserToken, IsUserAuthorized } from "./redis.js";
 import { GetDonations, GetUserInfo } from "./http.js";
@@ -141,7 +141,7 @@ function InitScenes() {
         }
     });
 
-    donateScece.enter(async (ctx) => {
+    donateScene.enter(async (ctx) => {
         const id = ctx.message.from.id - 0;
         const hash = HashStringWithString(id, config.get('bot.secret'));
         const token = await GetUserToken(hash);
@@ -171,14 +171,14 @@ function InitScenes() {
     });
 
 
-    donateScece.on(message('text'), async (ctx) => {
+    donateScene.on(message('text'), async (ctx) => {
         switch (ctx.message.text) {
             case buttonTexts.backToMenu: return ctx.scene.enter('menuScene');
             default: return ctx.reply('Воспользуйтесь одной из кнопок 👇');
         }
     });
 
-    donateScece.on(message('web_app_data'), async (ctx) => {
+    donateScene.on(message('web_app_data'), async (ctx) => {
         const { type, data, hash, id } = JSON.parse(ctx.message.web_app_data.data);
         if (hash !== HashStringWithString(id - 0, config.get('bot.secret'))) {
             return ctx.reply('Ошибка авторизации.');
@@ -227,7 +227,14 @@ function InitScenes() {
             console.error(`Error updating donation. UserHash: ${hash}, Status: ${res.status}`);
             return ctx.reply("😢 Произошла ошибка при обновлении донации. Попробуйте еще раз.");
         } else if (type == "plan_donation") {
-            return ctx.reply('🕒 Донация успешно запланирована!');
+            const res = await CreatePlanDonation(hash, data);
+            if (!res) {
+                console.log(`Error planning donation. UserHash: ${hash}, Status: ${res.status}`);
+                return ctx.reply('Ошибка планирования донации.');
+            }
+            if(res.status == 200) {
+                return ctx.reply('🕒 Донация успешно запланирована!');
+            }
         }
     })
 

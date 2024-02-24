@@ -14,7 +14,7 @@ async function GetDonations(hash, page, page_size) {
     try {
         const res = await axios.get(`${config.get('network.api')}/donations?page_size=${page_size}&page=${page}`, {
             headers: {
-                Authorization: `Basic c2FyZWdvaDgzNkByaWNvcml0LmNvbTpzYXJlZ29oODM2QHJpY29yaXQuY29t`
+                Authorization: `Bearer ${token}`
             }
         });
         return res;
@@ -34,7 +34,7 @@ async function GetUserInfo(hash) {
     try {
         const res = await axios.get(`${config.get('network.api')}/auth/me`, {
             headers: {
-                Authorization: `Basic c2FyZWdvaDgzNkByaWNvcml0LmNvbTpzYXJlZ29oODM2QHJpY29yaXQuY29t`
+                Authorization: `Bearer ${token}`
             }
         });
         return res;
@@ -73,14 +73,14 @@ async function CreateDonation(hash, data, image) {
     // body.last_name = user.last_name;
     // body.middle_name = user.middle_name;
 
-    if (data.id) {
+    if (data.id > 0) {
         body.id = data.id;
         try {
             const res = await axios.patch(`${config.get('network.api')}/donations`,
                 body,
                 {
                     headers: {
-                        Authorization: `Basic c2FyZWdvaDgzNkByaWNvcml0LmNvbTpzYXJlZ29oODM2QHJpY29yaXQuY29t`
+                        Authorization: `Bearer ${token}`
                     },
                 });
 
@@ -95,7 +95,47 @@ async function CreateDonation(hash, data, image) {
             body,
             {
                 headers: {
-                    Authorization: `Basic c2FyZWdvaDgzNkByaWNvcml0LmNvbTpzYXJlZ29oODM2QHJpY29yaXQuY29t`
+                    Authorization: `Bearer ${token}`
+                },
+
+            });
+        return res;
+    } catch (error) {
+        console.error(`Error creating donation. User hash: ${hash}, data: ${JSON.stringify(data)}.`);
+        return null;
+    }
+}
+
+/**
+ * Creates a new plan donation
+ * @param {string} hash - The user's hash
+ * @param {object} data - The donation data
+ * @param {object} image - The image data (has: bool, image_id: number)
+ * @returns {object} The response data
+ */
+async function CreatePlanDonation(hash, data) {
+    const token = await GetUserToken(hash);
+    let user = await GetUserInfo(hash);
+    if (!user) {
+        return null;
+    }
+    user = user.data;
+    const body = {}
+    body.donate_at = data.date;
+    body.blood_class = data.blood_type;
+    body.payment_type = data.type - 0 == 0 ? 'free' : "payed";
+    body.city_id = data.city_id;
+    body.blood_station_id = data.center_id;
+    body.user_id = user.id;
+    // body.first_name = user.first_name;
+    // body.last_name = user.last_name;
+    // body.middle_name = user.middle_name;
+    try {
+        const res = await axios.post(`${config.get('network.api')}/donation_plan`,
+            body,
+            {
+                headers: {
+                    Authorization: `Bearer ${token}`
                 },
 
             });
@@ -119,7 +159,7 @@ async function UploadFile(hash, bytes) {
             { bytes: bytes },
             {
                 headers: {
-                    Authorization: `Basic c2FyZWdvaDgzNkByaWNvcml0LmNvbTpzYXJlZ29oODM2QHJpY29yaXQuY29t`
+                    Authorization: `Bearer ${token}`
                 },
 
             });
@@ -135,7 +175,7 @@ async function GetDonationsById(hash, id) {
     try {
         const res = await axios.get(`${config.get('network.api')}/donations/${id}`, {
             headers: {
-                Authorization: `Basic c2FyZWdvaDgzNkByaWNvcml0LmNvbTpzYXJlZ29oODM2QHJpY29yaXQuY29t`
+                Authorization: `Bearer ${token}`
             }
         });
         return res;
