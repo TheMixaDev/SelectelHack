@@ -11,10 +11,15 @@ require (
 )
 
 require (
+	github.com/dgryski/go-rendezvous v0.0.0-20200823014737-9f7001d12a5f // indirect
+	github.com/go-redis/redis v6.15.9+incompatible // indirect
 	github.com/go-sql-driver/mysql v1.7.0 // indirect
+	github.com/gomodule/redigo v1.9.1 // indirect
 	github.com/jackc/pgx v3.6.2+incompatible // indirect
 	github.com/lib/pq v1.10.9 // indirect
 	github.com/pkg/errors v0.9.1 // indirect
+	github.com/redis/go-redis v6.15.9+incompatible // indirect
+	github.com/redis/go-redis/v9 v9.5.1 // indirect
 	gorm.io/driver/mysql v1.4.7 // indirect
 )
 

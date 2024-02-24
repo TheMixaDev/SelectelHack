@@ -14,5 +14,10 @@
     "sslcert": "database/cert/client.root.crt",
     "sslkey": "database/cert/client.root.key",
     "schema": "schema.sql"
+  },
+  "redis": {
+    "ttl" : 60,
+    "host": "localhost:6379",
+    "password": ""
   }
 }

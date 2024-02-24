@@ -7,7 +7,9 @@ import (
 	"go.uber.org/zap"
 
 	"github.com/invalidteam/selectel_hack/api"
+	"github.com/invalidteam/selectel_hack/cache"
 	"github.com/invalidteam/selectel_hack/database"
+	"github.com/invalidteam/selectel_hack/scheduler"
 )
 
 func main() {
@@ -49,6 +51,9 @@ func main() {
 		zap.S().Panic(err)
 	}
 	zap.L().Info("Schema created")
+
+	cache.RedisPoolInit(viper.GetString("redis.host"))
+	scheduler.RunScheduler()
 
 	api.CreateApi(viper.GetString("app.address"), viper.GetString("app.port")).ConfigureApp().Run()
 }

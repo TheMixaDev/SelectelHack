@@ -3,6 +3,7 @@ package utils
 import (
 	"crypto/rand"
 	"encoding/base64"
+	"time"
 )
 
 func GenerateRandomString(length int) string {
@@ -28,4 +29,24 @@ func GenerateRandomString(length int) string {
 	randomString = randomString[:length]
 
 	return randomString
+}
+
+// calculateInterval calculates the start and end time of an interval based on a template period and a timestamp.
+// If the timestamp is greater than 0, it will be converted to a time.Time object.
+// The start time is calculated by subtracting the template period from the end time.
+// The end time is set to the current local time if the timestamp is 0.
+// The start and end time are returned as a pair of time.Time objects.
+func CalculateInterval(templatePeriod uint, timestamp int64) (time.Time, time.Time) {
+	// Set the end time to the current local time
+	intervalEnd := time.Now().Local()
+
+	// If the timestamp is greater than 0, convert it to a time.Time object
+	if timestamp > 0 {
+		intervalEnd = time.Unix(0, timestamp*int64(time.Millisecond)).Local()
+	}
+
+	// Calculate the start time by subtracting the template period from the end time
+	intervalStart := intervalEnd.Add(-(time.Duration(templatePeriod) * time.Millisecond))
+
+	return intervalStart, intervalEnd
 }
