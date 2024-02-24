@@ -24,7 +24,9 @@ func donationsPostHandler(c *fiber.Ctx) error {
 	if err := c.BodyParser(&data); err != nil {
 		zap.S().Debugln("Error parsing body")
 		zap.S().Debugln(err)
-		return c.SendStatus(fiber.StatusBadRequest)
+		return c.Status(fiber.StatusBadRequest).JSON(&fiber.Map{
+			"message": err.Error(),
+		})
 	}
 
 	id, err := database.AddDonation(data)
@@ -52,7 +54,9 @@ func donationsPatchWithIdHandler(c *fiber.Ctx) error {
 
 	if err := c.BodyParser(&data); err != nil {
 		zap.S().Debugln("Error parsing body")
-		return c.SendStatus(fiber.StatusBadRequest)
+		return c.Status(fiber.StatusBadRequest).JSON(&fiber.Map{
+			"message": err.Error(),
+		})
 	}
 
 	err := database.UpdateDonation(data)

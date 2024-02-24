@@ -45,7 +45,9 @@ func bonusesPostFeedbackHandler(c *fiber.Ctx) error {
 	var body feedbackRequestBody
 	if err := c.BodyParser(&body); err != nil {
 		zap.S().Debugln(err)
-		return c.Status(fiber.StatusBadRequest).JSON(err)
+		return c.Status(fiber.StatusBadRequest).JSON(&fiber.Map{
+			"message": err.Error(),
+		})
 	}
 
 	if body.Rating < 1 || body.Rating > 5 {
@@ -84,7 +86,9 @@ func bonusesPatchFeedbackHandler(c *fiber.Ctx) error {
 	var body feedbackRequestBody
 	if err := c.BodyParser(&body); err != nil {
 		zap.S().Debugln(err)
-		return c.Status(fiber.StatusBadRequest).JSON(err)
+		return c.Status(fiber.StatusBadRequest).JSON(&fiber.Map{
+			"message": err.Error(),
+		})
 	}
 
 	if body.Rating < 1 || body.Rating > 5 {
