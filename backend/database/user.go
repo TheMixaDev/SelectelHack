@@ -147,6 +147,10 @@ func UpdateUser(id uint, update UserUpdate) error {
 		fields = append(fields, "last_name")
 		values = append(values, update.LastName)
 	}
+	if update.MiddleName != "" {
+		fields = append(fields, "middle_name")
+		values = append(values, update.MiddleName)
+	}
 	if update.FirstName != "" {
 		fields = append(fields, "first_name")
 		values = append(values, update.FirstName)
