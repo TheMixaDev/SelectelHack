@@ -13,7 +13,7 @@ import UIButton from './ui/UIButton.vue';
     </UILabeledInput>
     <UILabeledInput
         v-model="password"
-        type="text"
+        type="password"
         property="password"
         placeholder="">
         Пароль
