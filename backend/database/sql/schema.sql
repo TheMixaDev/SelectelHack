@@ -188,7 +188,7 @@ CREATE SEQUENCE IF NOT EXISTS donation_sequence;
 CREATE TABLE IF NOT EXISTS Donation (
     id INT4 PRIMARY KEY DEFAULT nextval('donation_sequence'),
     blood_station_id INT,
-    image_id INT,
+    image_id TEXT,
     city_id INT NOT NULL,
     donate_at TEXT,
     blood_class TEXT,

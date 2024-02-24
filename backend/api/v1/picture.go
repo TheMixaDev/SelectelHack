@@ -3,7 +3,7 @@ package v1
 import "github.com/gofiber/fiber/v2"
 
 type requestBody struct {
-	Bytes []byte `json:"bytes"`
+	Bytes string `json:"bytes"`
 }
 
 func picturePostHandler(c *fiber.Ctx) error {
@@ -14,9 +14,8 @@ func picturePostHandler(c *fiber.Ctx) error {
 			"error": err.Error(),
 		})
 	}
-	// TODO: Save bytes to database + return image id
+
 	return c.Status(200).JSON(&fiber.Map{
 		"message": "OK",
-		"id":      22, // TODO: REPLACE WITH ACTUAL ID
 	})
 }

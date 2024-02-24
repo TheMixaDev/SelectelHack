@@ -9,7 +9,7 @@ import (
 type DonationWithCity struct {
 	ID             uint64 `json:"id"`
 	BloodStationID uint   `json:"blood_station_id"`
-	ImageID        uint   `json:"image_id"`
+	ImageID        string `json:"image_id"`
 	CityID         uint   `json:"city_id"`
 	DonateAt       string `json:"donate_at"`
 	BloodClass     string `json:"blood_class"`

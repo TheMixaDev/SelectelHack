@@ -66,7 +66,7 @@ type DonorCard struct {
 type Donation struct {
 	ID             uint   `json:"id"`
 	BloodStationID int    `json:"blood_station_id"`
-	ImageID        int    `json:"image_id"`
+	ImageID        string `json:"image_id"`
 	CityID         int    `json:"city_id"`
 	DonateAt       string `json:"donate_at"`
 	BloodClass     string `json:"blood_class"`
