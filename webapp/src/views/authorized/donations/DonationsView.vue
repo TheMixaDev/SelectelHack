@@ -11,7 +11,7 @@ import UITableEmpty from '@/components/ui/table/UITableEmpty.vue';
                     <h1 class="text-xl font-bold leading-tight tracking-tight text-gray-900 md:text-2xl dark:text-white text-center">
                         Мои донации
                     </h1>
-                    <div v-if="donations.length > 0">
+                    <div v-if="donations?.length > 0">
                         <DonationComponent v-for="donation in donations" :json="donation" :key="donation.id" class="mb-2" @edit="edit"/>
                     </div>
                     <UITableEmpty v-else/>
@@ -27,19 +27,7 @@ export default {
     name: 'DonationsView',
     data() {
         return {
-            donations: [/*{
-                id: 1,
-                blood_station_id: 1,
-                city_id: 2,
-                city: {
-                    id: 2,
-                    title: "Москва"
-                },
-                blood_class: "blood",
-                payment_type: "payed",
-                donate_at: "2022-10-12",
-                with_image: true
-            }*/]
+            donations: []
         };
     },
     methods: {
