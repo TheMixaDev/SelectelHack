@@ -87,4 +87,6 @@ git clone https://github.com/isofinly/SelectelHack
 git fetch
 git pull
 
+cd SelectelHack
+
 docker-compose up --build
