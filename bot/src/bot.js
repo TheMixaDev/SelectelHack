@@ -40,11 +40,16 @@ const profileScene = new Scenes.BaseScene('profileScene');
 const uploadFileScene = new Scenes.BaseScene('uploadFileScene');
 
 /**
+ *  The bot's share status scene
+ */
+const shareStatusScene = new Scenes.BaseScene('shareStatusScene');
+
+/**
  * Registers the bot's scenes with the stage
  */
 bot.use(session());
 bot.use(stage.middleware());
-stage.register(authScene, menuScene, profileScene, donateScene, uploadFileScene);
+stage.register(authScene, menuScene, profileScene, donateScene, uploadFileScene, shareStatusScene);
 
 /**
  * Initializes the bot's scenes
@@ -64,4 +69,4 @@ bot.on(message('text'), async (ctx) => ctx.scene.enter('authScene'));
 /**
  * Exports the bot, stage, and scenes
  */
-export { bot, stage, authScene, menuScene, profileScene, donateScene, uploadFileScene, };
+export { bot, stage, authScene, menuScene, profileScene, donateScene, uploadFileScene, shareStatusScene};

@@ -1,4 +1,4 @@
-import { authScene, donateScene, menuScene, profileScene, uploadFileScene } from "./bot.js";
+import { authScene, donateScene, menuScene, profileScene, shareStatusScene, uploadFileScene } from "./bot.js";
 import { message } from 'telegraf/filters';
 import HashStringWithString from './hash.js';
 import { AuthUserWithTg, SetUserToken, UserLogOut } from './redis.js';
@@ -8,6 +8,7 @@ import { GetUserToken, IsUserAuthorized } from "./redis.js";
 import { GetUserInfo } from "./http.js";
 import { GenerateLink } from "./utils.js";
 import buttonTexts from "../assets/button_text.json";
+import replicText from "../assets/replic_text.json";
 
 /**
  * Initialize the different scenes of the bot
@@ -73,12 +74,22 @@ function InitScenes() {
         await ctx.reply('Вы успешно авторизовались!');
         return ctx.scene.enter('menuScene');
     })
+
     /**
      * Handles the user entering the menu scene.
      * @param {Context} ctx - The context object.
      */
-
     menuScene.enter(async (ctx) => {
+        let in_chat = (await ctx.telegram.getChatMember("@donornews", ctx.message.from.id - 0)).status == "left";
+        if (in_chat) {
+            await ctx.reply(replicText.promote, {
+                parse_mode: 'MarkdownV2', reply_markup:
+                {
+                    inline_keyboard: [[{ text: "Присоединиться к каналу", url: 'http://t.me/donornews' }]]
+                }
+            });
+        }
+
         const id = ctx.message.from.id - 0;
         const hash = HashStringWithString(id, config.get('bot.secret'));
         const token = await GetUserToken(hash);
@@ -93,8 +104,8 @@ function InitScenes() {
                         { text: buttonTexts.events, web_app: { url: GenerateLink(config.get('network.webapp'), 'events', '', '', '') } },
                     ],
                     [{ text: buttonTexts.profile }, { text: buttonTexts.updateProfile, web_app: { url: GenerateLink(config.get('network.webapp'), 'profile/setup', hash, id, token) } },],
+                    [{ text: buttonTexts.donate }, { text: buttonTexts.supportChat }],
                     [{ text: buttonTexts.guide, web_app: { url: GenerateLink(config.get('network.webapp'), 'static/howto', '', '', '') } },],
-                    [{ text: buttonTexts.donate }],
                     [{ text: buttonTexts.exitAccount }]
                 ],
                 resize_keyboard: true,
@@ -117,6 +128,12 @@ function InitScenes() {
         }
         switch (ctx.message.text) {
             case buttonTexts.donateBlood: return ctx.scene.enter('donateScene');
+            case buttonTexts.supportChat: return ctx.reply(replicText.support, {
+                parse_mode: 'MarkdownV2', reply_markup:
+                {
+                    inline_keyboard: [[{ text: "Написать", url: 'https://t.me/donorsearch_support' }]]
+                }
+            })
             case buttonTexts.exitAccount:
                 await UserLogOut(hash);
                 return ctx.scene.enter('authScene');
@@ -136,8 +153,8 @@ function InitScenes() {
                             { text: buttonTexts.events, web_app: { url: GenerateLink(config.get('network.webapp'), 'events', '', '', '') } },
                         ],
                         [{ text: buttonTexts.profile }, { text: buttonTexts.updateProfile, web_app: { url: GenerateLink(config.get('network.webapp'), 'profile/setup', hash, id, token) } },],
+                        [{ text: buttonTexts.donate }, { text: buttonTexts.supportChat }],
                         [{ text: buttonTexts.guide, web_app: { url: GenerateLink(config.get('network.webapp'), 'static/howto', '', '', '') } },],
-                        [{ text: buttonTexts.donate }],
                         [{ text: buttonTexts.exitAccount }]
                     ],
                     resize_keyboard: true,
@@ -231,7 +248,7 @@ function InitScenes() {
                 return ctx.reply("😢 Произошла ошибка при добавлении донации. Попробуйте еще раз.");
             } else {
                 // Move user to uploading file + save state to session
-                ctx.session = { data: data }
+                ctx.session.extras = { data: data }
                 return ctx.scene.enter('uploadFileScene');
             }
         } else if (type == "plan_donation") {
@@ -316,7 +333,7 @@ function InitScenes() {
 
         // if success -> retrieve id from response and use it for creating donation
         if (uploadRes.status == 200) {
-            const res = await CreateDonation(hash, ctx.session.data, { has: true, id: link });
+            const res = await CreateDonation(hash, ctx.session.extras.data, { has: true, id: link });
             if (!res) {
                 console.error(`Error creating donation. UserId: ${ctx.message.from.id}`);
                 return ctx.reply('☹️ Ошибка добавления донации. Попробуйте еще раз.');
@@ -363,26 +380,12 @@ function InitScenes() {
             return ctx.scene.enter('authScene');
         }
         let usr = await GetUserInfo(hash, token)
-        if (!usr) {
-            console.error(`Error to get user info. UserHash: ${hash}.`);
-            return ctx.reply('Профиль', {
-                reply_markup: {
-                    keyboard: [
-                        [
-                            { text: buttonTexts.bonusPoints, web_app: { url: GenerateLink(config.get('network.webapp'), 'bonuses', hash, id, token) } },
-                            { text: buttonTexts.donorRating, web_app: { url: GenerateLink(config.get('network.webapp'), 'top', hash, id, token) } },
-                        ],
-                        [{ text: buttonTexts.honoraryDonorStatus },],
-                        [{ text: buttonTexts.myDonations, web_app: { url: GenerateLink(config.get('network.webapp'), 'donations', hash, id, token) } },],
-                        [{ text: buttonTexts.backToMenu }]
-                    ],
-                    resize_keyboard: true,
-                    one_time_keyboard: true
-                }
-            });
+        usr = usr?.data?.data;
+        var msg = "Профиль" 
+        if (usr) {
+            msg = `Профиль: ${usr.first_name} ${usr.last_name} ${usr.middle_name}`
         }
-        usr = usr.data;
-        return ctx.reply("Профиль", {
+        return ctx.reply(msg, {
             reply_markup: {
                 keyboard: [
                     [
@@ -403,51 +406,8 @@ function InitScenes() {
      * @param {Context} ctx - The context object.
      */
     profileScene.on(message('text'), async (ctx) => {
-        const id = ctx.message.from.id - 0;
         switch (ctx.message.text) {
-            case buttonTexts.honoraryDonorStatus:
-                var hash = HashStringWithString(id, config.get('bot.secret'));
-                var token = await GetUserToken(hash);
-                if (!token) {
-                    return ctx.scene.enter('authScene');
-                }
-                var usr = await GetUserInfo(hash, token)
-                if (!usr) {
-                    return ctx.reply('😔 Не удалось получить информацию о вашем статусе.', {
-                        reply_markup: {
-                            keyboard: [
-                                [
-                                    { text: buttonTexts.bonusPoints, web_app: { url: GenerateLink(config.get('network.webapp'), 'bonuses', hash, id, token) } },
-                                    { text: buttonTexts.donorRating, web_app: { url: GenerateLink(config.get('network.webapp'), 'top', hash, id, token) } },
-                                ],
-                                [{ text: buttonTexts.honoraryDonorStatus },],
-                                [{ text: buttonTexts.myDonations, web_app: { url: GenerateLink(config.get('network.webapp'), 'donations', hash, id, token) } },],
-                                [{ text: buttonTexts.backToMenu }]
-                            ],
-                            resize_keyboard: true,
-                            one_time_keyboard: true
-                        }
-                    });
-                }
-                const donorStatusName = usr.data?.donor_status?.name;
-                const donationsCount = usr.data?.donor_status?.donations_count;
-
-                const str = `👑 Ваш статус донорства: ${donorStatusName ? donorStatusName : 'аноним'} (${donationsCount ? donationsCount : 0} донаций)`;
-                return ctx.reply(str, {
-                    reply_markup: {
-                        keyboard: [
-                            [
-                                { text: buttonTexts.bonusPoints, web_app: { url: GenerateLink(config.get('network.webapp'), 'bonuses', hash, id, token) } },
-                                { text: buttonTexts.donorRating, web_app: { url: GenerateLink(config.get('network.webapp'), 'top', hash, id, token) } },
-                            ],
-                            [{ text: buttonTexts.honoraryDonorStatus },],
-                            [{ text: buttonTexts.myDonations, web_app: { url: GenerateLink(config.get('network.webapp'), 'donations', hash, id, token) } },],
-                            [{ text: buttonTexts.backToMenu }]
-                        ],
-                        resize_keyboard: true,
-                        one_time_keyboard: true
-                    }
-                });
+            case buttonTexts.honoraryDonorStatus: return ctx.scene.enter('shareStatusScene');
             case buttonTexts.backToMenu: return ctx.scene.enter('menuScene');
             default: return ctx.reply('Воспользуйтесь одной из кнопок 👇');
         }
@@ -469,7 +429,7 @@ function InitScenes() {
             old = old.data.donation;
             // if old donation has no image and new donation has image -> ask user to upload new image
             if (!old.with_image && data.document == 0) {
-                ctx.session = { data: data }
+                ctx.session.extras = { data: data }
                 return ctx.scene.enter('uploadFileScene');
             }
 
@@ -488,6 +448,49 @@ function InitScenes() {
             return ctx.reply("😢 Произошла ошибка при обновлении донации. Попробуйте еще раз.");
         }
     })
+
+
+    shareStatusScene.enter(async (ctx) => {
+        const id = ctx.message.from.id - 0;
+        var hash = HashStringWithString(id, config.get('bot.secret'));
+        var token = await GetUserToken(hash);
+        if (!token) {
+            return ctx.scene.enter('authScene');
+        }
+        var usr = await GetUserInfo(hash, token)
+        if (!usr) {
+            return ctx.reply('😔 Не удалось получить информацию о вашем статусе.');
+        }
+        const donorStatusName = usr.data?.donor_status?.name;
+        const donationsCount = usr.data?.donor_status?.donations_count;
+        const status = donorStatusName ? donorStatusName : 'Потенциальный донор';
+        const count = donationsCount ? donationsCount : 0;
+        ctx.session.extras = { status: status, count: count }
+        const str = `👑 Ваш статус донорства: ${status} (${count} донаций)`;
+        return ctx.reply(str, {
+            reply_markup: {
+                keyboard: [
+                    [
+                        { text: buttonTexts.share },
+                        { text: buttonTexts.backToProfile },
+                    ],
+                ],
+                resize_keyboard: true,
+                one_time_keyboard: true
+            }
+        });
+    });
+
+    shareStatusScene.on(message('text'), async (ctx) => {
+        switch (ctx.message.text) {
+            case buttonTexts.backToProfile: return ctx.scene.enter('profileScene');
+            case buttonTexts.share:
+                await ctx.reply('Поделитесь сообщением ниже, и развивайте донорское сообщество вместе с нами! 🥳')
+                await ctx.reply(replicText.share.replace("{COUNT}", ctx.session.extras.count).replace("{RANK}", ctx.session.extras.status))
+                return ctx.scene.enter('profileScene');
+            default: return ctx.reply('Воспользуйтесь одной из кнопок 👇');
+        }
+    });
 }
 
 export default InitScenes;
