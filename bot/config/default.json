@@ -8,7 +8,7 @@
         "api": "https://alephdev.ru/api"
     },
     "redis": {
-        "address": "redis:6379",
+        "address": "redis://redis:6379",
         "db": 0,
         "password": ""
     }
