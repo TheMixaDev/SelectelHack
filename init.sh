@@ -87,6 +87,9 @@ git clone https://github.com/isofinly/SelectelHack
 git fetch
 git pull
 
-cd SelectelHack
+cd ~/SelectelHack/config/k8s
+chmod +x start.sh
+./start.sh
 
+cd ~/SelectelHack
 docker-compose up --build
