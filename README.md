@@ -151,7 +151,7 @@ The bot interacts with a backend API to perform a range of operations, as highli
 -   Start the bot by executing the main script `bun src/index.js `.
 -   Users will be greeted with a welcome message prompting them to register or log in.
 -   Once authenticated, users can navigate through the bot's menu to access different functionalities.
--   The bot uses inline keyboards for ease of navigation and interaction.
+-   The bot uses keyboards for ease of navigation and interaction.
 
 # Golang backend API
 
