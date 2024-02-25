@@ -1,7 +1,7 @@
 {
   "name": "selectel_hack_bot_js",
   "version": "1.0.0",
-  "description": "simple bot",
+  "description": "Donor Search Telegram Bot",
   "main": "src/index.js",
   "type": "module",
   "author": "kxrxh",

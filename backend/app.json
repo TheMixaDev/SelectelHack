@@ -5,7 +5,7 @@
   "dev": true,
   "db": {
     "user": "root",
-    "host": "crdb",
+    "host": "localhost",
     "port": "26257",
     "password": "",
     "dbname": "defaultdb",
@@ -13,11 +13,11 @@
     "sslrootcert": "database/cert/ca.crt",
     "sslcert": "database/cert/client.root.crt",
     "sslkey": "database/cert/client.root.key",
-    "schema": "schema.sql"
+    "schema": "database/sql/schema.sql"
   },
   "redis": {
     "ttl" : 60,
-    "host": "redis:6379",
+    "host": "localhost:6379",
     "password": "",
     "poll": 5
   },

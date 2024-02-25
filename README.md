@@ -338,35 +338,37 @@ Authorization: Bearer <your_jwt_token
 Configure the JWT middleware by providing your RSA public and private keys. Adjust the middleware settings according to your security requirements.
 
 This file is configured for docker-compose deployment:
+
 ```json
 {
-"app": {
-"port":  "3033"
-},
-"dev":  true,
-"db": {
-"user":  "root",
-"host":  "crdb",
-"port":  "26257",
-"password":  "",
-"dbname":  "defaultdb",
-"sslmode":  "disable",
-"sslrootcert":  "database/cert/ca.crt",
-"sslcert":  "database/cert/client.root.crt",
-"sslkey":  "database/cert/client.root.key",
-"schema":  "schema.sql"
-},
-"redis": {
-"ttl"  :  60,
-"host":  "redis:6379",
-"password":  "",
-"poll":  5
-},
-"bot": {
-"bot_id":  "",
-"api_key":  ""
+  "app": {
+    "port": "3033"
+  },
+  "dev": true,
+  "db": {
+    "user": "root",
+    "host": "crdb",
+    "port": "26257",
+    "password": "",
+    "dbname": "defaultdb",
+    "sslmode": "disable",
+    "sslrootcert": "database/cert/ca.crt",
+    "sslcert": "database/cert/client.root.crt",
+    "sslkey": "database/cert/client.root.key",
+    "schema": "schema.sql"
+  },
+  "redis": {
+    "ttl": 60,
+    "host": "redis:6379",
+    "password": "",
+    "poll": 5
+  },
+  "bot": {
+    "bot_id": "",
+    "api_key": ""
+  }
 }
-}
+
 ```
 # Database
 

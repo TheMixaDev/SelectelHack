@@ -1,4 +1,8 @@
 services:
+
+  ###########
+  # Backend #
+  ###########
   backend-api:
     build: ./backend
     container_name: backend-api
@@ -7,28 +11,40 @@ services:
     environment:
       - PRODUCTION=false
       - PORT=3033
-    # depends_on:
-      # database:
-        # condition: service_healthy
     restart: on-failure:5
     depends_on:
       crdb:
         condition: service_healthy
+  nginx:
+    container_name: nginx
+    build: ./webapp
+    restart: on-failure:5
+    ports:
+      - '443:443'
+    depends_on:
+      - backend-api
+  bot:
+   container_name: bot
+   build: ./bot
+   restart: on-failure:5
 
-  # It could instead, use volume-mounts.
+  ###########
+  # Metrics #
+  ###########
   prometheus:
     build: './monitoring/prometheus'
     container_name: 'prometheus'
     ports:
       - '9090:9090'
-
-  # This could instead be a volume-mounted container.
   grafana:
     build: './monitoring/grafana'
     container_name: 'grafana'
     ports:
       - '3000:3000'
 
+  ############
+  # STORAGES #
+  ############
   crdb:
    container_name: crdb
    image: cockroachdb/cockroach:latest
@@ -41,7 +57,6 @@ services:
       interval: 3s
       timeout: 3s
       retries: 5
-
    volumes:
      - "./persistence/cockroach/:/cockroach/cockroach-data"
   redis:
@@ -87,11 +102,3 @@ services:
       timeout: 5s
       retries: 5
       start_period: 10s
-  nginx:
-    container_name: nginx
-    build: ./webapp
-    restart: on-failure:5
-    ports:
-      - '443:443'
-    depends_on:
-      - backend-api
