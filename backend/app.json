@@ -13,7 +13,7 @@
     "sslrootcert": "database/cert/ca.crt",
     "sslcert": "database/cert/client.root.crt",
     "sslkey": "database/cert/client.root.key",
-    "schema": "database/sql/schema.sql"
+    "schema": "schema.sql"
   },
   "redis": {
     "ttl" : 60,
