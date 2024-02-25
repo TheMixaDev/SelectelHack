@@ -82,19 +82,10 @@ sudo apt install nodejs -y
 sudo apt autoremove -y
 sudo apt autoclean
 
-useradd usr
-sudo usermod -aG sudo usr
-su usr
-cd ~
-
 git clone https://github.com/isofinly/SelectelHack
 
 git fetch
 git pull
-
-cd ~/SelectelHack/config/k8s
-chmod +x start.sh
-./start.sh
 
 cd ~/SelectelHack
 docker-compose up --build
