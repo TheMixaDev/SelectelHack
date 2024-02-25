@@ -22,21 +22,6 @@ func SetupRoutesV1(v1 *fiber.Router) {
 	// authentication
 	authentication.Post("/login", authPostLoginHandler)
 
-	// bonuses information
-	bonuses := (*v1).Group("/bonuses")
-	bonuses.Get("/", bonusesGetHandler)
-	bonuses.Get("/:id", bonusesGetWithIdHandler)
-	bonuses.Post("/:id/feedback", bonusesPostFeedbackHandler) // TODO переделать для публикации оценки и получения оценки
-
-	// bonuses
-	bonuses.Patch("/:id/feedback", bonusesPatchFeedbackHandler) // TODO переделать для публикации оценки и получения оценки
-
-	// account recovery
-	authentication.Post("/set_password", authPostSetPasswordHandler)
-
-	// extra
-	authentication.Post("/set_two_factor_auth", authPostSetTwoFactorAuthHandler)
-
 	// donation plan management
 	donationPlan := (*v1).Group("/donation_plan").Use(jwtware.New(jwtware.Config{
 		SigningKey: jwtware.SigningKey{
