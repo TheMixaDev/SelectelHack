@@ -1,0 +1,17 @@
+{
+  "name": "selectel_hack_bot_js",
+  "version": "1.0.0",
+  "description": "simple bot",
+  "main": "src/index.js",
+  "type": "module",
+  "author": "kxrxh",
+  "license": "MIT",
+  "dependencies": {
+    "axios": "^1.6.7",
+    "config": "^3.3.11",
+    "crypto-js": "^4.2.0",
+    "nodemon": "^3.1.0",
+    "redis": "^4.6.13",
+    "telegraf": "^4.15.3"
+  }
+}
