@@ -106,7 +106,7 @@ async function CreateDonation(hash, data, image) {
  * @param {object} image - The image data (has: bool, image_id: number)
  * @returns {object} The response data
  */
-async function CreatePlanDonation(hash, data) {
+async function CreatePlanDonation(tgId, hash, data) {
     const token = await GetUserToken(hash);
     const body = {}
     body.donate_at = data.date;
@@ -119,7 +119,8 @@ async function CreatePlanDonation(hash, data) {
             body,
             {
                 headers: {
-                    Authorization: `Bearer ${token}`
+                    Authorization: `Bearer ${token}`,
+                    TelegramId: tgId,
                 },
 
             });

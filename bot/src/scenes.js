@@ -184,6 +184,7 @@ function InitScenes() {
                     ],
                     [
                         { text: buttonTexts.findBloodType, web_app: { url: GenerateLink(config.get('network.webapp'), 'stations', hash, id, token) } },
+                        { text: buttonTexts.onMap, web_app: { url: GenerateLink(config.get('network.webapp'), 'stations/map', hash, id, token) } },
                     ],
                     [
                         { text: buttonTexts.backToMenu, }
@@ -234,7 +235,7 @@ function InitScenes() {
                 return ctx.scene.enter('uploadFileScene');
             }
         } else if (type == "plan_donation") {
-            const res = await CreatePlanDonation(hash, data);
+            const res = await CreatePlanDonation(ctx.message.from.id, hash, data);
             if (!res) {
                 console.log(`Error planning donation. UserHash: ${hash}`);
                 return ctx.reply('Ошибка планирования донации.');
@@ -293,7 +294,10 @@ function InitScenes() {
         }
 
         // Retrieve file link from Telegram
-        const link = await ctx.telegram.getFileLink(file.file_id);
+        let link = await ctx.telegram.getFileLink(file.file_id);
+
+        link = link.pathname.split('/')
+        link = link.slice(link.length - 2).join('/');
 
         const id = ctx.message.from.id - 0;
         const hash = HashStringWithString(id, config.get('bot.secret'));
