@@ -82,6 +82,8 @@ sudo apt install nodejs -y
 sudo apt autoremove -y
 sudo apt autoclean
 
+sudo usermod -aG docker $USER && newgrp docker
+
 git clone https://github.com/isofinly/SelectelHack
 
 git fetch
