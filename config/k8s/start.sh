@@ -7,12 +7,12 @@ sleep 15
 
 # cockroachdb
 echo 'Creating cockroach cluster...'
-kubectl create -f ./cockroachdb/config.yaml
+kubectl create -f ./cockroach/config.yaml
 
 sleep 10
 
 echo 'Creating cockroach load balancer...'
-kubectl create -f ./cockroachdb/lb.yaml
+kubectl create -f ./cockroach/lb.yaml
 
 sleep 15
 
