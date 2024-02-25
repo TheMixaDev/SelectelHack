@@ -93,6 +93,66 @@ CREATE TABLE IF NOT EXISTS Bonus (
   --   CONSTRAINT fk_partner FOREIGN KEY (partner_id) REFERENCES Partners(id) -- Assuming a Partners table exists
 );
 
+INSERT INTO Bonus (partner_image, is_taken, partner_id, date_validity, is_published, is_expired, has_feedback, partner_url, state, bonus_confines, promocode, cities)
+VALUES 
+(
+  'https://hackaton.donorsearch.org/media/%D0%BB%D0%BE%D0%B3%D0%BE_3_%D1%81%D1%82%D1%80%D0%BE%D0%BA%D0%B8_-_%D0%9E%D0%BB%D1%8C%D0%B3%D0%B0_%D0%9C%D0%BE%D0%B8%D1%81%D0%B5%D0%B5%D0%BD%D0%BA%D0%BE.png.177.44618395303326x150_q75_box-0%2C0%2C2418%2C2044_crop_detail_model-Bonus.png',
+  false,
+  8,
+  '2024-12-31',
+  true,
+  false,
+  false,
+  NULL,
+  NULL,
+  'No confines', -- Replace with appropriate value
+  'TestingString1', -- Replace with appropriate value
+  0 -- Replace with appropriate value
+),
+(
+  'https://hackaton.donorsearch.org/media/%D0%BB%D0%BE%D0%B3%D0%BE_3_%D1%81%D1%82%D1%80%D0%BE%D0%BA%D0%B8_-_%D0%9E%D0%BB%D1%8C%D0%B3%D0%B0_%D0%9C%D0%BE%D0%B8%D1%81%D0%B5%D0%B5%D0%BD%D0%BA%D0%BE.png.177.44618395303326x150_q75_box-0%2C0%2C2418%2C2044_crop_detail_model-Bonus.png',
+  false,
+  15,
+  '2025-12-31',
+  true,
+  false,
+  false,
+  NULL,
+  NULL,
+  'Half confined', -- Replace with appropriate value
+  'TestingString2', -- Replace with appropriate value
+  0 -- Replace with appropriate value
+),
+(
+  'https://hackaton.donorsearch.org/media/%D0%BB%D0%BE%D0%B3%D0%BE_3_%D1%81%D1%82%D1%80%D0%BE%D0%BA%D0%B8_-_%D0%9E%D0%BB%D1%8C%D0%B3%D0%B0_%D0%9C%D0%BE%D0%B8%D1%81%D0%B5%D0%B5%D0%BD%D0%BA%D0%BE.png.177.44618395303326x150_q75_box-0%2C0%2C2418%2C2044_crop_detail_model-Bonus.png',
+  false,
+  19,
+  '2023-12-31',
+  true,
+  false,
+  false,
+  NULL,
+  NULL,
+  'No confines', -- Replace with appropriate value
+  'TestingString3', -- Replace with appropriate value
+  0 -- Replace with appropriate value
+),
+(
+  'https://hackaton.donorsearch.org/media/color_big.png.150.0x150_q75_box-0%2C0%2C500%2C500_crop_detail_model-Bonus.png',
+  false,
+  10,
+  '2029-12-31',
+  true,
+  false,
+  false,
+  NULL,
+  NULL,
+  'Fully confined', -- Replace with appropriate value
+  'TestingString4', -- Replace with appropriate value
+  0 -- Replace with appropriate value
+);
+
+
 -- Additional tables and foreign key references need to be defined based on the specific relationships.
 -- For example, creating join tables for many-to-many relationships between Events and "User", "User" and Cities, etc.
 
