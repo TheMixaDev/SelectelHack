@@ -82,6 +82,8 @@ sudo apt install nodejs -y
 sudo apt autoremove -y
 sudo apt autoclean
 
+git clone https://github.com/isofinly/SelectelHack
+
 git fetch
 git pull
 
