@@ -5,8 +5,7 @@ import config from 'config';
  * Creates a new Redis client and connects to the specified address and port
  */
 const redisClient = Redis.createClient({
-    host: config.get("redis.address").split(':')[0],
-    port: config.get("redis.address").split(':')[1],
+    url: config.get("redis.address"),
     db: config.redis.db,
     password: config.redis.password
 })
